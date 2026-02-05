@@ -1,0 +1,202 @@
+// ==============================
+// FILE STRUCTURE
+// ==============================
+// frontend/
+// ├── package.json
+// └── src/
+//     ├── App.js
+//     ├── Dashboard.js
+//     └── index.js
+
+
+// ==============================
+// package.json
+// ==============================
+{
+  "name": "supply-chain-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "axios": "^1.6.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
+    "recharts": "^2.10.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  }
+}
+
+
+// ==============================
+// src/index.js
+// ==============================
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+
+
+// ==============================
+// src/App.js
+// ==============================
+import Dashboard from "./Dashboard";
+
+function App() {
+  return <Dashboard />;
+}
+
+export default App;
+
+
+// ==============================
+// src/Dashboard.js
+// ==============================
+import { useEffect, useState } from "react";
+import axios from "axios";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  ResponsiveContainer
+} from "recharts";
+
+const BACKEND_URL = "http://127.0.0.1:8000/dashboard";
+
+export default function Dashboard() {
+  const [data, setData] = useState([]);
+  const [cost, setCost] = useState(0);
+  const [insight, setInsight] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    axios
+      .get(BACKEND_URL)
+      .then((res) => {
+        const formatted = Object.entries(res.data.optimization).map(
+          ([route, value]) => ({
+            route,
+            shipments: value
+          })
+        );
+
+        setData(formatted);
+        setCost(res.data.total_cost);
+        setInsight(res.data.ai_insight);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setInsight("⚠️ Could not connect to backend.");
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return (
+      <div style={styles.center}>
+        <h2>Loading AI Supply Chain Dashboard...</h2>
+      </div>
+    );
+  }
+
+  return (
+    <div style={styles.container}>
+      <h1 style={styles.title}>AI Supply Chain Command Center</h1>
+
+      <div style={styles.card}>
+        <h2>Total Optimized Cost</h2>
+        <p style={styles.cost}>${cost.toLocaleString()}</p>
+      </div>
+
+      <div style={styles.chartCard}>
+        <h2>Optimized Shipments by Route</h2>
+
+        <ResponsiveContainer width="100%" height={400}>
+          <BarChart data={data}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="route" />
+            <YAxis />
+            <Tooltip />
+            <Bar dataKey="shipments" />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+      <div style={styles.aiCard}>
+        <h2>Gemini Executive Insight</h2>
+        <p style={{ lineHeight: 1.6 }}>{insight}</p>
+      </div>
+    </div>
+  );
+}
+
+
+// ==============================
+// STYLES
+// ==============================
+
+const styles = {
+  container: {
+    padding: "40px",
+    fontFamily: "Inter, Arial, sans-serif",
+    background: "#f7f9fc",
+    minHeight: "100vh"
+  },
+
+  title: {
+    marginBottom: "30px"
+  },
+
+  card: {
+    background: "white",
+    padding: "25px",
+    borderRadius: "14px",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+    marginBottom: "30px",
+    maxWidth: "400px"
+  },
+
+  cost: {
+    fontSize: "32px",
+    fontWeight: "bold",
+    marginTop: "10px"
+  },
+
+  chartCard: {
+    background: "white",
+    padding: "30px",
+    borderRadius: "14px",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+    marginBottom: "30px"
+  },
+
+  aiCard: {
+    background: "#ffffff",
+    padding: "30px",
+    borderRadius: "14px",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+    maxWidth: "900px"
+  },
+
+  center: {
+    height: "100vh",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    fontFamily: "Arial"
+  }
+};
