@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IMI Shipping & Freight - Route Optimization Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* IMI Brand Colors - from actual logo */
+            --imi-red: #E31E24;
+            --imi-dark-red: #C41E3A;
+            --imi-navy: #1A1D2E;
+            --imi-white: #FFFFFF;
+            
+            /* Modern UI Colors */
+            --bg-primary: #F8F9FA;
+            --bg-secondary: #FFFFFF;
+            --bg-card: #FFFFFF;
+            --text-primary: #1A1D2E;
+            --text-secondary: #6C757D;
+            --text-muted: #ADB5BD;
+            
+            /* Accent Colors */
+            --accent-blue: #0066CC;
+            --accent-green: #28A745;
+            --accent-orange: #FD7E14;
+            
+            /* Border & Shadow */
+            --border-color: #DEE2E6;
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+            --shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .header {
+            background: linear-gradient(135deg, rgba(26, 29, 46, 0.97) 0%, rgba(26, 29, 46, 0.95) 100%),
+                        url('Cargo_Ship.jpg') center center/cover;
+            color: var(--imi-white);
+            padding: 3rem 0;
+            box-shadow: var(--shadow-xl);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, 
+                rgba(227, 30, 36, 0.15) 0%, 
+                rgba(26, 29, 46, 0.3) 50%,
+                rgba(0, 102, 204, 0.1) 100%);
+            z-index: 1;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo {
+            width: 180px;
+            height: auto;
+            background: var(--imi-white);
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: var(--shadow-lg);
+            transition: transform 0.3s ease;
+        }
+
+        .logo img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .logo:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        h1 {
+            font-size: 2.75rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+            letter-spacing: -0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 2.5rem auto;
+            padding: 0 2rem 4rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-title {
+            font-size: 1.75rem;
+            color: var(--text-primary);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+            border-bottom: 3px solid var(--imi-red);
+            padding-bottom: 1rem;
+        }
+
+        .card-title .ship-icon {
+            font-size: 2rem;
+            color: var(--imi-red);
+        }
+
+        .upload-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .file-upload {
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--bg-primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .file-upload::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--imi-red), var(--accent-blue));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .file-upload:hover {
+            border-color: var(--imi-red);
+            background: var(--imi-white);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .file-upload:hover::before {
+            transform: scaleX(1);
+        }
+
+        .file-upload.uploaded {
+            border-color: var(--accent-green);
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.05) 0%, rgba(40, 167, 69, 0.02) 100%);
+            border-style: solid;
+        }
+
+        .file-upload.uploaded::before {
+            background: var(--accent-green);
+            transform: scaleX(1);
+        }
+
+        .file-upload label {
+            display: block;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 1.05rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .file-upload input {
+            display: none;
+        }
+
+        .file-status {
+            margin-top: 0.75rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .file-upload.uploaded .file-status {
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+
+        .controls-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            letter-spacing: 0.3px;
+        }
+
+        .control-group input, .control-group select {
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-family: inherit;
+        }
+
+        .control-group input:focus, .control-group select:focus {
+            outline: none;
+            border-color: var(--imi-red);
+            box-shadow: 0 0 0 3px rgba(227, 30, 36, 0.1);
+        }
+
+        .control-group input:hover, .control-group select:hover {
+            border-color: var(--text-secondary);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--imi-red) 0%, var(--imi-dark-red) 100%);
+            color: var(--imi-white);
+            padding: 1.125rem 2.5rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.125rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-md);
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            background: linear-gradient(135deg, var(--imi-dark-red) 0%, var(--imi-red) 100%);
+        }
+
+        .btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .results-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .results-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, var(--imi-white) 0%, var(--bg-primary) 100%);
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            border: 2px solid var(--border-color);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .summary-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--imi-red), var(--accent-blue));
+        }
+
+        .summary-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--imi-red);
+        }
+
+        .summary-card .value {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin: 0.75rem 0;
+            color: var(--imi-red);
+            line-height: 1.2;
+        }
+
+        .summary-card .label {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 1.5rem;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        th {
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--imi-navy) 100%);
+            color: var(--imi-white);
+            padding: 1.25rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        th:first-child {
+            border-top-left-radius: 12px;
+        }
+
+        th:last-child {
+            border-top-right-radius: 12px;
+        }
+
+        td {
+            padding: 1.25rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: var(--bg-primary);
+        }
+
+        tr:nth-child(even) td {
+            background: rgba(248, 249, 250, 0.5);
+        }
+
+        tr:nth-child(even):hover td {
+            background: var(--bg-primary);
+        }
+
+        .ai-explanation {
+            background: linear-gradient(135deg, rgba(227, 30, 36, 0.05) 0%, rgba(0, 102, 204, 0.05) 100%);
+            border-left: 4px solid var(--imi-red);
+            padding: 2rem;
+            border-radius: 12px;
+            margin-top: 2.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .ai-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, var(--imi-red) 0%, var(--imi-dark-red) 100%);
+            color: var(--imi-white);
+            padding: 0.625rem 1.25rem;
+            border-radius: 24px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .loader {
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--imi-red);
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .ship-icon {
+            font-size: 1.5rem;
+        }
+
+        .chart-container {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--text-secondary);
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            margin-top: 4rem;
+        }
+
+        .error-message {
+            background: linear-gradient(135deg, #FFF5F5 0%, #FEE 100%);
+            color: #C53030;
+            padding: 1.25rem;
+            border-radius: 12px;
+            border-left: 4px solid #C53030;
+            margin: 1rem 0;
+            font-weight: 500;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, #F0FFF4 0%, #E6FFED 100%);
+            color: #22543D;
+            padding: 1.25rem;
+            border-radius: 12px;
+            border-left: 4px solid var(--accent-green);
+            margin: 1rem 0;
+            font-weight: 500;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .scenario-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .scenario-card {
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--bg-secondary);
+        }
+
+        .scenario-card:hover {
+            border-color: var(--imi-red);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .scenario-card.selected {
+            border-color: var(--imi-red);
+            background: linear-gradient(135deg, rgba(227, 30, 36, 0.05) 0%, rgba(227, 30, 36, 0.02) 100%);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .scenario-title {
+            font-weight: 700;
+            color: var(--imi-red);
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            .logo {
+                width: 140px;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+
+            .card-title {
+                font-size: 1.4rem;
+            }
+
+            table {
+                font-size: 0.9rem;
+            }
+
+            th, td {
+                padding: 0.875rem 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo">
+                    <img src="IMI_logo.jpg" alt="International Materials Logo">
+                </div>
+                <div>
+                    <h1>Route Optimization Dashboard</h1>
+                    <p class="subtitle">AI-Powered Shipping Intelligence</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- File Upload Section -->
+        <div class="card">
+            <h2 class="card-title">
+                <span class="ship-icon">📁</span>
+                Upload Data Files
+            </h2>
+            <div class="upload-section">
+                <div class="file-upload" id="coa-list-upload">
+                    <label for="coa-list-file">
+                        📋 COA List
+                        <input type="file" id="coa-list-file" accept=".xlsx,.xls">
+                    </label>
+                    <div class="file-status" id="coa-list-status">No file selected</div>
+                </div>
+
+                <div class="file-upload" id="coa-rate-upload">
+                    <label for="coa-rate-file">
+                        💰 COA Rates
+                        <input type="file" id="coa-rate-file" accept=".xlsx,.xls">
+                    </label>
+                    <div class="file-status" id="coa-rate-status">No file selected</div>
+                </div>
+
+                <div class="file-upload" id="fob-upload">
+                    <label for="fob-file">
+                        🏭 FOB Prices
+                        <input type="file" id="fob-file" accept=".xlsx,.xls">
+                    </label>
+                    <div class="file-status" id="fob-status">No file selected</div>
+                </div>
+
+                <div class="file-upload" id="schedule-upload">
+                    <label for="schedule-file">
+                        📅 Shipment Schedule
+                        <input type="file" id="schedule-file" accept=".xlsx,.xls">
+                    </label>
+                    <div class="file-status" id="schedule-status">No file selected</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls Section -->
+        <div class="card">
+            <h2 class="card-title">
+                <span class="ship-icon">⚙️</span>
+                Optimization Parameters
+            </h2>
+            <div class="controls-section">
+                <div class="control-group">
+                    <label for="bunker-price">Bunker Price ($/mt)</label>
+                    <input type="number" id="bunker-price" value="400" min="0" step="10">
+                </div>
+                <div class="control-group">
+                    <label for="optimization-goal">Optimization Goal</label>
+                    <select id="optimization-goal">
+                        <option value="cost">Minimize Total Cost</option>
+                        <option value="balanced">Balance Cost & Efficiency</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label>
+                    <input type="checkbox" id="use-gemini" checked>
+                    Use Google Gemini AI for Explanation
+                </label>
+            </div>
+
+            <div class="control-group" id="gemini-api-section">
+                <label for="gemini-api-key">Google Gemini API Key</label>
+                <input type="password" id="gemini-api-key" placeholder="Enter your Gemini API key">
+            </div>
+
+            <button class="btn" id="optimize-btn" disabled>
+                <span class="ship-icon">🚀</span> Optimize Routes
+            </button>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section" id="results-section">
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="ship-icon">📊</span>
+                    Optimization Results
+                </h2>
+
+                <div class="summary-grid" id="summary-grid">
+                    <!-- Summary cards will be populated by JavaScript -->
+                </div>
+
+                <div id="routes-table-container">
+                    <!-- Routes table will be populated by JavaScript -->
+                </div>
+
+                <div class="ai-explanation" id="ai-explanation" style="display: none;">
+                    <div class="ai-badge">🤖 AI-Powered Explanation</div>
+                    <div id="ai-explanation-content"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="ship-icon">📈</span>
+                    Constraint Analysis
+                </h2>
+                <div id="constraint-analysis"></div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="ship-icon">🎯</span>
+                    Scenario Comparison
+                </h2>
+                <p>Adjust parameters above and click "Optimize Routes" again to compare scenarios</p>
+                <div id="scenario-comparison"></div>
+            </div>
+        </div>
+
+        <div id="loading" style="display: none;">
+            <div class="card">
+                <div class="loader"></div>
+                <p style="text-align: center; margin-top: 1rem;">Optimizing routes...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p style="font-weight: 500;">© 2024 International Materials | Powered by Linear Programming & Google Gemini AI</p>
+        <p style="font-size: 0.9rem; margin-top: 0.5rem; opacity: 0.7;">Optimizing global logistics, one route at a time 🌍</p>
+    </div>
+
+    <!-- External Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/javascript-lp-solver@0.4.24/prod/solver.min.js"></script>
+    
+    <script src="app.js"></script>
+</body>
+</html>
