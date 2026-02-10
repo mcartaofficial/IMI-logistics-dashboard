@@ -683,7 +683,7 @@ ${context.portDetails.map(p => `- ${p.port}: ${p.used} shipments (FOB Price: $${
 Please provide a concise explanation covering cost efficiency, COA strategy, and port selection. Be data-driven.`;
 
             // THE FIX: Updated to v1 stable endpoint and corrected model string format
-            const apiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+            const apiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
             const response = await fetch(apiUrl, {
                 method: 'POST',
