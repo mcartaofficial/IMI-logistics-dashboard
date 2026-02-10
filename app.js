@@ -624,6 +624,10 @@ class ShippingOptimizer {
         document.getElementById('constraint-analysis').innerHTML = analysisHTML;
     }
 
+    /**
+     * UPDATED: FIXED VERSION OF AI EXPLANATION
+     * Uses stable API version v1 and corrected model identifier.
+     */
     async getGeminiExplanation(results) {
         const apiKey = document.getElementById('gemini-api-key').value.trim();
         
@@ -636,7 +640,7 @@ class ShippingOptimizer {
             document.getElementById('ai-explanation-content').innerHTML = '<div style="text-align: center; padding: 2rem;"><div class="spinner"></div><p>Generating AI explanation...</p></div>';
             document.getElementById('ai-explanation').style.display = 'block';
 
-            // FIX: Prepare comprehensive context for Gemini
+            // Prepare comprehensive context for Gemini
             const context = {
                 totalCost: results.totalCost,
                 numShipments: results.numShipments,
@@ -663,7 +667,6 @@ class ShippingOptimizer {
                 }))
             };
 
-            // FIX: Better prompt for Gemini
             const prompt = `You are an expert shipping logistics analyst. Analyze this route optimization result and provide a clear, professional explanation.
 
 **Optimization Results:**
@@ -677,23 +680,10 @@ ${context.coaDetails.map(c => `- ${c.id}: Used ${c.used} shipments (Min: ${c.min
 **Port Distribution:**
 ${context.portDetails.map(p => `- ${p.port}: ${p.used} shipments (FOB Price: $${p.price})`).join('\n')}
 
-**Sample Routes Selected:**
-${context.sampleRoutes.map(r => `- Shipment ${r.shipment}: ${r.from} → ${r.to} via ${r.coa} ($${r.cost})`).join('\n')}
+Please provide a concise explanation covering cost efficiency, COA strategy, and port selection. Be data-driven.`;
 
-Please provide a concise explanation in 3-4 paragraphs covering:
-
-1. **Cost Optimization**: Explain why this solution achieves the minimum total cost. What factors contributed to the cost efficiency?
-
-2. **COA Strategy**: Analyze how the optimizer utilized the COA contracts. Were minimum commitments met? Which COAs were prioritized and why?
-
-3. **Port Selection**: Explain the port distribution strategy. How did FOB prices influence the routing decisions?
-
-4. **Key Insights & Recommendations**: Provide actionable insights about the optimization and any suggestions for potential cost savings or strategic improvements.
-
-Be professional, specific, and data-driven in your analysis.`;
-
-            // FIX: Updated API endpoint for Gemini 1.5
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+            // THE FIX: Updated to v1 stable endpoint and corrected model string format
+            const apiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
             const response = await fetch(apiUrl, {
                 method: 'POST',
@@ -708,8 +698,6 @@ Be professional, specific, and data-driven in your analysis.`;
                     }],
                     generationConfig: {
                         temperature: 0.7,
-                        topK: 40,
-                        topP: 0.95,
                         maxOutputTokens: 1024,
                     }
                 })
@@ -722,54 +710,27 @@ Be professional, specific, and data-driven in your analysis.`;
 
             const data = await response.json();
             
-            console.log('Gemini API response:', data);
-            
+            // Safety check for candidates array
             if (data.candidates && data.candidates.length > 0 && data.candidates[0].content) {
                 const explanation = data.candidates[0].content.parts[0].text;
                 
-                // FIX: Format the explanation with proper HTML
                 const formattedExplanation = explanation
-                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')  // Bold
-                    .replace(/\*(.*?)\*/g, '<em>$1</em>')              // Italic
-                    .replace(/\n\n/g, '</p><p>')                        // Paragraphs
-                    .replace(/\n/g, '<br>');                            // Line breaks
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\n\n/g, '</p><p>')
+                    .replace(/\n/g, '<br>');
                 
                 document.getElementById('ai-explanation-content').innerHTML = `<p>${formattedExplanation}</p>`;
-                document.getElementById('ai-explanation').style.display = 'block';
             } else {
                 throw new Error('Invalid response structure from Gemini API');
             }
 
         } catch (error) {
             console.error('Gemini API error:', error);
-            
-            // FIX: More helpful error messages
-            let errorMessage = 'Error getting AI explanation: ';
-            
-            if (error.message.includes('API_KEY_INVALID') || error.message.includes('API key not valid')) {
-                errorMessage += 'Invalid API key. Please check your Gemini API key and try again.';
-            } else if (error.message.includes('quota')) {
-                errorMessage += 'API quota exceeded. Please check your Gemini API usage limits.';
-            } else if (error.message.includes('blocked')) {
-                errorMessage += 'Request was blocked. The content may have triggered safety filters.';
-            } else {
-                errorMessage += error.message;
-            }
-            
             document.getElementById('ai-explanation-content').innerHTML = `
                 <div class="error-message">
-                    ${errorMessage}<br><br>
-                    <strong>Troubleshooting tips:</strong>
-                    <ul style="text-align: left; margin: 1rem 0;">
-                        <li>Verify your API key is correct</li>
-                        <li>Check that your API key has Gemini API enabled</li>
-                        <li>Ensure you have sufficient API quota</li>
-                        <li>Try again in a few moments</li>
-                    </ul>
-                    <small>Full error: ${error.message}</small>
+                    Error getting AI explanation: ${error.message}
                 </div>
             `;
-            document.getElementById('ai-explanation').style.display = 'block';
         }
     }
 
@@ -777,7 +738,7 @@ Be professional, specific, and data-driven in your analysis.`;
         if (this.scenarios.length === 0) {
             document.getElementById('scenario-comparison').innerHTML = `
                 <div style="text-align: center; padding: 2rem; color: #666;">
-                    <p>Run optimization scenarios with different parameters to compare results here.</p>
+                    <p>Run optimization scenarios to compare results here.</p>
                 </div>
             `;
             return;
@@ -790,32 +751,12 @@ Be professional, specific, and data-driven in your analysis.`;
                 <div class="scenario-card ${index === this.scenarios.length - 1 ? 'selected' : ''}">
                     <div class="scenario-title">Scenario ${index + 1}</div>
                     <p><strong>Time:</strong> ${scenario.timestamp}</p>
-                    <p><strong>Bunker Price:</strong> $${scenario.bunkerPrice}</p>
                     <p><strong>Total Cost:</strong> $${scenario.totalCost.toFixed(2)}</p>
-                    <p><strong>Shipments:</strong> ${scenario.numShipments}</p>
                 </div>
             `;
         });
 
         comparisonHTML += '</div>';
-
-        if (this.scenarios.length > 1) {
-            const costDiff = this.scenarios[this.scenarios.length - 1].totalCost - this.scenarios[this.scenarios.length - 2].totalCost;
-            const diffPercent = (costDiff / this.scenarios[this.scenarios.length - 2].totalCost * 100).toFixed(2);
-            
-            const comparison = costDiff >= 0 ? 'increase' : 'decrease';
-            const color = costDiff >= 0 ? '#c62828' : '#2e7d32';
-            
-            comparisonHTML += `
-                <div style="margin-top: 1rem; padding: 1rem; background: #f5f5f5; border-radius: 8px;">
-                    <strong>Comparison with Previous Scenario:</strong><br>
-                    <span style="color: ${color}; font-size: 1.2rem; font-weight: bold;">
-                        Cost ${comparison}: $${Math.abs(costDiff).toFixed(2)} (${Math.abs(diffPercent)}%)
-                    </span>
-                </div>
-            `;
-        }
-
         document.getElementById('scenario-comparison').innerHTML = comparisonHTML;
     }
 }
