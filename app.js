@@ -1,102 +1,89 @@
-/**
- * IMI SHIPPING & FREIGHT - FORMULA-AWARE PARSER
- * This version specifically looks for Solver 'Changing Cells' (D6:D117)
- */
-
-const Logger = {
-    el: document.getElementById('system-log'),
-    log(msg, isError = false) {
-        const time = new Date().toLocaleTimeString();
-        const line = document.createElement('div');
-        if (isError) line.className = 'log-error';
-        line.innerHTML = `[${time}] ${isError ? '⚠️ ERROR:' : '>'} ${msg}`;
-        this.el.appendChild(line);
-        this.el.scrollTop = this.el.scrollHeight;
-    }
-};
-
-class ShippingOptimizer {
+class DashboardApp {
     constructor() {
+        this.workbookData = {};
+        this.currentSheet = null;
+
+        // Elements
         this.fileInput = document.getElementById('file-input');
-        this.optimizeBtn = document.getElementById('optimize-btn');
-        this.display = document.getElementById('data-display');
-        this.workbook = null;
+        this.dropZone = document.getElementById('drop-zone');
+        this.navBar = document.getElementById('nav-bar');
+        this.contentArea = document.getElementById('sheet-content');
+        this.pageTitle = document.getElementById('page-title');
+        this.uploadScreen = document.getElementById('upload-screen');
+
         this.init();
     }
 
     init() {
-        this.fileInput.addEventListener('change', (e) => this.processFile(e.target.files[0]));
-        this.optimizeBtn.addEventListener('click', () => this.renderFullAnalysis());
-        Logger.log("System Initialized. Awaiting LP_Enhanced_IMI file...");
+        this.fileInput.addEventListener('change', (e) => this.handleFile(e.target.files[0]));
+        
+        // Drag and Drop
+        this.dropZone.addEventListener('dragover', (e) => { e.preventDefault(); this.dropZone.style.borderColor = 'var(--imi-red)'; });
+        this.dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            this.handleFile(e.dataTransfer.files[0]);
+        });
     }
 
-    processFile(file) {
+    handleFile(file) {
         if (!file) return;
         const reader = new FileReader();
+        
         reader.onload = (e) => {
-            try {
-                const data = new Uint8Array(e.target.result);
-                // CRITICAL: We enable 'cellFormula' and 'cellText' to catch the Solver outputs
-                const wb = XLSX.read(data, { 
-                    type: 'array',
-                    cellFormula: true, 
-                    cellStyles: true,
-                    cellNF: true, 
-                    cellText: true 
-                });
+            const data = new Uint8Array(e.target.result);
+            const wb = XLSX.read(data, { type: 'array', raw: false });
+            
+            // Store all sheets in memory
+            wb.SheetNames.forEach(name => {
+                this.workbookData[name] = XLSX.utils.sheet_to_json(wb.Sheets[name], { header: 1, defval: "" });
+            });
 
-                this.workbook = wb;
-                Logger.log(`Loaded ${file.name}. Solver data detected.`);
-                this.optimizeBtn.disabled = false;
-            } catch (err) {
-                Logger.log(`Read Error: ${err.message}`, true);
-            }
+            this.createNavigation(wb.SheetNames);
+            this.uploadScreen.style.display = 'none'; // Hide upload, show dashboard
+            this.showSheet(wb.SheetNames[0]); // Show first sheet by default
         };
         reader.readAsArrayBuffer(file);
     }
 
-    renderFullAnalysis() {
-        this.display.innerHTML = "";
-        Logger.log("Processing formulas in sheets...");
-
-        this.workbook.SheetNames.forEach(name => {
-            const sheet = this.workbook.Sheets[name];
-            
-            // We use sheet_to_json but with specific flags to ensure 
-            // that the 'result' of the formula is what gets printed.
-            const rows = XLSX.utils.sheet_to_json(sheet, { 
-                header: 1, 
-                defval: "",
-                raw: false, // This tells the library: "Give me the calculated string, not the raw formula"
-                dateNF: 'yyyy-mm-dd'
-            });
-
-            if (rows.length > 0) {
-                const section = document.createElement('div');
-                section.innerHTML = `<h3>Analysis: ${name}</h3>`;
-                let tableHtml = '<div style="overflow-x:auto;"><table><thead><tr>';
-                
-                rows[0].forEach(h => tableHtml += `<th>${h}</th>`);
-                tableHtml += '</tr></thead><tbody>';
-
-                rows.slice(1).forEach((row, rowIndex) => {
-                    tableHtml += '<tr>';
-                    row.forEach((cell, colIndex) => {
-                        // Special highlight for your "Changing Cells" range (Columns D in Long_Model)
-                        const isChangingCell = (name === "Long_Model" && colIndex === 3);
-                        const style = isChangingCell ? 'style="background:#fff3cd; font-weight:bold;"' : '';
-                        tableHtml += `<td ${style}>${cell}</td>`;
-                    });
-                    tableHtml += '</tr>';
-                });
-
-                tableHtml += '</tbody></table></div>';
-                section.innerHTML += tableHtml;
-                this.display.appendChild(section);
-            }
+    createNavigation(sheetNames) {
+        this.navBar.innerHTML = '';
+        sheetNames.forEach(name => {
+            const btn = document.createElement('button');
+            btn.className = 'nav-btn';
+            btn.innerText = name.replace(/_/g, ' '); // Make names look cleaner
+            btn.onclick = () => this.showSheet(name);
+            btn.setAttribute('data-sheet', name);
+            this.navBar.appendChild(btn);
         });
-        Logger.log("Render Complete. Formulas evaluated.");
+    }
+
+    showSheet(name) {
+        // Update active button UI
+        document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelector(`[data-sheet="${name}"]`).classList.add('active');
+
+        this.pageTitle.innerText = name;
+        const rows = this.workbookData[name];
+
+        if (!rows || rows.length === 0) {
+            this.contentArea.innerHTML = "No data found in this sheet.";
+            return;
+        }
+
+        // Build Table
+        let html = '<table><thead><tr>';
+        rows[0].forEach(h => html += `<th>${h}</th>`);
+        html += '</tr></thead><tbody>';
+
+        rows.slice(1).forEach(row => {
+            html += '<tr>';
+            row.forEach(cell => html += `<td>${cell}</td>`);
+            html += '</tr>';
+        });
+
+        html += '</tbody></table>';
+        this.contentArea.innerHTML = html;
     }
 }
 
-new ShippingOptimizer();
+new DashboardApp();
