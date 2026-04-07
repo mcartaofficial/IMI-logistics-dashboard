@@ -1,4 +1,4 @@
-class MILogisticsApp {
+class IMILogisticsApp {
     constructor() {
         this.workbookData = {};
         this.fileInput = document.getElementById('file-input');
@@ -74,4 +74,4 @@ class MILogisticsApp {
     }
 }
 
-new MILogisticsApp();
+new IMILogisticsApp();
