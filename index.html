@@ -2,61 +2,63 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IMI Shipping - Route Optimization</title>
+    <title>IMI Optimization - ULTRA STABLE</title>
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
     <style>
-        :root {
-            --imi-red: #E31E24; --imi-navy: #1A1D2E; --bg: #F8F9FA;
-        }
-        body { font-family: sans-serif; background: var(--bg); margin: 0; padding: 0; }
-        .header { background: var(--imi-navy); color: white; padding: 2rem; text-align: center; }
-        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+        :root { --imi-red: #E31E24; --navy: #1A1D2E; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; margin: 0; }
+        .container { max-width: 1000px; margin: 40px auto; padding: 20px; }
         
-        /* Dropzone Styling */
+        /* The Heavy-Duty Dropzone */
         #drop-zone {
-            border: 3px dashed #ccc; border-radius: 12px; padding: 50px;
-            text-align: center; background: white; cursor: pointer; transition: 0.3s;
+            background: white; border: 4px dashed #bdc3c7; border-radius: 20px;
+            padding: 60px; text-align: center; transition: all 0.3s;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
         }
-        #drop-zone.dragover { border-color: var(--imi-red); background: #fff5f5; }
-        #drop-zone:hover { border-color: #999; }
+        #drop-zone.active { border-color: var(--imi-red); background: #fff9f9; transform: scale(1.02); }
         
-        .btn {
-            background: var(--imi-red); color: white; border: none; padding: 12px 24px;
-            border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 1rem;
+        .btn-main {
+            background: var(--imi-red); color: white; border: none; padding: 15px 30px;
+            font-size: 18px; border-radius: 8px; cursor: pointer; width: 100%;
+            margin-top: 20px; font-weight: bold; box-shadow: 0 4px 15px rgba(227, 30, 36, 0.3);
         }
-        .btn:disabled { background: #ccc; cursor: not-allowed; }
+        .btn-main:disabled { background: #bdc3c7; cursor: not-allowed; box-shadow: none; }
+
+        /* System Logger Styling */
+        #system-log {
+            background: #2c3e50; color: #2ecc71; font-family: monospace;
+            padding: 15px; border-radius: 8px; margin-top: 20px;
+            max-height: 200px; overflow-y: auto; font-size: 12px; line-height: 1.5;
+        }
+        .log-error { color: #e74c3c; }
         
-        #status-msg { margin: 1rem 0; font-weight: bold; text-align: center; display: none; }
-        .sheet-card { background: white; margin-top: 2rem; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); overflow: hidden; }
-        .sheet-title { background: #333; color: white; padding: 10px 20px; font-weight: bold; }
-        .table-wrap { overflow-x: auto; padding: 1rem; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-        th { background: #eee; text-align: left; padding: 8px; border: 1px solid #ddd; }
-        td { padding: 8px; border: 1px solid #ddd; }
+        #data-display { margin-top: 30px; }
+        table { width: 100%; border-collapse: collapse; background: white; margin-bottom: 20px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background: var(--navy); color: white; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>IMI Route Optimization Dashboard</h1>
-        <p>Upload LP_Enhanced_IMI_WhatIf_1.xlsx to begin</p>
+<div class="container">
+    <div id="drop-zone">
+        <h2 id="prompt-text">Step 1: Upload LP_Enhanced_IMI_WhatIf_1.xlsx</h2>
+        <p>Drag file here or click the button below</p>
+        <button class="btn-main" onclick="document.getElementById('file-input').click()">BROWSE COMPUTER</button>
+        <input type="file" id="file-input" hidden accept=".xlsx, .xls, .xlsm">
     </div>
 
-    <div class="container">
-        <div id="drop-zone">
-            <div style="font-size: 3rem;">📄</div>
-            <p><strong>Click to select</strong> or Drag & Drop the Excel file here</p>
-            <input type="file" id="file-input" hidden accept=".xlsx, .xls">
-        </div>
-
-        <div id="status-msg"></div>
-
-        <button id="process-btn" class="btn" disabled>Generate Analysis</button>
-
-        <div id="output"></div>
+    <div id="system-log">
+        > System ready. Waiting for file...
     </div>
 
-    <script src="app.js"></script>
+    <button id="optimize-btn" class="btn-main" style="background: var(--navy);" disabled>
+        Step 2: Run Optimization Analysis
+    </button>
+
+    <div id="data-display"></div>
+</div>
+
+<script src="app.js"></script>
 </body>
 </html>
