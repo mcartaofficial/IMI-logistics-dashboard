@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>IMI Logistics Dashboard</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
 
@@ -12,7 +12,7 @@
         <div class="drop-box" id="drop-zone">
             <div style="font-size: 50px; margin-bottom: 15px;">🚢</div>
             <h1 style="color: #24223F; margin: 0; font-weight: 900;">IMI Logistics</h1>
-            <p style="color: #718096; margin-top: 5px;">Route Optimization Dashboard</p>
+            <p style="color: #718096; margin-top: 5px;">Dashboard & Optimization Tool</p>
             <input type="file" id="file-input" hidden accept=".xlsx, .xls">
             <button class="btn-upload" onclick="document.getElementById('file-input').click()">UPLOAD DATASET</button>
         </div>
@@ -22,18 +22,16 @@
         <div class="sidebar-header">
             <h2>IMI Logistics Dashboard</h2>
         </div>
-        <div class="nav-list" id="sidebar-nav">
-            </div>
+        <div class="nav-list" id="sidebar-nav"></div>
     </aside>
 
     <main class="content">
         <div class="top-bar">
-            <h3 id="current-sheet-title" style="margin:0; font-weight: 800; color: #24223F;">Select a Category</h3>
+            <h3 id="current-sheet-title" style="margin:0; font-weight: 800; color: #24223F;">Dashboard</h3>
             <div id="file-name-display"></div>
         </div>
-
         <div class="view-area">
-            <div class="card" id="data-card">
+            <div class="card">
                 <div id="table-output"></div>
             </div>
         </div>
