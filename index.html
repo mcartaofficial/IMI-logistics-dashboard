@@ -151,6 +151,12 @@
         }
 
         .btn-upload:hover { transform: scale(1.05); filter: brightness(1.1); box-shadow: 0 10px 20px rgba(214, 25, 43, 0.3); }
+        
+        .home-welcome h1 { color: var(--deep-space); font-size: 2.5rem; margin-bottom: 10px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 30px; }
+        .stat-item { background: var(--off-white); padding: 20px; border-radius: 15px; text-align: center; }
+        .stat-item span { display: block; font-size: 1.5rem; font-weight: 800; color: var(--mi-red); }
+        .stat-item label { font-size: 0.75rem; color: var(--text-gray); text-transform: uppercase; }
     </style>
 </head>
 <body>
@@ -175,7 +181,7 @@
 
     <main class="content">
         <div class="top-bar">
-            <h3 id="current-sheet-title" style="margin:0; font-weight: 800; color: var(--deep-space);">Route Optimization</h3>
+            <h3 id="current-sheet-title" style="margin:0; font-weight: 800; color: var(--deep-space);">Overview</h3>
             <div id="file-name-display" style="background: #E2E8F0; padding: 8px 16px; border-radius: 30px; font-size: 0.7rem; font-weight: 700; color: var(--deep-space);"></div>
         </div>
 
@@ -185,6 +191,9 @@
             </div>
         </div>
     </main>
+
+    <script src="https://elfsightcdn.com/platform.js" async></script>
+    <div class="elfsight-app-9639422b-a08a-4426-ac61-16178e4719f3" data-elfsight-app-lazy></div>
 
     <script src="app.js"></script>
 </body>
