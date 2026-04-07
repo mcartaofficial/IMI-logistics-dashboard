@@ -6,22 +6,20 @@ class MILogisticsApp {
         this.tableOutput = document.getElementById('table-output');
         this.titleText = document.getElementById('current-sheet-title');
         this.overlay = document.getElementById('upload-overlay');
-        
         this.init();
     }
 
     init() {
-        this.fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) {
-                this.handleFile(e.target.files[0]);
-            }
-        });
+        this.fileInput.addEventListener('change', (e) => this.handleFile(e.target.files[0]));
     }
 
     handleFile(file) {
+        if (!file) return;
         const reader = new FileReader();
+        
         reader.onload = (e) => {
             const data = new Uint8Array(e.target.result);
+            // Setting raw: false ensures formula results are displayed, not the cell range references.
             const wb = XLSX.read(data, { type: 'array', raw: false });
             
             wb.SheetNames.forEach(name => {
@@ -41,7 +39,8 @@ class MILogisticsApp {
         names.forEach(name => {
             const btn = document.createElement('button');
             btn.className = 'nav-item';
-            btn.innerText = name.replace(/_/g, ' ');
+            const cleanName = name.replace(/_/g, ' ');
+            btn.innerHTML = `<span>•</span> ${cleanName}`;
             btn.onclick = () => this.switchPage(name);
             btn.setAttribute('data-id', name);
             this.nav.appendChild(btn);
@@ -54,20 +53,23 @@ class MILogisticsApp {
         if (activeBtn) activeBtn.classList.add('active');
         
         this.titleText.innerText = sheetName.replace(/_/g, ' ');
-        const rows = this.workbookData[sheetName];
 
-        let html = '<table><thead><tr>';
-        rows[0].forEach(cell => html += `<th>${cell || ""}</th>`);
+        const rows = this.workbookData[sheetName];
+        if (!rows || rows.length === 0) return;
+
+        let html = '<div class="table-container"><table><thead><tr>';
+        rows[0].forEach(cell => html += `<th>${cell}</th>`);
         html += '</tr></thead><tbody>';
 
-        rows.slice(1).forEach((row) => {
+        rows.slice(1).forEach(row => {
             html += '<tr>';
-            row.forEach(cell => html += `<td>${cell || ""}</td>`);
+            row.forEach(cell => html += `<td>${cell}</td>`);
             html += '</tr>';
         });
 
-        html += '</tbody></table>';
+        html += '</tbody></table></div>';
         this.tableOutput.innerHTML = html;
+        document.querySelector('.content').scrollTop = 0;
     }
 }
 
