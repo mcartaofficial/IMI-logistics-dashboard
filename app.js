@@ -1,57 +1,59 @@
 /**
- * IMI Shipping & Freight - Route Optimization Logic
- * Updated for Single-File Drag & Drop
+ * IMI Dashboard Logic
+ * Handles file parsing and dynamic table rendering
  */
 
-class ShippingOptimizer {
-    constructor() {
-        this.workbookData = null;
-        this.dropZone = document.getElementById('drop-zone');
-        this.fileInput = document.getElementById('file-input');
-        this.optimizeBtn = document.getElementById('optimize-btn');
-        this.statusMsg = document.getElementById('file-status');
-        this.dashboardOutput = document.getElementById('dashboard-output');
+document.addEventListener('DOMContentLoaded', () => {
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+    const statusMsg = document.getElementById('status-msg');
+    const processBtn = document.getElementById('process-btn');
+    const output = document.getElementById('output');
 
-        this.initializeEventListeners();
+    let cachedWorkbook = null;
+
+    // --- Safety Check ---
+    if (typeof XLSX === 'undefined') {
+        alert("Error: SheetJS library failed to load. Check your internet connection.");
+        return;
     }
 
-    initializeEventListeners() {
-        // Trigger file input when clicking the drop zone
-        this.dropZone.addEventListener('click', () => this.fileInput.click());
+    // 1. Trigger File Selection
+    dropZone.addEventListener('click', () => fileInput.click());
 
-        // Handle file selection via dialog
-        this.fileInput.addEventListener('change', (e) => this.handleFile(e.target.files[0]));
+    // 2. Handle File Drop
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('dragover');
+    });
 
-        // Drag & Drop visual effects
-        this.dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            this.dropZone.classList.add('dragover');
-        });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
 
-        this.dropZone.addEventListener('dragleave', () => {
-            this.dropZone.classList.remove('dragover');
-        });
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+        const file = e.dataTransfer.files[0];
+        handleFileSelection(file);
+    });
 
-        this.dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            this.dropZone.classList.remove('dragover');
-            this.handleFile(e.dataTransfer.files[0]);
-        });
+    // 3. Handle File Input (Click)
+    fileInput.addEventListener('change', (e) => {
+        handleFileSelection(e.target.files[0]);
+    });
 
-        // Optimization button logic
-        this.optimizeBtn.addEventListener('click', () => this.renderDashboard());
-    }
-
-    handleFile(file) {
+    function handleFileSelection(file) {
         if (!file) return;
+        
+        console.log("File Selected:", file.name);
 
-        // Check file extension
-        if (!file.name.endsWith('.xlsx') && !file.name.endsWith('.xls')) {
-            this.updateStatus('Error: Please upload an Excel file (.xlsx)', 'red');
+        // Extension Check (Case Insensitive)
+        const ext = file.name.split('.').pop().toLowerCase();
+        if (ext !== 'xlsx' && ext !== 'xls') {
+            updateStatus("Error: Please select an Excel (.xlsx) file", "red");
             return;
         }
 
-        this.updateStatus(`File detected: ${file.name}. Reading data...`, 'var(--imi-navy)');
+        updateStatus(`Loading ${file.name}...`, "orange");
 
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -59,78 +61,68 @@ class ShippingOptimizer {
                 const data = new Uint8Array(e.target.result);
                 const workbook = XLSX.read(data, { 
                     type: 'array',
-                    cellFormula: true, // Evaluates Excel formulas
-                    cellNF: true, 
+                    cellFormula: true, // Crucial for evaluating What-If results
+                    cellNF: true,
                     cellText: true 
                 });
 
-                this.workbookData = this.parseWorkbook(workbook);
-                
-                // Update UI Success
-                this.updateStatus(`Successfully loaded: ${file.name}`, 'var(--accent-green)');
-                this.optimizeBtn.disabled = false;
-                this.dropZone.style.borderColor = 'var(--accent-green)';
+                cachedWorkbook = workbook;
+                updateStatus(`File Ready: ${file.name}`, "green");
+                processBtn.disabled = false;
+                console.log("Workbook parsed successfully.");
             } catch (err) {
                 console.error(err);
-                this.updateStatus('Error: Could not parse Excel content.', 'red');
+                updateStatus("Error parsing file. Is it password protected?", "red");
             }
         };
+
+        reader.onerror = () => updateStatus("Error reading file.", "red");
         reader.readAsArrayBuffer(file);
     }
 
-    parseWorkbook(workbook) {
-        const sheets = {};
-        workbook.SheetNames.forEach(name => {
-            // Convert each sheet to a 2D array (header: 1)
-            // raw: false ensures we get the calculated value of formulas
-            sheets[name] = XLSX.utils.sheet_to_json(workbook.Sheets[name], { header: 1, raw: false });
-        });
-        return sheets;
-    }
-
-    renderDashboard() {
-        if (!this.workbookData) return;
-
-        this.dashboardOutput.innerHTML = ''; // Clear previous results
-
-        Object.entries(this.workbookData).forEach(([sheetName, rows]) => {
-            if (rows.length === 0) return;
-
-            const section = document.createElement('div');
-            section.className = 'sheet-section card';
-            
-            let tableHTML = `
-                <div class="sheet-header">${sheetName}</div>
-                <div class="table-wrapper">
-                    <table>
-                        <thead>
-                            <tr>${rows[0].map(h => `<th>${h || ''}</th>`).join('')}</tr>
-                        </thead>
-                        <tbody>
-            `;
-
-            // Add data rows (skipping the header)
-            rows.slice(1).forEach(row => {
-                tableHTML += `<tr>${row.map(cell => `<td>${cell || ''}</td>`).join('')}</tr>`;
+    // 4. Render the Dashboard
+    processBtn.addEventListener('click', () => {
+        if (!cachedWorkbook) return;
+        
+        output.innerHTML = ""; // Clear old results
+        
+        cachedWorkbook.SheetNames.forEach(sheetName => {
+            const data = XLSX.utils.sheet_to_json(cachedWorkbook.Sheets[sheetName], { 
+                header: 1, 
+                raw: false // Shows formula results as text ($10.50) instead of raw numbers
             });
 
-            tableHTML += `</tbody></table></div>`;
-            section.innerHTML = tableHTML;
-            this.dashboardOutput.appendChild(section);
+            if (data.length > 0) {
+                renderSheet(sheetName, data);
+            }
         });
 
-        // Smooth scroll to results
-        this.dashboardOutput.scrollIntoView({ behavior: 'smooth' });
+        updateStatus("Dashboard updated successfully!", "var(--imi-navy)");
+    });
+
+    function renderSheet(name, rows) {
+        const card = document.createElement('div');
+        card.className = 'sheet-card';
+        
+        let html = `<div class="sheet-title">${name}</div><div class="table-wrap"><table>`;
+        
+        // Build Header
+        html += `<thead><tr>${rows[0].map(h => `<th>${h || ''}</th>`).join('')}</tr></thead>`;
+        
+        // Build Body
+        html += `<tbody>`;
+        rows.slice(1).forEach(row => {
+            html += `<tr>${row.map(cell => `<td>${cell || ''}</td>`).join('')}</tr>`;
+        });
+        html += `</tbody></table></div>`;
+        
+        card.innerHTML = html;
+        output.appendChild(card);
     }
 
-    updateStatus(text, color) {
-        this.statusMsg.style.display = 'block';
-        this.statusMsg.textContent = text;
-        this.statusMsg.style.color = color;
+    function updateStatus(text, color) {
+        statusMsg.style.display = 'block';
+        statusMsg.style.color = color;
+        statusMsg.textContent = text;
     }
-}
-
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', () => {
-    new ShippingOptimizer();
 });
