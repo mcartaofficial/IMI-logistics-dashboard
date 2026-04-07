@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IMI Shipping & Freight - Route Optimization Dashboard</title>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -12,7 +13,7 @@
         }
 
         :root {
-            /* IMI Brand Colors - from actual logo */
+            /* IMI Brand Colors */
             --imi-red: #E31E24;
             --imi-dark-red: #C41E3A;
             --imi-navy: #1A1D2E;
@@ -24,30 +25,22 @@
             --bg-card: #FFFFFF;
             --text-primary: #1A1D2E;
             --text-secondary: #6C757D;
-            --text-muted: #ADB5BD;
-            
-            /* Accent Colors */
-            --accent-blue: #0066CC;
-            --accent-green: #28A745;
-            --accent-orange: #FD7E14;
-            
-            /* Border & Shadow */
             --border-color: #DEE2E6;
-            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.06);
+            --accent-green: #28A745;
+            
+            /* Shadows */
             --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
             --shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.15);
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
             line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
 
+        /* Header with IMI Background */
         .header {
             background: linear-gradient(135deg, rgba(26, 29, 46, 0.97) 0%, rgba(26, 29, 46, 0.95) 100%),
                         url('Cargo_Ship.jpg') center center/cover;
@@ -55,32 +48,12 @@
             padding: 3rem 0;
             box-shadow: var(--shadow-xl);
             position: relative;
-            overflow: hidden;
-        }
-
-        .header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, 
-                rgba(227, 30, 36, 0.15) 0%, 
-                rgba(26, 29, 46, 0.3) 50%,
-                rgba(0, 102, 204, 0.1) 100%);
-            z-index: 1;
         }
 
         .header-content {
             max-width: 1400px;
             margin: 0 auto;
             padding: 0 2rem;
-            position: relative;
-            z-index: 2;
-        }
-
-        .logo-section {
             display: flex;
             align-items: center;
             gap: 2rem;
@@ -88,44 +61,19 @@
 
         .logo {
             width: 180px;
-            height: auto;
             background: var(--imi-white);
             border-radius: 12px;
             padding: 1rem;
-            box-shadow: var(--shadow-lg);
-            transition: transform 0.3s ease;
+            box-shadow: var(--shadow-md);
         }
 
-        .logo img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        .logo:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-xl);
-        }
-
-        h1 {
-            font-size: 2.75rem;
-            font-weight: 700;
-            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
-            letter-spacing: -0.5px;
-            margin-bottom: 0.5rem;
-        }
-
-        .subtitle {
-            font-size: 1.2rem;
-            opacity: 0.9;
-            font-weight: 300;
-            letter-spacing: 0.5px;
-        }
+        h1 { font-size: 2.5rem; font-weight: 700; }
+        .subtitle { font-size: 1.1rem; opacity: 0.9; font-weight: 300; }
 
         .container {
             max-width: 1400px;
             margin: 2.5rem auto;
-            padding: 0 2rem 4rem;
+            padding: 0 2rem;
         }
 
         .card {
@@ -135,601 +83,146 @@
             margin-bottom: 2rem;
             box-shadow: var(--shadow-md);
             border: 1px solid var(--border-color);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
         }
 
         .card-title {
-            font-size: 1.75rem;
-            color: var(--text-primary);
-            margin-bottom: 2rem;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            font-weight: 600;
             border-bottom: 3px solid var(--imi-red);
-            padding-bottom: 1rem;
+            padding-bottom: 0.5rem;
         }
 
-        .card-title .ship-icon {
-            font-size: 2rem;
-            color: var(--imi-red);
-        }
-
-        .upload-section {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .file-upload {
-            border: 2px dashed var(--border-color);
-            border-radius: 12px;
-            padding: 2rem 1.5rem;
+        /* New Drag & Drop Zone Styling */
+        #drop-zone {
+            border: 3px dashed var(--border-color);
+            border-radius: 16px;
+            padding: 4rem 2rem;
             text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
             background: var(--bg-primary);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .file-upload::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, var(--imi-red), var(--accent-blue));
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
-        }
-
-        .file-upload:hover {
-            border-color: var(--imi-red);
-            background: var(--imi-white);
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .file-upload:hover::before {
-            transform: scaleX(1);
-        }
-
-        .file-upload.uploaded {
-            border-color: var(--accent-green);
-            background: linear-gradient(135deg, rgba(40, 167, 69, 0.05) 0%, rgba(40, 167, 69, 0.02) 100%);
-            border-style: solid;
-        }
-
-        .file-upload.uploaded::before {
-            background: var(--accent-green);
-            transform: scaleX(1);
-        }
-
-        .file-upload label {
-            display: block;
+            transition: all 0.3s ease;
             cursor: pointer;
-            font-weight: 600;
-            color: var(--text-primary);
-            font-size: 1.05rem;
-            margin-bottom: 0.5rem;
+            position: relative;
         }
 
-        .file-upload input {
+        #drop-zone.dragover {
+            border-color: var(--imi-red);
+            background: rgba(227, 30, 36, 0.05);
+            transform: scale(1.01);
+        }
+
+        #drop-zone .icon {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        #drop-zone .upload-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--imi-navy);
+        }
+
+        #drop-zone .sub-text {
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        #file-status {
+            margin-top: 1.5rem;
+            font-weight: 600;
+            padding: 1rem;
+            border-radius: 8px;
             display: none;
         }
 
-        .file-status {
-            margin-top: 0.75rem;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        .file-upload.uploaded .file-status {
-            color: var(--accent-green);
-            font-weight: 600;
-        }
-
-        .controls-section {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .control-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-
-        .control-group label {
-            font-weight: 600;
-            color: var(--text-primary);
-            font-size: 0.95rem;
-            letter-spacing: 0.3px;
-        }
-
-        .control-group input, .control-group select {
-            padding: 0.875rem 1rem;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: all 0.2s ease;
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-            font-family: inherit;
-        }
-
-        .control-group input:focus, .control-group select:focus {
-            outline: none;
-            border-color: var(--imi-red);
-            box-shadow: 0 0 0 3px rgba(227, 30, 36, 0.1);
-        }
-
-        .control-group input:hover, .control-group select:hover {
-            border-color: var(--text-secondary);
-        }
-
+        /* Button & Results Styling */
         .btn {
             background: linear-gradient(135deg, var(--imi-red) 0%, var(--imi-dark-red) 100%);
-            color: var(--imi-white);
-            padding: 1.125rem 2.5rem;
+            color: white;
+            padding: 1rem 2rem;
             border: none;
             border-radius: 12px;
-            font-size: 1.125rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow-md);
-            letter-spacing: 0.5px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
+            width: 100%;
             margin-top: 1rem;
         }
 
-        .btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-            background: linear-gradient(135deg, var(--imi-dark-red) 0%, var(--imi-red) 100%);
-        }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .btn:active:not(:disabled) {
-            transform: translateY(0);
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .results-section {
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .results-section.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .summary-grid {
+        .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2.5rem;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
         }
 
-        .summary-card {
-            background: linear-gradient(135deg, var(--imi-white) 0%, var(--bg-primary) 100%);
-            padding: 2rem;
+        .sheet-section {
+            background: white;
             border-radius: 12px;
-            text-align: center;
-            box-shadow: var(--shadow-sm);
-            border: 2px solid var(--border-color);
-            transition: all 0.3s ease;
-            position: relative;
             overflow: hidden;
+            border: 1px solid var(--border-color);
         }
 
-        .summary-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, var(--imi-red), var(--accent-blue));
-        }
-
-        .summary-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-md);
-            border-color: var(--imi-red);
-        }
-
-        .summary-card .value {
-            font-size: 2.25rem;
-            font-weight: 700;
-            margin: 0.75rem 0;
-            color: var(--imi-red);
-            line-height: 1.2;
-        }
-
-        .summary-card .label {
-            font-size: 0.95rem;
-            color: var(--text-secondary);
+        .sheet-header {
+            background: var(--imi-navy);
+            color: white;
+            padding: 1rem 1.5rem;
             font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            padding: 1rem;
         }
 
         table {
             width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            margin-top: 1.5rem;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: var(--shadow-sm);
-        }
-
-        th {
-            background: linear-gradient(135deg, var(--text-primary) 0%, var(--imi-navy) 100%);
-            color: var(--imi-white);
-            padding: 1.25rem 1rem;
-            text-align: left;
-            font-weight: 600;
-            font-size: 0.95rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        th:first-child {
-            border-top-left-radius: 12px;
-        }
-
-        th:last-child {
-            border-top-right-radius: 12px;
-        }
-
-        td {
-            padding: 1.25rem 1rem;
-            border-bottom: 1px solid var(--border-color);
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-        }
-
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        tr:hover td {
-            background: var(--bg-primary);
-        }
-
-        tr:nth-child(even) td {
-            background: rgba(248, 249, 250, 0.5);
-        }
-
-        tr:nth-child(even):hover td {
-            background: var(--bg-primary);
-        }
-
-        .ai-explanation {
-            background: linear-gradient(135deg, rgba(227, 30, 36, 0.05) 0%, rgba(0, 102, 204, 0.05) 100%);
-            border-left: 4px solid var(--imi-red);
-            padding: 2rem;
-            border-radius: 12px;
-            margin-top: 2.5rem;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .ai-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: linear-gradient(135deg, var(--imi-red) 0%, var(--imi-dark-red) 100%);
-            color: var(--imi-white);
-            padding: 0.625rem 1.25rem;
-            border-radius: 24px;
+            border-collapse: collapse;
             font-size: 0.9rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            box-shadow: var(--shadow-sm);
         }
 
-        .loader {
-            border: 4px solid var(--border-color);
-            border-top: 4px solid var(--imi-red);
-            border-radius: 50%;
-            width: 48px;
-            height: 48px;
-            animation: spin 1s linear infinite;
-            margin: 2rem auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .ship-icon {
-            font-size: 1.5rem;
-        }
-
-        .chart-container {
-            margin: 2rem 0;
-            padding: 1.5rem;
-            background: var(--bg-secondary);
-            border-radius: 12px;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .footer {
-            text-align: center;
-            padding: 3rem 2rem;
-            color: var(--text-secondary);
-            background: var(--bg-secondary);
-            border-top: 1px solid var(--border-color);
-            margin-top: 4rem;
-        }
-
-        .error-message {
-            background: linear-gradient(135deg, #FFF5F5 0%, #FEE 100%);
-            color: #C53030;
-            padding: 1.25rem;
-            border-radius: 12px;
-            border-left: 4px solid #C53030;
-            margin: 1rem 0;
-            font-weight: 500;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .success-message {
-            background: linear-gradient(135deg, #F0FFF4 0%, #E6FFED 100%);
-            color: #22543D;
-            padding: 1.25rem;
-            border-radius: 12px;
-            border-left: 4px solid var(--accent-green);
-            margin: 1rem 0;
-            font-weight: 500;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .scenario-selector {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin: 1.5rem 0;
-        }
-
-        .scenario-card {
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
-            padding: 1.75rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: var(--bg-secondary);
-        }
-
-        .scenario-card:hover {
-            border-color: var(--imi-red);
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .scenario-card.selected {
-            border-color: var(--imi-red);
-            background: linear-gradient(135deg, rgba(227, 30, 36, 0.05) 0%, rgba(227, 30, 36, 0.02) 100%);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .scenario-title {
-            font-weight: 700;
-            color: var(--imi-red);
-            margin-bottom: 0.75rem;
-            font-size: 1.1rem;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2rem;
-            }
-
-            .subtitle {
-                font-size: 1rem;
-            }
-
-            .logo {
-                width: 140px;
-            }
-
-            .card {
-                padding: 1.5rem;
-            }
-
-            .card-title {
-                font-size: 1.4rem;
-            }
-
-            table {
-                font-size: 0.9rem;
-            }
-
-            th, td {
-                padding: 0.875rem 0.75rem;
-            }
-        }
+        th { background: #f8f9fa; text-align: left; padding: 12px; border-bottom: 2px solid #dee2e6; }
+        td { padding: 10px; border-bottom: 1px solid #eee; }
     </style>
 </head>
 <body>
+
     <div class="header">
         <div class="header-content">
-            <div class="logo-section">
-                <div class="logo">
-                    <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wAARCADNASoDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD4Pooor6UAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKVVLMAASTwAKA3Eoq7qmkz6PLFFcgLK8Yk2d1BzgH34qlUwnGpFSi7pmtWlUoTdOqrSW6e6CiiiqMgooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAVVLMAASTwAK9L8F+CxpqpfXyA3RGY4z/yz9z7/AMqj8BeFIYbeLU7jEs0g3RL2Qev1rt9tfEZtmrlJ4aht1f6H77wZwjGjGnmmPV5OzhHt2k/Psum++3lfxK/5GJf+uC/zNcpXV/EsY8RL/wBcF/ma5Svp8v8A90p+iPyfib/kc4v/ABy/MKm+yTfZTc7D5G7Zv7Z9K1/C3hebxBdAkGO1Q/PJ/Qe9dP8AEOzh0/QbK3t4xHEkmAB9Kzq4+nDEQw0dZPfy/wCCdWD4dr18sr5rW92nBe73k7pfcu/XZHndFFXNJ0q41m8S2tkLOx5PZR6mvSlKMIuUnZI+VpUqlepGlSjeTdklu2QQWstz5nlRs4jUuxA+6B1JqKvVrrw7b+HvCGoRRDdK0DGSU9WOP5V5TXBg8ZHGc8oLROyPpM8yKpkXsKdd3nOPM0tlra3+YUUUV6J8sFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFAHs/hD/AJFzT/8ArkK1ppkt4mkkYJGoyzMcACsbwvMlv4XspJGCIsILMxwAK4Txj4xk1uU21sSlkp+hkPqfavzWngamNxlSMdEm7vtr+Z/UuJ4hw+QZJhatT3qjhHlj391avsl1ZS8Y6zFrmtPPACIlURqT/Fgnn9aPC3hiXxDdc5S1jP7yT+g96w69K+Fv/INvP+ug/lX2GOm8vwL9j9lJL8j8TyChDiLP4/X9VNylJLS+jdvT9DrLGwh062SCBAkSDAArk/if/wAgq1/66n+VdsRmuK+KAxpVr/11P8q+IyyUp42m5PW5++cVwhTyDEQgrJRSSXa6PP8AStLn1i+jtbdcyN3PQDuTXsHh7w9b+HrIQxDdI3Mkp6sf8K8++G3/ACMn/bFv5ivVq9nPsTU9oqCfu2v6nxfh3lWG+qvMZRvUbcU+ySW3rfVmV4r/AORc1H/ri38q8Ur2vxX/AMi5qP8A1xb+VeKV3cP60J+v6Hz/AIlq2Oof4H/6Uwooor6o/HgooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA2NR8ST3mlWmnx5it4UCsM/fPqfapPC3hebxFdd47RD+8lx+g96Xwt4Wm8R3XOYrRD+8lx+g9/wCVet2VjBp9rHb26COJBgKK+WzHMKeXxdDD/G/wv+p+t8NcN4jiKrHH5m37GNkl/Mo6JLtFdX12Wt2vLPH1nDYaxDbwII4o7dQqj6mul+Fv/INvP+ug/lWD8SxjxEv/AFwX+Zre+Fv/ACDrz/roP5VnjG5ZPFv+7+Z0ZLCMONKkIKyUppLsrM7auL+KP/IKtf8Arqf5V2lcX8Uf+QVa/wDXU/yr5nK1bG0/X9D9T4u/5EeJ/wAP6o534bf8jJ/2xb+Yr1avKfht/wAjH/2xb+Yr1au3P/8Ae/kjw/Dz/kTf9vy/JGV4r/5FzUf+uLfyrxSva/Ff/Iuaj/1xb+VeKV7fDv8AAn6/ofD+Jf8Av+H/AMH6sKKKK+rPx0KKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAPZvByqnhyw2gDMQJwO9bVY3hD/kXNP/65Crurarb6NZvc3L7UXoO7H0FfkmJg54qcYq7cn+Z/ZWWVaeHyrD1arUYqnFtvZe6jzf4mf8jGv/XBf5mt74W/8g28/wCug/lXD+INbk1/UnupFCDG1FHZR0/nXcfC3/kG3n/XQfyr7HMKcqOUqE91y/mfiHDuJp4zi+WIou8ZObXpZnbVxfxR/wCQVa/9dT/KuxmlSCJpJGCIoyWJ4Arynxr4rGvXCwQDFpEflY9XPr9K+eyahUq4mNSK0jufpnG+Pw+Eyirh6svfqK0V1eq19F3H/Db/AJGT/ti38xXq1eU/Db/kZP8Ati38xXq1b5+v9q+SODw+/wCRLp/PL8kZXir/AJFzUf8Ari38q8Ur0Xx34wjSGXTLQiRnG2aTqAPQe9edV9DkWHqUMO3UVuZ3R+bcf5jh8dmMIYeXN7Ncra2vd6LvYKKKK+jPzAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAPW9F1a30bwhZXNy+1FhGB3Y+grznxD4huPEN4ZZSViXiOIHhR/jVS81O4vobeKV8xQIERB0A/xqrXj4PLo4epOvPWcm/kj7fO+Jq2ZYajgKXu0acYrzk0krvy7L5+hXo/wymSDSb6SRgiK4JYngDFecVbTU54tPeyR9sDtvcD+L610Y7DPF0fYp2u1+Z5nD2axyXHxxso83KpWXdtNL5dzoPGXjF9aka1tmKWSnkjrIf8K5Siit8Ph6eFpqlSVkjz8yzLE5riZYrFSvJ/cl2XZI6n4bnHiPP/AExb+Yre8beNhbB7CwfMpGJJlP3fYe9cFp+pT6ZJJJbtsd0MZbuAeuKrEliSTknvXBUy6FfF/WauqSVl/mfR4biatgMm/szCe7KUpOUvJ20Xr1f3CEkkknJNFFFewfEBRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFAGr4T8M33jTxVo3h7TFR9S1a9hsLVZHCKZZXCICx4A3MOT0rqPFfwS8UeDPi8fhrqcFvH4oF1b2nlJcK0XmTKjRjzBxjEi5Papv2dP+Tg/hj/2NGl/+lcVfQH7R3/KSqb/ALGDSP8A0RbVk5NSt5AfP/xq+AnjP9n/AMRW+jeMtMFjcXMPnwSxSCWGVc4O114JB6jqMj1Fcf4a8PXni3xBp+jaeqPfX8628KuwVS7HAyT0r9VPj1d6D+098Q/HvwH8RG003xRpYi1DwlqQ4Z2MIZ4mJ75J4HVT6ivzr+GnhPVPAv7RvhvQNatHsdU0/XIYJ4JBgqwkH5g9Qe4NRTqucddwLf8Awyz47/4XM/wuNtYr4rSPzWia8QRBcZ/1mcdO1enR/wDBM/42TEiOw0ZyBkhdWhP9ay/+Chk8tt+1h4peKR4nCQ4ZGIP3PUV2X/BNG/urv4reMhNdTygeFrsgPKxAOU561Mpz9nzp9AOM8T/8E9fi74R8N6trmoWmjrYaZaS3twY9VhZhHGhdsKDknCniuZ+DP7HHxH+PHg6XxP4VtNPl0mK7eyaS7vo4SJFVWIwx6Ydea8h1PV757y7Rr24ZDI4KmViCMnjrX2d8M9L1TWf+CYnjC10a2uru/bxcpSKzVmkIBtCcBeemaqTnBK73YHD/APDtX40f8+eif+DeH/GvIh+zx4wb40f8KtWC0bxZ5wg8pbpDDuKhh+8zjoaz/wDhXPxJ/wCgD4i/78TV6Z+xRZX2nftd+CbbU4p4L6O+2yx3IIkU7TwQead5RTbaYHRN/wAE0/jUjFWsdFDDqDq8Of515F8Y/wBm/wCIXwGmtx4y8Py6fbXJIgvYpFmt5SOwkQlc+x59quftLatfQ/H7x4sd7coi6tNgLKwA5+tfTHw41bXfFv8AwTr+JY8fTXF3pVhdRf8ACP3OpEtIHDJxGzckAlwPQFh2qeacUpNp3A+Y/A37Mnj74kfC3XPH/h7Sk1HQdHkeO6Ecy+eNiqzlY+rAKwJx2B9K8q6V+iH7Hnxgu/gR+xH4l8aWtsl7HYeLolubVxkywOLdJFU5GG2sSCeMgV4t+2n+z7pPhefTPiv8PNl58MfFwFxA1uvy2Fw4JaEj+FSQxUcYIZf4eXGq+dxl8gPGdJ+BfirWvg7q/wATrWC2bwrpd4LG5ma4USrKSgAEfUj94vP19K8+r7Q+G/8AyjF+Jv8A2MsP/oVrXzZ8Cfhnc/GD4teGvCdshYahdokzAfciBy7H2Cg1cZ35m+jA6fVP2SfiTo/wag+J9zo8a+FZYlnEguEMyxscB2jzuAz6+1cX8KfhVr3xm8ZW/hjw2lvJqk6PIi3U6wphRk/M3Ffo5bfHTR/Gf7UniT4GPOP+EButD/4Rqzgdt0SXUaffUdCTwM/7Nfm18QfB+pfC7x/rnhy7Mltf6VdyWzFSVb5TgHI9RiopzlK6ejA+hY/+CZ/xsmJEdhozkDJC6tCf61k+KP8Agnt8XfCPhvVtd1C00dbDTLSW9uDHqsLsI40LthQck4U8V3H/AATMv7q7+KvjcT3U8oXwpdkB5WIB3x89a+Qb3V76SadGvbhkZmBUysQRnp1oTqOTjdaeX/BA7Gz+Bfiq/wDgxf8AxRigtj4Tsr4afNMbhRKJiUAAj6kfvF5+vpXJeGfC+r+M9btdH0PTrnVdUunCQ2tpGZJHPsBX174a/wCUWfi3/sbk/wDQrStD4A3sH7Mf7H3iH4vWltFJ438RXZ0jSLiVQ32aPoXX8dxP+4PWj2jSfe9kBxWmf8E2Pi3d2Ec1/L4d0K6lXKWGo6qqzt7YUMAfYmvGPjB+z748+BOoRWvjHQZtNSfPkXaMstvNj+5IpKn6Zz7Vx3iDxTrHivWJtW1nU7rU9SmcyPdXUzPISTnqTx+Ffan7FfxCuf2h/DXib4EePbh9c0+706S60S5vW3y2U0Y4CuecAlSP+BDpRJzguZu6A+Wfgn8CfFf7QHie50Dwhb29zqNvbNdulzcLCvlhgpOW75YVyPifwzqfgzxDqGh61ZyafqunzNb3NtMMNG6nBBr7G/4JpWN14Z/aC8dWgYR3lhoF5GGZcgOkqAEj6itX48+FdM/bN+C3/C5fCFnFH8RPDqfZvFuj2q/NNGgx56r1OFXIPOUyM5TFDqtVLPYD5P8Agz8EPFHx58R3mh+E4Le4v7Sze/lW5uFhHlKyqSC3U5YcVwc0TQSvG33kYqceor7G/wCCWv8AyXfxJ/2LF1/6Mhr5BvInn1aeKNS8jzsqqOpJbgVopNzce1gPVPgx+yn8RPj34f1fWvCOlw3dhpjbJnnuFiLNtLbUDHLHA7e1eTXlnNp93Pa3EbQ3EDtHJGwwVYHBB+hFfolrfxRP7E3w++B/guxma31S5uk13xGiNjfFJgFH79COP9k188/t7/C638AfHS61bSkH/CPeKIV1iwkQYQiQZcD6H+dZwqOUrPZ7AeXeC/gX4q8e/DzxP410mC3k0Lw5j7fJJcKjrnGNqnlvvDpXn1faP7LH/JlH7QX+7D/7Tr4urSEnJyT6AFFFFaAFFFFABRRRQB6H+zp/ycH8Mf8AsaNL/wDSuKvoD9o7/lJVN/2MGkf+iLavmD4aeLI/AXxH8KeJ5bdryLRdWtNSe3VtplEMySFAe2duM+9ejfEz9oG18fftQt8WI9HltLVtRsr7+zWlDPiCOJSu7pz5ZP41jKLc7+QHf/t3+JdS8Hftp6/rej3Ullqdi9pPbzxnDI6xIQa95j0PS/2xtP8AAvxj8L2iJ8QfD+oWlt4m0u3wGnRWH74D2659MjtXxb+0p8YoPjz8X9Y8aW+nSaVFfrEBayyB2XYgXqPpVj9mr9oTWf2cfiPbeJNNDXVkw8q+07ftW5iPb2I6g9qzdN8itul/SA73/gol/wAnWeKv9yH/ANArrv8AgmT/AMlX8af9itd/zSvDP2k/jFB8ePi5q3jK202TSYr5UAtZZA7LtXHUVs/ssftA2v7O/i/W9autIl1lNR0mbTRFFKIyhcg7iT24qnCXseXrYDx7Uf8AkIXP/XVv5mvvD4FfEvxF8JP+CbnizxL4W1A6ZrFv4s2R3AQMQr/ZFYYPHIJr4LuZRPcyygYDuWx6ZNfUHwI/aw8G/Dz4Dah8MfGXgObxfpl7qz6nIBdCNCdsW0Y65Biz+NVVi5RVlfUDG/4eC/HX/odZP/AaL/4mrv7I/jPV/iH+2n4T8R69dm+1fUNQ825uCoUu2zGcDjoBW9/w0V+zn/0QE/8AgwrzTwb8cfDXw+/aTs/iJ4f8KPpvh2zuRPb6FHOC0a7ACoc++T+NRy3i0o208gPqXWf2xfC+kftLan4Z8Y/DHwnLoMerPZ3OrfYEa4GWwJWJXnnGa82/4KHeLfiLp/i+18JatcWcPw+ZRfaDBo9uILWaE/dYgcFl6entXzF8VPGkfxF+I3iHxNFatZR6pePdLbu24xhj0J716xrn7T1n49/Zwsfhx4w0ObVdb0WTOi+II5gHt04/duCMsMZH4D0pKlyOMkgPSvh9/wAoxfiP/wBjRD/O2rH/AGKvjro0VvqfwW+JLC7+HXirMMLTtxp92x+V1J+6rNg57MA396vOfDn7Q1roX7K/if4Rto8st1rGqpqK6kJQEjCmI7SuMn/Vn868RBIII4Iq1T5lJS6sD9GPHvwS1b9n79hn4w+ENUDSpD4lguLK8xhbq2d7by5B7/KQR2INc/8A8E2vhgdM8PeNvild3dlpUkFs+k6Re6i/lwxzuPmct7ZA/wCBV5f4q/bn1Lx7+ytJ8KPEWly3+rgQwx64Zh80MUiOgdTyWwu3P0rlviD+05Z+IP2bvCvwk8PaHNo1lp0wudRupJgxvpOTnAHHzEHn+6KxUKji4vqwPWdE/Y11jRPHlp4ui+M/ghtYgvxqHnfbGBaTfuP58/nU3/BTX4YR2/irw18S9Me3u9P8RWiw3d1ZMHha6jABYEdmGDnvzXxDX0Bpv7Tlnc/ssXnwg8QaHNqcsN19q0nVEmA+yNuzggjJHLDA7EelaOE1JSvcD0f/AIJif8lV8c/9ind/+hx18e3X/HzN/vn+dezfsrftB237Ovi/XtZutHl1lNS0iXTBFFKIyhdlO4k9vlrxaV/Mld8Y3EnFaRi1OT9APs/w1/yiz8W/9jcn/oVpV3QdLl+Nv/BOiXSNDH2rW/BOrNd3FjHzI0By28Dvwz/9814jpX7RVrp37Jus/B5tGle6v9YXVF1MSgIgBhO3b1J/dH865f4FfHrxR+z94wXXfDlwpWRfKu7Cf5oLqLujr/XtWXs5WbW97gebkEEgjBHY19lf8E1PCk2mfETxD8TNSVrXwx4Y0mdp7t/lRpGAO0E9SAp49xUN7+0d+zl4xum1jxH8FLi21uQ+ZNHpd4I7eV+pO3tk1xHxx/bDu/iH4Oj8C+DfD1p4C8CRsGbTbA/Pc46eaw6/Sqk5VFy2tcD1X/gnbrQ8R/tH/EfVAMLeaHfzgD0aZCP518//ALOP7Qerfs4/F2PxFZB7rSppDbarpwb5bq2LfMMdNy9VPrx0Jq1+yj+0La/s4+NtY1260eXWo7/SpdOEMUojKl2U7sn/AHa8XuJfPuJZAMB2LY9MmnyXlK60dgP1n+B3wE0fwZ+0Re/E7wCVu/hr4z8M3U9o1uPks52aN2iI/hBwxA7EMvavh/8AYp+EK/F79pTTLe7iEmjaTM+qX5cfJ5cbZCt7FsD8a2v2Tf25dV/Zy8Oax4Z1LTpfEXhy7DSWtss2xrSZuGKk8bWHJHqM9zXOfBL9p6x+Cfw0+IGk6ZoMz+LPFEbW8etecAtrEQcALjOckn3wKyUKkeZeiQH0N+0r+zFefHn4w634tl+LXgq1tp2WG0tZrwloIUGFQ44znJ/Gt39of4JT+Jv2KdJ8zX9J8XeJfh+2Gv8AR5fNDWhOCrHrkAqcfWvzaJJJJOSa92/Za/aWT9n+98TWmq6RJ4g8NeILFrO805JQhJIIDAnjOCR+VN05xSs72A9b/ZY/5Mo/aC/3Yf8A2nXxdX01+zv+1N4T+Dng7xz4U1zwXceJtB8S3Qka2+0iPbEMYRuOeg5Fbn/DRX7Of/RAT/4MKtOUZS929wPkmitbxdqOnav4r1q/0ew/srSbq9mns7Ddu+zQtIzRxZ77VIXPtWTXQAUUUUAFFFFAGn4Y8O33jDxLpOg6ZGJtS1S7hsbWNmChpZXCICT0yzDmtH4i/DvXvhV4z1Hwr4ksjYa1YMqzQbgwG5Q6kEcEFWB/Guk/ZqGf2jfhWD0/4SvSv/SyKvrTxZ8OrD9pDxvpni3VLrdH4H8Q6nonjS7nkw39m2s01xazttHygxLJBuPJZF9KxlU5JWewHx18Rfgz4r+FOm+Gr7xLp4sIfENp9usB5gZniwpywH3eHXg+tcRX1d+2h46uPid8N/g34sud4fVU1qaOJ8fuYRdqsUQxxhEVV/CvlGrptyjdgFdp8Kfg94q+NXiCfRfCOmnUtQgtnupELhAqKQOp4ySQAO+a4uvtX4FfCP4meHv2aLfxB8O9Clv/ABR4p1qG7adbmGAwWNm+6JWErruEkvzZXqF5pVJcqA+Lri3ktLiSGVCksbFHU9QQcEVHX0L+3D8MrjwH8ZW1dtMfSLTxXZxa2lk7q5tppB/pEJZCUysok4UkAFa+eqqMlJJoCxYWT6jfQWsbRpJM4jVpXCICTjljwB717gn7GHjyTT5NQTUvCb6fE4ikvF8RWxhRz0UvuwCewrwevePDX/JmnjQ9/wDhJ7Dn/tm9TNtWsB4x4i0Kfwzrl7pV1LbzXFpIYnktJlmiYjurrww9xWdRRWgG/wCAvA2r/ErxhpnhjQYFudX1KXyreJ3CBm2lup6cA16F4g/Zb8U+GtG1HUrrWvCUkVjDJPLDb+IrWSYhASQqBss3HCjknitD9iLP/DVvw4xjP9onr/1yeneOYv2fV03WzoU/xHPiDbL9kXUPsP2Xz+dok2Ddsz1xzispSfNZAeGUUUVqB3Pws+DPiP4w3Gqx6AtkselwC5vLjULtLaGGMttDM7kAc8VofEP9nzxj8NdCi1zUYLG/0KSX7P8A2po99Fe26S4zsZo2O1sdjXp37IdjpeqeBPjfaa3qj6JpEvhyJbnUY7c3DQL9oXkRBlL88YyK0fiVYeGfgR+z9J4e8OazqHjePx80F/HrklmLaxhhhLZjRC7sJ9xw2cED61g5vn5QPleiiitwOhtvAWsXfgW98XxwKdDs7yOwmm3jcJpFZlG3r0U81z1e7+Hv+TMPGH/Y26f/AOiJ68IqYu9wCtnwd4Q1Xx74n03w9odq17quoSiG3gU43MffsAAST6Csavqf9jT4V+JdZ8NfELxv4b0V9Z1mysG0fSIRJHGBc3C4kk3SMoBSMkgg5y1KcuWNwPnjx74E1r4Z+LdS8NeIbNrHV9Pk8qeEnIB7EHuCOQe9c/X1d+1z8IfFelfC/wCHPjjxVosmk+IVtv7A1oNNHOZJYR+4md0dgWkiwMZ/gNfKNEJc0bgFdIfh9rQ+H48aG3T+wDf/ANmifzBu8/Zv27euMd65uvf3P/GDaf8AY7j/ANJGpydrAeAUUUVQCgFiABknoBXt1l+xz8Rrywt2MWjWusXMaSQeHbvV4ItUlVgGTFuzA5YEEA4PPSvF7G6lsb23uYMedDIsiZGfmByOO/Ir6nn8T/Cf9p7xtbT65/wkHw2+JusTxWwv7Ei70uW7OEVnjYiWIFtvCkgZ61nNyWwHyxfWU+m3txaXUTQXNvI0UsTjDI6nDKfcEEVBW1438MX3gnxnr/h3VHSTU9I1C4sLp42LK0sUjI5BPUblPNYtaLUAooooAKKKKANfwf4pvvA3i7RPEmmGMalo99BqFqZl3J5sUiyJuHcblGRXSp8bvFsP/CfCC/W1j8cOz6zFBGFSUtMZjtH8IyWHH8LMO9cHRSaT3A6zxT8Tda8YeD/CXhnUDbnTPC8NxBp4ii2uFmk8x97fxHcOD2FcnRRTSS2AK6/4g/FPXfiVNpDatJBFBpFhFplja2cflQwQRjhVXPckk+5NchRRZbgdbrHxQ1zX/h1oPgq/a3uNH0K5nudPdov38HnENKgfuhYbsHvXJUUUJJbAFdRZfEbWLD4eal4KiMH9iahexX8waLMvmxghcN2GCeK5eihq4BRRRQB0vw3+IOrfCrxxpHizQmhXVtLlM1ubiPzI9xUryvfhjXoniT9qG78TaJqWmy/DT4ZWJvoJIGvbDwpBDcxbwQXjkByrjOQw6HmvFqKlxTd2gCiiiqA6vwf8TNa8DeH/ABVo2mG3Fl4lslsL/wA6EOxiVw42H+E5HWpbf4qa3F8NLjwJL9lvNAe8F9Ct1CHltJcYYwv1QMPvAcHrjNcfRSsgCiiimB09p8RdXsvh3qHgqMwf2JfX8WozAxZl82NWVcN2GGPFcxRRRawBXX6n8Utb1P4daP4JY21voWl3Mt5GlvDskllkxuaV85fAAAz0rkKKLXA6/Qfilrfh/wAB+JPB8Jt7nRNeaGW4iu4vMaKSJsrJCSfkfBKlh1U4rkKKKEkgCvWPhr+0hrnw18GzeFk8O+FPE2hyXhvxa+JtHS/VJtu3eu48HHH4mvJ6KTSlowOq+I/xAk+I+vLqsmgaB4cYRLF9k8OacljbHGfmMa8bjnk1ytFFNK2iAmsryfTryC7tpWguYJFlilQ4ZHU5BHuCBXvMP7aHixJY9Tm8J+BLvxfGQ8fi+fw5EdUSQfdl3giMyDAwxjJrwCipcVLdAWdT1O71rUrvUL+5lvL67me4uLiZizyyMxZnYnkkkkk+9VqKKoAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP/Z" alt="International Materials Logo">
-                </div>
-                <div>
-                    <h1>Route Optimization Dashboard</h1>
-                    <p class="subtitle">AI-Powered Shipping Intelligence</p>
-                </div>
+            <div class="logo">
+                <img src="imi_logo.png" alt="IMI Logo" style="width:100%">
+            </div>
+            <div>
+                <h1>Route Optimization Dashboard</h1>
+                <p class="subtitle">AI-Powered Shipping Intelligence | Freight Analysis</p>
             </div>
         </div>
     </div>
 
     <div class="container">
-        <!-- File Upload Section -->
         <div class="card">
-            <h2 class="card-title">
-                <span class="ship-icon">📁</span>
-                Upload Data Files
-            </h2>
-            <div class="upload-section">
-                <div class="file-upload" id="coa-list-upload">
-                    <label for="coa-list-file">
-                        📋 COA List
-                        <input type="file" id="coa-list-file" accept=".xlsx,.xls">
-                    </label>
-                    <div class="file-status" id="coa-list-status">No file selected</div>
-                </div>
-
-                <div class="file-upload" id="coa-rate-upload">
-                    <label for="coa-rate-file">
-                        💰 COA Rates
-                        <input type="file" id="coa-rate-file" accept=".xlsx,.xls">
-                    </label>
-                    <div class="file-status" id="coa-rate-status">No file selected</div>
-                </div>
-
-                <div class="file-upload" id="fob-upload">
-                    <label for="fob-file">
-                        🏭 FOB Prices
-                        <input type="file" id="fob-file" accept=".xlsx,.xls">
-                    </label>
-                    <div class="file-status" id="fob-status">No file selected</div>
-                </div>
-
-                <div class="file-upload" id="schedule-upload">
-                    <label for="schedule-file">
-                        📅 Shipment Schedule
-                        <input type="file" id="schedule-file" accept=".xlsx,.xls">
-                    </label>
-                    <div class="file-status" id="schedule-status">No file selected</div>
-                </div>
+            <h2 class="card-title"><span>📦</span> Data Integration</h2>
+            <div id="drop-zone">
+                <span class="icon">📊</span>
+                <p class="upload-text">Drag & Drop "LP_Enhanced_IMI_WhatIf_1.xlsx" here</p>
+                <p class="sub-text">or click to browse files</p>
+                <input type="file" id="file-input" hidden accept=".xlsx">
             </div>
-        </div>
-
-        <!-- Controls Section -->
-        <div class="card">
-            <h2 class="card-title">
-                <span class="ship-icon">⚙️</span>
-                Optimization Parameters
-            </h2>
-            <div class="controls-section">
-                <div class="control-group">
-                    <label for="bunker-price">Bunker Price ($/mt)</label>
-                    <input type="number" id="bunker-price" value="400" min="0" step="10">
-                </div>
-                <div class="control-group">
-                    <label for="optimization-goal">Optimization Goal</label>
-                    <select id="optimization-goal">
-                        <option value="cost">Minimize Total Cost</option>
-                        <option value="balanced">Balance Cost & Efficiency</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="control-group">
-                <label>
-                    <input type="checkbox" id="use-gemini" checked>
-                    Use Google Gemini AI for Explanation
-                </label>
-            </div>
-
-            <div class="control-group" id="gemini-api-section">
-                <label for="gemini-api-key">Google Gemini API Key</label>
-                <input type="password" id="gemini-api-key" placeholder="Enter your Gemini API key">
-            </div>
-
+            <div id="file-status"></div>
+            
             <button class="btn" id="optimize-btn" disabled>
-                <span class="ship-icon">🚀</span> Optimize Routes
+                🚀 Generate Dashboard Results
             </button>
         </div>
 
-        <!-- Results Section -->
-        <div class="results-section" id="results-section">
-            <div class="card">
-                <h2 class="card-title">
-                    <span class="ship-icon">📊</span>
-                    Optimization Results
-                </h2>
-
-                <div class="summary-grid" id="summary-grid">
-                    <!-- Summary cards will be populated by JavaScript -->
-                </div>
-
-                <div id="routes-table-container">
-                    <!-- Routes table will be populated by JavaScript -->
-                </div>
-
-                <div class="ai-explanation" id="ai-explanation" style="display: none;">
-                    <div class="ai-badge">🤖 AI-Powered Explanation</div>
-                    <div id="ai-explanation-content"></div>
-                </div>
+        <div id="dashboard-output" class="dashboard-grid">
             </div>
-
-            <div class="card">
-                <h2 class="card-title">
-                    <span class="ship-icon">📈</span>
-                    Constraint Analysis
-                </h2>
-                <div id="constraint-analysis"></div>
-            </div>
-
-            <div class="card">
-                <h2 class="card-title">
-                    <span class="ship-icon">🎯</span>
-                    Scenario Comparison
-                </h2>
-                <p>Adjust parameters above and click "Optimize Routes" again to compare scenarios</p>
-                <div id="scenario-comparison"></div>
-            </div>
-        </div>
-
-        <div id="loading" style="display: none;">
-            <div class="card">
-                <div class="loader"></div>
-                <p style="text-align: center; margin-top: 1rem;">Optimizing routes...</p>
-            </div>
-        </div>
     </div>
 
-    <div class="footer">
-        <p style="font-weight: 500;">© 2024 International Materials | Powered by Linear Programming & Google Gemini AI</p>
-        <p style="font-size: 0.9rem; margin-top: 0.5rem; opacity: 0.7;">Optimizing global logistics, one route at a time 🌍</p>
-    </div>
-
-    <!-- External Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/javascript-lp-solver@0.4.24/prod/solver.min.js"></script>
-    
     <script src="app.js"></script>
 </body>
 </html>
