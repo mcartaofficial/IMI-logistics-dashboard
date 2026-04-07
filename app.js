@@ -6,7 +6,6 @@ class MILogisticsApp {
         this.tableOutput = document.getElementById('table-output');
         this.titleText = document.getElementById('current-sheet-title');
         this.overlay = document.getElementById('upload-overlay');
-        
         this.init();
     }
 
@@ -20,6 +19,7 @@ class MILogisticsApp {
         
         reader.onload = (e) => {
             const data = new Uint8Array(e.target.result);
+            // raw: false ensures formulas like D6:D117 are calculated values
             const wb = XLSX.read(data, { type: 'array', raw: false });
             
             wb.SheetNames.forEach(name => {
@@ -28,7 +28,7 @@ class MILogisticsApp {
 
             this.buildSidebar(wb.SheetNames);
             this.overlay.style.display = 'none';
-            document.getElementById('file-name-display').innerText = file.name;
+            document.getElementById('file-name-display').innerText = `Active File: ${file.name}`;
             this.switchPage(wb.SheetNames[0]);
         };
         reader.readAsArrayBuffer(file);
@@ -39,7 +39,9 @@ class MILogisticsApp {
         names.forEach(name => {
             const btn = document.createElement('button');
             btn.className = 'nav-item';
-            btn.innerText = name.replace(/_/g, ' ');
+            // Clean up sheet names for the menu
+            const cleanName = name.replace(/_/g, ' ').toUpperCase();
+            btn.innerHTML = `<span>•</span> ${cleanName}`;
             btn.onclick = () => this.switchPage(name);
             btn.setAttribute('data-id', name);
             this.nav.appendChild(btn);
@@ -47,7 +49,6 @@ class MILogisticsApp {
     }
 
     switchPage(sheetName) {
-        // UI Updates
         document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
         const activeBtn = document.querySelector(`[data-id="${sheetName}"]`);
         if (activeBtn) activeBtn.classList.add('active');
@@ -57,7 +58,6 @@ class MILogisticsApp {
         const rows = this.workbookData[sheetName];
         if (!rows || rows.length === 0) return;
 
-        // Table Construction
         let html = '<div class="table-container"><table><thead><tr>';
         rows[0].forEach(cell => html += `<th>${cell}</th>`);
         html += '</tr></thead><tbody>';
@@ -70,6 +70,9 @@ class MILogisticsApp {
 
         html += '</tbody></table></div>';
         this.tableOutput.innerHTML = html;
+        
+        // Smooth scroll back to top of card on page switch
+        document.querySelector('.content').scrollTop = 0;
     }
 }
 
