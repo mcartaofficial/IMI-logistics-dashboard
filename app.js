@@ -1,28 +1,17 @@
-class DashboardApp {
+class MILogisticsApp {
     constructor() {
         this.workbookData = {};
-        this.currentSheet = null;
-
-        // Elements
         this.fileInput = document.getElementById('file-input');
-        this.dropZone = document.getElementById('drop-zone');
-        this.navBar = document.getElementById('nav-bar');
-        this.contentArea = document.getElementById('sheet-content');
-        this.pageTitle = document.getElementById('page-title');
-        this.uploadScreen = document.getElementById('upload-screen');
-
+        this.nav = document.getElementById('sidebar-nav');
+        this.tableOutput = document.getElementById('table-output');
+        this.titleText = document.getElementById('current-sheet-title');
+        this.overlay = document.getElementById('upload-overlay');
+        
         this.init();
     }
 
     init() {
         this.fileInput.addEventListener('change', (e) => this.handleFile(e.target.files[0]));
-        
-        // Drag and Drop
-        this.dropZone.addEventListener('dragover', (e) => { e.preventDefault(); this.dropZone.style.borderColor = 'var(--imi-red)'; });
-        this.dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            this.handleFile(e.dataTransfer.files[0]);
-        });
     }
 
     handleFile(file) {
@@ -33,46 +22,44 @@ class DashboardApp {
             const data = new Uint8Array(e.target.result);
             const wb = XLSX.read(data, { type: 'array', raw: false });
             
-            // Store all sheets in memory
             wb.SheetNames.forEach(name => {
                 this.workbookData[name] = XLSX.utils.sheet_to_json(wb.Sheets[name], { header: 1, defval: "" });
             });
 
-            this.createNavigation(wb.SheetNames);
-            this.uploadScreen.style.display = 'none'; // Hide upload, show dashboard
-            this.showSheet(wb.SheetNames[0]); // Show first sheet by default
+            this.buildSidebar(wb.SheetNames);
+            this.overlay.style.display = 'none';
+            document.getElementById('file-name-display').innerText = file.name;
+            this.switchPage(wb.SheetNames[0]);
         };
         reader.readAsArrayBuffer(file);
     }
 
-    createNavigation(sheetNames) {
-        this.navBar.innerHTML = '';
-        sheetNames.forEach(name => {
+    buildSidebar(names) {
+        this.nav.innerHTML = '';
+        names.forEach(name => {
             const btn = document.createElement('button');
-            btn.className = 'nav-btn';
-            btn.innerText = name.replace(/_/g, ' '); // Make names look cleaner
-            btn.onclick = () => this.showSheet(name);
-            btn.setAttribute('data-sheet', name);
-            this.navBar.appendChild(btn);
+            btn.className = 'nav-item';
+            btn.innerText = name.replace(/_/g, ' ');
+            btn.onclick = () => this.switchPage(name);
+            btn.setAttribute('data-id', name);
+            this.nav.appendChild(btn);
         });
     }
 
-    showSheet(name) {
-        // Update active button UI
-        document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-        document.querySelector(`[data-sheet="${name}"]`).classList.add('active');
+    switchPage(sheetName) {
+        // UI Updates
+        document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+        const activeBtn = document.querySelector(`[data-id="${sheetName}"]`);
+        if (activeBtn) activeBtn.classList.add('active');
+        
+        this.titleText.innerText = sheetName.replace(/_/g, ' ');
 
-        this.pageTitle.innerText = name;
-        const rows = this.workbookData[name];
+        const rows = this.workbookData[sheetName];
+        if (!rows || rows.length === 0) return;
 
-        if (!rows || rows.length === 0) {
-            this.contentArea.innerHTML = "No data found in this sheet.";
-            return;
-        }
-
-        // Build Table
-        let html = '<table><thead><tr>';
-        rows[0].forEach(h => html += `<th>${h}</th>`);
+        // Table Construction
+        let html = '<div class="table-container"><table><thead><tr>';
+        rows[0].forEach(cell => html += `<th>${cell}</th>`);
         html += '</tr></thead><tbody>';
 
         rows.slice(1).forEach(row => {
@@ -81,9 +68,9 @@ class DashboardApp {
             html += '</tr>';
         });
 
-        html += '</tbody></table>';
-        this.contentArea.innerHTML = html;
+        html += '</tbody></table></div>';
+        this.tableOutput.innerHTML = html;
     }
 }
 
-new DashboardApp();
+new MILogisticsApp();
