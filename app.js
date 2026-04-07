@@ -19,7 +19,7 @@ class MILogisticsApp {
         
         reader.onload = (e) => {
             const data = new Uint8Array(e.target.result);
-            // raw: false ensures formulas like D6:D117 are calculated values
+            // raw: false is key to seeing formula results (e.g. D6:D117 values)
             const wb = XLSX.read(data, { type: 'array', raw: false });
             
             wb.SheetNames.forEach(name => {
@@ -28,7 +28,7 @@ class MILogisticsApp {
 
             this.buildSidebar(wb.SheetNames);
             this.overlay.style.display = 'none';
-            document.getElementById('file-name-display').innerText = `Active File: ${file.name}`;
+            document.getElementById('file-name-display').innerText = file.name.toUpperCase();
             this.switchPage(wb.SheetNames[0]);
         };
         reader.readAsArrayBuffer(file);
@@ -39,8 +39,8 @@ class MILogisticsApp {
         names.forEach(name => {
             const btn = document.createElement('button');
             btn.className = 'nav-item';
-            // Clean up sheet names for the menu
-            const cleanName = name.replace(/_/g, ' ').toUpperCase();
+            // Clean formatting for the sheet names
+            const cleanName = name.replace(/_/g, ' ');
             btn.innerHTML = `<span>•</span> ${cleanName}`;
             btn.onclick = () => this.switchPage(name);
             btn.setAttribute('data-id', name);
@@ -70,8 +70,6 @@ class MILogisticsApp {
 
         html += '</tbody></table></div>';
         this.tableOutput.innerHTML = html;
-        
-        // Smooth scroll back to top of card on page switch
         document.querySelector('.content').scrollTop = 0;
     }
 }
