@@ -1,4 +1,4 @@
-class IMILogisticsApp {
+class MILogisticsApp {
     constructor() {
         this.workbookData = {};
         this.fileInput = document.getElementById('file-input');
@@ -19,7 +19,7 @@ class IMILogisticsApp {
         
         reader.onload = (e) => {
             const data = new Uint8Array(e.target.result);
-            // raw: false is key to seeing formula results (e.g. D6:D117 values)
+            // Setting raw: false ensures formula results are displayed, not the cell range references.
             const wb = XLSX.read(data, { type: 'array', raw: false });
             
             wb.SheetNames.forEach(name => {
@@ -39,7 +39,6 @@ class IMILogisticsApp {
         names.forEach(name => {
             const btn = document.createElement('button');
             btn.className = 'nav-item';
-            // Clean formatting for the sheet names
             const cleanName = name.replace(/_/g, ' ');
             btn.innerHTML = `<span>•</span> ${cleanName}`;
             btn.onclick = () => this.switchPage(name);
@@ -74,4 +73,4 @@ class IMILogisticsApp {
     }
 }
 
-new IMILogisticsApp();
+new MILogisticsApp();
