@@ -2,65 +2,102 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>IMI Optimization Dashboard</title>
+    <title>MI Logistics Dashboard</title>
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
     <style>
-        :root { --imi-red: #E31E24; --navy: #1A1D2E; --light-gray: #f4f7f6; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--light-gray); margin: 0; display: flex; flex-direction: column; height: 100vh; }
+        :root { --imi-red: #E31E24; --navy: #1A1D2E; --sidebar-w: 260px; --bg: #f4f7fa; }
+        body { font-family: 'Inter', 'Segoe UI', sans-serif; background: var(--bg); margin: 0; display: flex; height: 100vh; color: #333; }
         
-        /* Sidebar/TopNav Branding */
-        .header { background: var(--navy); color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        /* Sidebar Navigation */
+        .sidebar { 
+            width: var(--sidebar-w); background: var(--navy); color: white; 
+            display: flex; flex-direction: column; flex-shrink: 0;
+        }
+        .sidebar-header { padding: 2rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .sidebar-header h2 { font-size: 1.2rem; margin: 0; letter-spacing: 1px; color: #fff; }
         
-        /* Navigation Buttons */
-        .nav-bar { background: white; border-bottom: 2px solid #ddd; padding: 0 2rem; display: flex; gap: 10px; overflow-x: auto; }
-        .nav-btn { 
-            padding: 15px 25px; border: none; background: none; cursor: pointer; 
-            font-weight: 600; color: #666; border-bottom: 3px solid transparent; transition: 0.2s;
+        .nav-list { flex: 1; padding: 1rem 0; overflow-y: auto; }
+        .nav-item { 
+            width: 100%; padding: 12px 24px; border: none; background: none; 
+            color: #a0aec0; text-align: left; cursor: pointer; font-size: 0.9rem;
+            transition: 0.3s; display: block; border-left: 4px solid transparent;
         }
-        .nav-btn.active { color: var(--imi-red); border-bottom-color: var(--imi-red); background: #fff5f5; }
-
-        /* Main Content Area */
-        .main-content { flex: 1; padding: 2rem; overflow-y: auto; }
-        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-
-        /* Upload Overlay */
-        #upload-screen { 
-            position: fixed; inset: 0; background: white; z-index: 100; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+        .nav-item:hover { background: rgba(255,255,255,0.05); color: white; }
+        .nav-item.active { 
+            background: rgba(255,255,255,0.1); color: white; 
+            border-left-color: var(--imi-red); font-weight: 600; 
         }
-        .drop-zone { border: 3px dashed #cbd5e0; padding: 60px; border-radius: 20px; text-align: center; width: 50%; }
 
-        /* Table Styling */
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th { background: #f8f9fa; text-align: left; padding: 12px; border: 1px solid #dee2e6; color: var(--navy); }
-        td { padding: 10px; border: 1px solid #dee2e6; font-size: 14px; }
-        tr:nth-child(even) { background-color: #fafafa; }
+        /* Main Content area */
+        .content { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+        .top-bar { 
+            background: white; padding: 1rem 2rem; display: flex; 
+            justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+        }
+        .view-area { padding: 2rem; }
+        .card { 
+            background: white; border-radius: 12px; padding: 25px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;
+        }
+
+        /* Table Design from Image */
+        .table-container { overflow-x: auto; margin-top: 1.5rem; }
+        table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        th { 
+            text-align: left; padding: 12px 15px; background: #f8fafc; 
+            color: #64748b; font-weight: 600; font-size: 0.8rem; text-transform: uppercase;
+            border-bottom: 2px solid #edf2f7;
+        }
+        td { padding: 12px 15px; border-bottom: 1px solid #edf2f7; font-size: 0.9rem; color: #4a5568; }
+        tr:hover { background-color: #fcfcfc; }
+
+        /* Upload Screen overlay */
+        #upload-overlay {
+            position: fixed; inset: 0; background: white; z-index: 1000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .drop-box { 
+            border: 2px dashed #cbd5e0; padding: 4rem; border-radius: 16px; 
+            text-align: center; width: 400px; transition: 0.3s;
+        }
+        .drop-box.hover { border-color: var(--imi-red); background: #fff5f5; }
+        .btn-upload { 
+            background: var(--imi-red); color: white; border: none; padding: 12px 30px; 
+            border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 20px;
+        }
     </style>
 </head>
 <body>
 
-    <div id="upload-screen">
-        <div class="drop-zone" id="drop-zone">
-            <h1 style="color: var(--navy)">IMI Route Optimizer</h1>
-            <p>Please upload <strong>LP_Enhanced_IMI_WhatIf_1.xlsx</strong></p>
+    <div id="upload-overlay">
+        <div class="drop-box" id="drop-zone">
+            <h1 style="color: var(--navy)">MI Logistics</h1>
+            <p>Select your Optimization Excel File</p>
             <input type="file" id="file-input" hidden accept=".xlsx, .xls">
-            <button class="nav-btn" style="background: var(--imi-red); color: white; border-radius: 5px; margin-top: 10px;" onclick="document.getElementById('file-input').click()">Browse Files</button>
+            <button class="btn-upload" onclick="document.getElementById('file-input').click()">CHOOSE FILE</button>
         </div>
-        <p id="status-msg" style="margin-top: 20px; color: #666;"></p>
     </div>
 
-    <div class="header">
-        <h2 style="margin:0">IMI Dashboard</h2>
-        <div id="file-info" style="font-size: 0.9rem; opacity: 0.8;"></div>
-    </div>
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>MI LOGISTICS</h2>
+        </div>
+        <div class="nav-list" id="sidebar-nav">
+            </div>
+    </aside>
 
-    <nav class="nav-bar" id="nav-bar">
-        </nav>
+    <main class="content">
+        <div class="top-bar">
+            <h3 id="current-sheet-title" style="margin:0; color: var(--navy)">Dashboard Overview</h3>
+            <span id="file-name-display" style="font-size: 0.8rem; color: #718096;"></span>
+        </div>
 
-    <main class="main-content">
-        <div id="page-title" style="margin-bottom: 20px; font-size: 1.5rem; font-weight: bold; color: var(--navy);"></div>
-        <div id="sheet-content" class="card">
-            <p style="color: #999;">Select a tab above to view optimization data.</p>
+        <div class="view-area">
+            <div class="card" id="data-card">
+                <div id="table-output">
+                    <p style="text-align: center; color: #a0aec0;">Please upload data to view the logistics breakdown.</p>
+                </div>
+            </div>
         </div>
     </main>
 
