@@ -1,0 +1,9 @@
+/* Accounting Color Schema */
+.cell-currency { font-family: 'Courier New', monospace; text-align: right; }
+.cost-high { color: #D6192B; font-weight: 600; } /* Over budget/High cost */
+.cost-low { color: #2DAD6E; font-weight: 600; }  /* Savings/Efficiency */
+.text-total { color: #24223F; font-weight: 800; border-top: 2px solid #24223F; } /* Totals */
+.changing-cell { background-color: #FFF9C4; font-weight: bold; border: 1px solid #FBC02D; } /* Solver Inputs */
+
+/* Align numeric columns to the right for easier comparison */
+td:nth-child(n+3) { text-align: right; font-family: 'Roboto Mono', monospace; }
