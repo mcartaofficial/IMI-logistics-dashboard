@@ -1,7 +1,7 @@
 class MILogisticsApp {
     constructor() {
         this.workbookData = {};
-        this.sheetNames = [];
+        this.fileNames = [];
         this.fileInput = document.getElementById('file-input');
         this.nav = document.getElementById('sidebar-nav');
         this.tableOutput = document.getElementById('table-output');
@@ -22,7 +22,7 @@ class MILogisticsApp {
             const data = new Uint8Array(e.target.result);
             const wb = XLSX.read(data, { type: 'array', raw: false });
             
-            this.sheetNames = wb.SheetNames;
+            this.fileNames = wb.SheetNames;
             wb.SheetNames.forEach(name => {
                 this.workbookData[name] = XLSX.utils.sheet_to_json(wb.Sheets[name], { header: 1, defval: "" });
             });
@@ -30,7 +30,7 @@ class MILogisticsApp {
             this.buildSidebar();
             this.overlay.style.display = 'none';
             document.getElementById('file-name-display').innerText = file.name.toUpperCase();
-            this.showHomePage();
+            this.showHomePage(); // Default to home page on load
         };
         reader.readAsArrayBuffer(file);
     }
@@ -38,16 +38,16 @@ class MILogisticsApp {
     buildSidebar() {
         this.nav.innerHTML = '';
         
-        // Add Home Button
+        // Add Home Page Button
         const homeBtn = document.createElement('button');
         homeBtn.className = 'nav-item';
-        homeBtn.innerHTML = `<span>🏠</span> HOME`;
+        homeBtn.innerHTML = `<span>🏠</span> DASHBOARD HOME`;
         homeBtn.onclick = () => this.showHomePage();
-        homeBtn.setAttribute('data-id', 'home-view');
+        homeBtn.setAttribute('data-id', 'HOME_PAGE');
         this.nav.appendChild(homeBtn);
 
         // Add Sheet Buttons
-        this.sheetNames.forEach(name => {
+        this.fileNames.forEach(name => {
             const btn = document.createElement('button');
             btn.className = 'nav-item';
             const cleanName = name.replace(/_/g, ' ');
@@ -59,46 +59,38 @@ class MILogisticsApp {
     }
 
     showHomePage() {
-        this.setActiveNav('home-view');
-        this.titleText.innerText = "Logistics Overview";
+        this.updateActiveNav('HOME_PAGE');
+        this.titleText.innerText = "Dashboard Overview";
         
+        const totalSheets = this.fileNames.length;
         let totalRows = 0;
-        this.sheetNames.forEach(name => totalRows += (this.workbookData[name].length - 1));
+        this.fileNames.forEach(name => totalRows += (this.workbookData[name].length - 1));
 
         this.tableOutput.innerHTML = `
-            <div class="home-welcome">
-                <h1>Welcome to IMI Logistics</h1>
-                <p>Select a route or data sheet from the sidebar to begin optimization analysis.</p>
+            <div style="text-align: center; padding: 20px;">
+                <h1 style="color: var(--deep-space); margin-bottom: 10px;">Welcome to IMI Logistics</h1>
+                <p style="color: var(--text-gray);">Select a route or data sheet from the sidebar to begin optimization.</p>
                 
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <span>${this.sheetNames.length}</span>
-                        <label>Active Data Sheets</label>
+                <div class="welcome-grid">
+                    <div class="stat-box">
+                        <small>TOTAL SHEETS</small>
+                        <h2 style="margin: 5px 0; color: var(--mi-red);">${totalSheets}</h2>
                     </div>
-                    <div class="stat-item">
-                        <span>${totalRows}</span>
-                        <label>Total Logistics Records</label>
+                    <div class="stat-box">
+                        <small>TOTAL DATA ROWS</small>
+                        <h2 style="margin: 5px 0; color: var(--mi-red);">${totalRows}</h2>
                     </div>
-                    <div class="stat-item">
-                        <span>Ready</span>
-                        <label>Optimization Status</label>
+                    <div class="stat-box">
+                        <small>SYSTEM STATUS</small>
+                        <h2 style="margin: 5px 0; color: #10B981;">ACTIVE</h2>
                     </div>
-                </div>
-                <div style="margin-top: 40px; color: var(--text-gray); font-style: italic;">
-                    Use the AI Chatbot in the bottom right for real-time assistance with your logistics data.
                 </div>
             </div>
         `;
     }
 
-    setActiveNav(id) {
-        document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-        const activeBtn = document.querySelector(`[data-id="${id}"]`);
-        if (activeBtn) activeBtn.classList.add('active');
-    }
-
     switchPage(sheetName) {
-        this.setActiveNav(sheetName);
+        this.updateActiveNav(sheetName);
         this.titleText.innerText = sheetName.replace(/_/g, ' ');
 
         const rows = this.workbookData[sheetName];
@@ -117,6 +109,12 @@ class MILogisticsApp {
         html += '</tbody></table></div>';
         this.tableOutput.innerHTML = html;
         document.querySelector('.content').scrollTop = 0;
+    }
+
+    updateActiveNav(id) {
+        document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+        const activeBtn = document.querySelector(`[data-id="${id}"]`);
+        if (activeBtn) activeBtn.classList.add('active');
     }
 }
 
