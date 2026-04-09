@@ -30,7 +30,7 @@ class MILogisticsApp {
             this.buildSidebar();
             this.overlay.style.display = 'none';
             document.getElementById('file-name-display').innerText = file.name.toUpperCase();
-            this.showHomePage(); 
+            this.showHomePage(); // Default to home page on load
         };
         reader.readAsArrayBuffer(file);
     }
@@ -38,6 +38,7 @@ class MILogisticsApp {
     buildSidebar() {
         this.nav.innerHTML = '';
         
+        // Add Home Page Button
         const homeBtn = document.createElement('button');
         homeBtn.className = 'nav-item';
         homeBtn.innerHTML = `<span>🏠</span> DASHBOARD HOME`;
@@ -45,6 +46,7 @@ class MILogisticsApp {
         homeBtn.setAttribute('data-id', 'HOME_PAGE');
         this.nav.appendChild(homeBtn);
 
+        // Add Sheet Buttons
         this.fileNames.forEach(name => {
             const btn = document.createElement('button');
             btn.className = 'nav-item';
@@ -65,9 +67,9 @@ class MILogisticsApp {
         this.fileNames.forEach(name => totalRows += (this.workbookData[name].length - 1));
 
         this.tableOutput.innerHTML = `
-            <div style="text-align: center; padding: 10px;">
+            <div style="text-align: center; padding: 20px;">
                 <h1 style="color: var(--deep-space); margin-bottom: 10px;">Welcome to IMI Logistics</h1>
-                <p style="color: var(--text-gray);">Fleet status and route optimization overview.</p>
+                <p style="color: var(--text-gray);">Select a route or data sheet from the sidebar to begin optimization.</p>
                 
                 <div class="welcome-grid">
                     <div class="stat-box">
@@ -82,10 +84,6 @@ class MILogisticsApp {
                         <small>SYSTEM STATUS</small>
                         <h2 style="margin: 5px 0; color: #10B981;">ACTIVE</h2>
                     </div>
-                </div>
-
-                <div class="map-container">
-                    <div class="elfsight-app-75d47e0d-88a4-4060-9df3-a20a6a23d462" data-elfsight-app-lazy></div>
                 </div>
             </div>
         `;
