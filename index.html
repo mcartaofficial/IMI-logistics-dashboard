@@ -104,6 +104,7 @@
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
             margin-top: 30px;
+            margin-bottom: 30px;
         }
         .stat-box {
             padding: 20px;
@@ -165,6 +166,9 @@
         }
 
         .btn-upload:hover { transform: scale(1.05); filter: brightness(1.1); box-shadow: 0 10px 20px rgba(214, 25, 43, 0.3); }
+        
+        /* Map Container spacing */
+        #map-container { margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px; }
     </style>
 </head>
 <body>
@@ -195,11 +199,13 @@
         <div class="view-area">
             <div class="card" id="data-card">
                 <div id="table-output"></div>
+                <div id="map-container"></div>
             </div>
         </div>
     </main>
 
     <script src="https://elfsightcdn.com/platform.js" async></script>
+    
     <div class="elfsight-app-6ba85109-b815-4820-91b7-5719ae4049e2" data-elfsight-app-lazy></div>
 
     <script src="app.js"></script>
