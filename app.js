@@ -30,7 +30,7 @@ class MILogisticsApp {
             this.buildSidebar();
             this.overlay.style.display = 'none';
             document.getElementById('file-name-display').innerText = file.name.toUpperCase();
-            this.showHomePage(); // Default to home page on load
+            this.showHomePage(); 
         };
         reader.readAsArrayBuffer(file);
     }
@@ -38,7 +38,6 @@ class MILogisticsApp {
     buildSidebar() {
         this.nav.innerHTML = '';
         
-        // Add Home Page Button
         const homeBtn = document.createElement('button');
         homeBtn.className = 'nav-item';
         homeBtn.innerHTML = `<span>🏠</span> DASHBOARD HOME`;
@@ -46,7 +45,6 @@ class MILogisticsApp {
         homeBtn.setAttribute('data-id', 'HOME_PAGE');
         this.nav.appendChild(homeBtn);
 
-        // Add Sheet Buttons
         this.fileNames.forEach(name => {
             const btn = document.createElement('button');
             btn.className = 'nav-item';
@@ -66,11 +64,10 @@ class MILogisticsApp {
         let totalRows = 0;
         this.fileNames.forEach(name => totalRows += (this.workbookData[name].length - 1));
 
-        // Integrated the Google Maps widget below the statistics grid
         this.tableOutput.innerHTML = `
-            <div style="text-align: center; padding: 20px;">
+            <div style="text-align: center; padding: 10px;">
                 <h1 style="color: var(--deep-space); margin-bottom: 10px;">Welcome to IMI Logistics</h1>
-                <p style="color: var(--text-gray);">Select a route or data sheet from the sidebar to begin optimization.</p>
+                <p style="color: var(--text-gray);">Fleet status and route optimization overview.</p>
                 
                 <div class="welcome-grid">
                     <div class="stat-box">
@@ -87,7 +84,7 @@ class MILogisticsApp {
                     </div>
                 </div>
 
-                <div style="margin-top: 40px; border-radius: 15px; overflow: hidden; border: 1px solid #eee;">
+                <div class="map-container">
                     <div class="elfsight-app-75d47e0d-88a4-4060-9df3-a20a6a23d462" data-elfsight-app-lazy></div>
                 </div>
             </div>
