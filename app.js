@@ -5,6 +5,7 @@ class MILogisticsApp {
         this.fileInput = document.getElementById('file-input');
         this.nav = document.getElementById('sidebar-nav');
         this.tableOutput = document.getElementById('table-output');
+        this.mapContainer = document.getElementById('map-container'); // Added reference
         this.titleText = document.getElementById('current-sheet-title');
         this.overlay = document.getElementById('upload-overlay');
         this.init();
@@ -30,7 +31,7 @@ class MILogisticsApp {
             this.buildSidebar();
             this.overlay.style.display = 'none';
             document.getElementById('file-name-display').innerText = file.name.toUpperCase();
-            this.showHomePage(); // Default to home page on load
+            this.showHomePage(); 
         };
         reader.readAsArrayBuffer(file);
     }
@@ -38,7 +39,6 @@ class MILogisticsApp {
     buildSidebar() {
         this.nav.innerHTML = '';
         
-        // Add Home Page Button
         const homeBtn = document.createElement('button');
         homeBtn.className = 'nav-item';
         homeBtn.innerHTML = `<span>🏠</span> DASHBOARD HOME`;
@@ -46,7 +46,6 @@ class MILogisticsApp {
         homeBtn.setAttribute('data-id', 'HOME_PAGE');
         this.nav.appendChild(homeBtn);
 
-        // Add Sheet Buttons
         this.fileNames.forEach(name => {
             const btn = document.createElement('button');
             btn.className = 'nav-item';
@@ -87,11 +86,20 @@ class MILogisticsApp {
                 </div>
             </div>
         `;
+
+        // Inject the Map Widget into the dedicated home container
+        this.mapContainer.innerHTML = `
+            <div style="margin-bottom: 15px; font-weight: 700; color: var(--deep-space);">FLEET & STORE LOCATOR</div>
+            <div class="elfsight-app-d9332a95-3af1-4708-a385-24cef7defd35" data-elfsight-app-lazy></div>
+        `;
     }
 
     switchPage(sheetName) {
         this.updateActiveNav(sheetName);
         this.titleText.innerText = sheetName.replace(/_/g, ' ');
+        
+        // Hide map when viewing data tables
+        this.mapContainer.innerHTML = '';
 
         const rows = this.workbookData[sheetName];
         if (!rows || rows.length === 0) return;
