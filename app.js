@@ -1,6 +1,6 @@
 class MILogisticsApp {
     constructor() {
-        // --- DIMENSION ADJUSTMENTS (THE MARKERS) ---
+        // --- DIMENSION ADJUSTMENT MARKERS ---
         this.widgetConfig = {
             shipXplorer: {
                 width: "100%",
@@ -8,10 +8,10 @@ class MILogisticsApp {
             },
             elfsight: {
                 width: "100%",
-                height: "900px" // CHANGE THIS: Lower = shorter, Higher = taller
+                height: "600px" // <--- CHANGE THIS TO ADJUST THE CROP
             }
         };
-        // -------------------------------------------
+        // ------------------------------------
 
         this.workbookData = {};
         this.fileNames = [];
@@ -84,6 +84,7 @@ class MILogisticsApp {
                     <div class="stat-box"><small>SYSTEM STATUS</small><h2 style="margin: 5px 0; color: #10B981;">ACTIVE</h2></div>
                 </div>
             </div>
+            <div class="elfsight-app-6ba85109-b815-4820-91b7-5719ae4049e2" data-elfsight-app-lazy></div>
         `;
 
         this.mapContainer.innerHTML = `
@@ -98,8 +99,8 @@ class MILogisticsApp {
             </div>
 
             <div style="margin-top: 20px;">
-                <div style="margin-bottom: 15px; font-weight: 930; color: var(--deep-space); text-transform: uppercase;">📍 FLEET & STORE LOCATOR</div>
-                <div class="hard-clip-wrapper elfsight-crop" style="width: ${this.widgetConfig.elfsight.width}; height: ${this.widgetConfig.elfsight.height} !important;">
+                <div style="margin-bottom: 15px; font-weight: 700; color: var(--deep-space); text-transform: uppercase;">📍 FLEET & STORE LOCATOR</div>
+                <div class="elfsight-window" style="width: ${this.widgetConfig.elfsight.width}; height: ${this.widgetConfig.elfsight.height};">
                     <div class="elfsight-app-d9332a95-3af1-4708-a385-24cef7defd35" data-elfsight-app-lazy></div>
                 </div>
             </div>
@@ -112,6 +113,7 @@ class MILogisticsApp {
         this.mapContainer.innerHTML = '';
         const rows = this.workbookData[sheetName];
         if (!rows || rows.length === 0) return;
+
         let html = '<div class="table-container"><table><thead><tr>';
         rows[0].forEach(cell => html += `<th>${cell}</th>`);
         html += '</tr></thead><tbody>';
@@ -121,6 +123,10 @@ class MILogisticsApp {
             html += '</tr>';
         });
         html += '</tbody></table></div>';
+        
+        // Add Chatbot to every internal page
+        html += `<div class="elfsight-app-6ba85109-b815-4820-91b7-5719ae4049e2" data-elfsight-app-lazy></div>`;
+
         this.tableOutput.innerHTML = html;
         document.querySelector('.content').scrollTop = 0;
     }
