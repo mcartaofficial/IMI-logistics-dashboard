@@ -1,12 +1,17 @@
 class MILogisticsApp {
     constructor() {
+        // --- DIMENSION ADJUSTMENTS ---
         this.widgetConfig = {
-            shipXplorer: { width: "100%", height: "800px" },
-            elfsight: { 
-                width: "100%", 
-                height: "850px" // Increased height for the bottom map
+            shipXplorer: {
+                width: "100%",
+                height: "800px" 
+            },
+            elfsight: {
+                width: "100%",
+                height: "850px" // INCREASED HEIGHT for the bottom map
             }
         };
+        // -----------------------------
 
         this.workbookData = {};
         this.fileNames = [];
@@ -24,6 +29,7 @@ class MILogisticsApp {
     init() {
         this.fileInput.addEventListener('change', (e) => this.handleFile(e.target.files[0]));
         
+        // Sidebar Toggle
         this.menuToggle.addEventListener('click', () => {
             this.sidebar.classList.toggle('collapsed');
         });
@@ -46,6 +52,7 @@ class MILogisticsApp {
             this.overlay.style.display = 'none';
             document.getElementById('file-name-display').innerText = file.name.toUpperCase();
             
+            // Default to collapsed for more screen space
             this.sidebar.classList.add('collapsed');
             this.showHomePage(); 
         };
@@ -60,7 +67,7 @@ class MILogisticsApp {
         homeBtn.innerHTML = `<span>🏠</span> DASHBOARD HOME`;
         homeBtn.onclick = () => {
             this.showHomePage();
-            if (window.innerWidth < 1024) this.sidebar.classList.add('collapsed');
+            this.sidebar.classList.add('collapsed');
         };
         homeBtn.setAttribute('data-id', 'HOME_PAGE');
         this.nav.appendChild(homeBtn);
@@ -122,7 +129,7 @@ class MILogisticsApp {
 
             <div style="margin-top: 20px;">
                 <div style="margin-bottom: 15px; font-weight: 700; color: var(--deep-space); text-transform: uppercase;">📍 FLEET & STORE LOCATOR</div>
-                <div class="hard-clip-wrapper" style="width: ${this.widgetConfig.elfsight.width}; height: ${this.widgetConfig.elfsight.height}; overflow: hidden;">
+                <div class="hard-clip-wrapper" style="width: ${this.widgetConfig.elfsight.width}; height: ${this.widgetConfig.elfsight.height};">
                     <div class="elfsight-app-d9332a95-3af1-4708-a385-24cef7defd35" data-elfsight-app-lazy></div>
                 </div>
             </div>
