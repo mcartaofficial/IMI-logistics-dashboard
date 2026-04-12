@@ -19,10 +19,9 @@
             margin: 0; 
             display: flex; 
             height: 100vh; 
-            overflow: hidden;
+            overflow: hidden; /* Keeps dashboard static */
         }
 
-        /* Dashboard UI Elements */
         .sidebar { width: 300px; background: var(--deep-space); color: var(--white); display: flex; flex-direction: column; z-index: 10; }
         .sidebar-header { padding: 40px 24px; background: rgba(0,0,0,0.15); border-bottom: 1px solid rgba(255,255,255,0.1); }
         .sidebar-header h2 { font-size: 1.1rem; margin: 0; letter-spacing: 1.2px; font-weight: 900; color: var(--white); text-transform: uppercase; }
@@ -34,31 +33,42 @@
         .view-area { padding: 45px; }
         .card { background: var(--white); border-radius: 20px; padding: 35px; box-shadow: 0 15px 35px rgba(36, 34, 63, 0.08); }
 
-        /* The Outer Wrapper: Clips the bottom of the widget */
+        /* ShipXplorer Wrapper - Hard Clip */
         .hard-clip-wrapper {
             margin: 0 auto;
             position: relative;
-            overflow: hidden !important; 
+            overflow: hidden !important;
             border-radius: 15px;
             border: 1px solid #eee;
-            background: #fff;
-            display: block;
         }
 
-        /* RE-ENABLE INTERNAL SCROLLING FOR THE LIST */
-        /* We target Elfsight's common list containers specifically */
-        [class*="elfsight-app"] [class*="Container"],
-        [class*="elfsight-app"] [class*="List"],
-        [class*="elfsight-app"] [class*="ScrollContainer"] {
-            overflow-y: auto !important;
-            scrollbar-width: thin !important; /* Shows a small scrollbar for the list only */
-            -ms-overflow-style: auto !important;
+        /* Elfsight Wrapper - Allows internal scroll but crops bottom */
+        .elfsight-scroll-container {
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden !important; /* This crops the widget height */
+            border-radius: 15px;
+            border: 1px solid #eee;
         }
 
-        /* Global Dashboard Scrollbar Hider (Doesn't affect Elfsight internal list) */
-        .content::-webkit-scrollbar,
-        .nav-list::-webkit-scrollbar,
-        body::-webkit-scrollbar {
+        /* Re-enable internal scrolling for the elfsight list specifically */
+        .elfsight-scroll-container [class*="elfsight-app"] {
+            overflow: auto !important; 
+            height: 100% !important;
+        }
+
+        /* Custom Scrollbar for the location list (optional, makes it look cleaner) */
+        .elfsight-scroll-container [class*="elfsight-app"]::-webkit-scrollbar {
+            width: 6px;
+            display: block; /* Shows only the internal one */
+        }
+        .elfsight-scroll-container [class*="elfsight-app"]::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 10px;
+        }
+
+        /* Hide the main browser/dashboard scrollbars */
+        .nav-list::-webkit-scrollbar, .content::-webkit-scrollbar {
             display: none;
         }
         
