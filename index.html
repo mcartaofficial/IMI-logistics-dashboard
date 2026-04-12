@@ -113,6 +113,27 @@
             border-left: 4px solid var(--mi-red);
         }
 
+        /* Map Grid Layout */
+        .map-grid {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap; /* Allows stacking on smaller screens */
+        }
+
+        .map-wrapper {
+            flex: 1;
+            min-width: 450px; /* Ensures they don't get too squashed */
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        iframe {
+            border-radius: 12px;
+            border: 1px solid #eee;
+        }
+
         /* Table Design */
         .table-container { overflow-x: auto; border-radius: 12px; }
         table { width: 100%; border-collapse: collapse; min-width: 800px; }
@@ -205,7 +226,6 @@
     </main>
 
     <script src="https://elfsightcdn.com/platform.js" async></script>
-    
     <div class="elfsight-app-6ba85109-b815-4820-91b7-5719ae4049e2" data-elfsight-app-lazy></div>
 
     <script src="app.js"></script>
