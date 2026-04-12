@@ -8,7 +8,7 @@ class MILogisticsApp {
             },
             elfsight: {
                 width: "100%",
-                height: "500px"  // Adjust this value to "crop" the view
+                height: "400px"  // Adjust this value to "crop" the view
             }
         };
         // -----------------------------
