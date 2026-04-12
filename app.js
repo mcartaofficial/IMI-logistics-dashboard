@@ -2,7 +2,10 @@ class MILogisticsApp {
     constructor() {
         this.widgetConfig = {
             shipXplorer: { width: "100%", height: "800px" },
-            elfsight: { width: "100%", height: "550px" }
+            elfsight: { 
+                width: "100%", 
+                height: "850px" // Increased height for the bottom map
+            }
         };
 
         this.workbookData = {};
@@ -21,7 +24,6 @@ class MILogisticsApp {
     init() {
         this.fileInput.addEventListener('change', (e) => this.handleFile(e.target.files[0]));
         
-        // Hamburger toggle logic
         this.menuToggle.addEventListener('click', () => {
             this.sidebar.classList.toggle('collapsed');
         });
@@ -44,7 +46,6 @@ class MILogisticsApp {
             this.overlay.style.display = 'none';
             document.getElementById('file-name-display').innerText = file.name.toUpperCase();
             
-            // Auto-collapse on first load to show full dashboard
             this.sidebar.classList.add('collapsed');
             this.showHomePage(); 
         };
@@ -71,7 +72,6 @@ class MILogisticsApp {
             btn.innerHTML = `<span>📄</span> ${cleanName}`;
             btn.onclick = () => {
                 this.switchPage(name);
-                // Collapse sidebar after selection
                 this.sidebar.classList.add('collapsed');
             };
             btn.setAttribute('data-id', name);
@@ -122,7 +122,7 @@ class MILogisticsApp {
 
             <div style="margin-top: 20px;">
                 <div style="margin-bottom: 15px; font-weight: 700; color: var(--deep-space); text-transform: uppercase;">📍 FLEET & STORE LOCATOR</div>
-                <div class="hard-clip-wrapper" style="width: ${this.widgetConfig.elfsight.width}; height: ${this.widgetConfig.elfsight.height};">
+                <div class="hard-clip-wrapper" style="width: ${this.widgetConfig.elfsight.width}; height: ${this.widgetConfig.elfsight.height}; overflow: hidden;">
                     <div class="elfsight-app-d9332a95-3af1-4708-a385-24cef7defd35" data-elfsight-app-lazy></div>
                 </div>
             </div>
