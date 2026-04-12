@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>IMI Logistics Dashboard</title>
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <script src="https://elfsightcdn.com/platform.js" async></script>
     <style>
         :root {
             --mi-red: #D6192B;
@@ -22,30 +23,24 @@
             overflow: hidden; 
         }
 
+        /* Sidebar & Layout */
         .sidebar { width: 300px; background: var(--deep-space); color: var(--white); display: flex; flex-direction: column; z-index: 10; }
         .sidebar-header { padding: 40px 24px; background: rgba(0,0,0,0.15); border-bottom: 1px solid rgba(255,255,255,0.1); }
         .sidebar-header h2 { font-size: 1.1rem; margin: 0; letter-spacing: 1.2px; font-weight: 900; color: var(--white); text-transform: uppercase; }
         .nav-list { flex: 1; padding: 25px 0; overflow-y: auto; }
         .nav-item { width: 100%; padding: 16px 28px; border: none; background: none; color: #8E9AAF; text-align: left; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 15px; text-transform: uppercase; }
         .nav-item.active { background: var(--mi-red); color: var(--white); font-weight: 700; }
-        .content { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+        
+        .content { flex: 1; overflow-y: auto; display: flex; flex-direction: column; position: relative; }
         .top-bar { background: var(--white); padding: 20px 45px; display: flex; justify-content: space-between; align-items: center; }
         .view-area { padding: 45px; }
         .card { background: var(--white); border-radius: 20px; padding: 35px; box-shadow: 0 15px 35px rgba(36, 34, 63, 0.08); }
 
-        /* Map Wrappers */
-        .hard-clip-wrapper {
+        /* Map & Widget Styles */
+        .hard-clip-wrapper, .elfsight-scroll-container {
             margin: 0 auto;
             position: relative;
             overflow: hidden !important;
-            border-radius: 15px;
-            border: 1px solid #eee;
-        }
-
-        .elfsight-scroll-container {
-            margin: 0 auto;
-            position: relative;
-            overflow: hidden !important; 
             border-radius: 15px;
             border: 1px solid #eee;
         }
@@ -55,28 +50,23 @@
             height: 100% !important;
         }
 
-        /* Scrollbar styling for internal lists */
-        .elfsight-scroll-container [class*="elfsight-app"]::-webkit-scrollbar {
-            width: 6px;
-            display: block;
-        }
-        .elfsight-scroll-container [class*="elfsight-app"]::-webkit-scrollbar-thumb {
-            background: #cbd5e0;
-            border-radius: 10px;
-        }
+        /* Dashboard Scrollbar Hiding */
+        .nav-list::-webkit-scrollbar, .content::-webkit-scrollbar { display: none; }
+        * { scrollbar-width: none; -ms-overflow-style: none; }
 
-        /* Hide main dashboard scrollbars */
-        .nav-list::-webkit-scrollbar, .content::-webkit-scrollbar {
-            display: none;
-        }
-        
+        /* Overlay & Buttons */
         #upload-overlay { position: fixed; inset: 0; background: var(--off-white); z-index: 1000; display: flex; align-items: center; justify-content: center; }
         .drop-box { background: var(--white); padding: 70px; border-radius: 30px; text-align: center; width: 480px; box-shadow: 0 30px 60px rgba(0,0,0,0.1); }
         .btn-upload { background: var(--mi-red); color: var(--white); border: none; padding: 16px 36px; border-radius: 12px; font-weight: 800; cursor: pointer; margin-top: 30px; }
+
+        /* Custom Table Style */
+        .table-container { overflow-x: auto; border-radius: 12px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #F8FAFC; color: var(--deep-space); font-size: 0.7rem; text-transform: uppercase; padding: 18px; border-bottom: 2px solid #EDF2F7; text-align: left; }
+        td { padding: 16px; border-bottom: 1px solid #F1F5F9; font-size: 0.9rem; color: #334155; }
     </style>
 </head>
 <body>
-
     <div id="upload-overlay">
         <div class="drop-box">
             <div style="font-size: 50px; margin-bottom: 15px;">🚢</div>
@@ -86,20 +76,15 @@
             <button class="btn-upload" onclick="document.getElementById('file-input').click()">UPLOAD DATASET</button>
         </div>
     </div>
-
     <aside class="sidebar">
-        <div class="sidebar-header">
-            <h2>IMI Logistics Dashboard</h2>
-        </div>
+        <div class="sidebar-header"><h2>IMI Logistics Dashboard</h2></div>
         <div class="nav-list" id="sidebar-nav"></div>
     </aside>
-
     <main class="content">
         <div class="top-bar">
             <h3 id="current-sheet-title" style="margin:0; font-weight: 800; color: var(--deep-space);">Welcome</h3>
-            <div id="file-name-display" style="background: #E2E8F0; padding: 8px 16px; border-radius: 30px; font-size: 0.7rem; font-weight: 700; color: var(--deep-space);"></div>
+            <div id="file-name-display"></div>
         </div>
-
         <div class="view-area">
             <div class="card" id="data-card">
                 <div id="table-output"></div>
@@ -107,10 +92,6 @@
             </div>
         </div>
     </main>
-
-    <script src="https://elfsightcdn.com/platform.js" async></script>
-    <div class="elfsight-app-6ba85109-b815-4820-91b7-5719ae4049e2" data-elfsight-app-lazy></div>
-
     <script src="app.js"></script>
 </body>
 </html>
