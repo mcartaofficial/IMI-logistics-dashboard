@@ -1,6 +1,6 @@
 class MILogisticsApp {
     constructor() {
-        // --- DIMENSION ADJUSTMENTS (THE MARKERS) ---
+        // --- DIMENSION ADJUSTMENTS ---
         this.widgetConfig = {
             shipXplorer: {
                 width: "100%",
@@ -8,10 +8,10 @@ class MILogisticsApp {
             },
             elfsight: {
                 width: "100%",
-                height: "800px" // CHANGE THIS: Lower = shorter, Higher = taller
+                height: "900px" // Adjusted to show more of the list
             }
         };
-        // -------------------------------------------
+        // -----------------------------
 
         this.workbookData = {};
         this.fileNames = [];
@@ -99,7 +99,7 @@ class MILogisticsApp {
 
             <div style="margin-top: 20px;">
                 <div style="margin-bottom: 15px; font-weight: 700; color: var(--deep-space); text-transform: uppercase;">📍 FLEET & STORE LOCATOR</div>
-                <div class="hard-clip-wrapper elfsight-crop" style="width: ${this.widgetConfig.elfsight.width}; height: ${this.widgetConfig.elfsight.height} !important;">
+                <div class="hard-clip-wrapper" style="width: ${this.widgetConfig.elfsight.width}; height: ${this.widgetConfig.elfsight.height} !important;">
                     <div class="elfsight-app-d9332a95-3af1-4708-a385-24cef7defd35" data-elfsight-app-lazy></div>
                 </div>
             </div>
