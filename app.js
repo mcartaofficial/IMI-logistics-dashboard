@@ -1,155 +1,208 @@
-class MILogisticsApp {
-    constructor() {
-        // --- DIMENSION ADJUSTMENTS ---
-        this.widgetConfig = {
-            shipXplorer: {
-                width: "100%",
-                height: "800px",
-                overflow: "hidden" // Keeps it clean
-            },
-            elfsight: {
-                width: "100%",
-                height: "550px",   // ADJUST THIS to crop the bottom part
-                overflow: "hidden" // Prevents the scroll wheel/extra space
-            }
-        };
-        // -----------------------------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>IMI Logistics Dashboard</title>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <style>
+        :root {
+            --mi-red: #D6192B;
+            --deep-space: #24223F;
+            --white: #FFFEFF;
+            --off-white: #F5F7FA;
+            --text-gray: #718096;
+        }
 
-        this.workbookData = {};
-        this.fileNames = [];
-        this.fileInput = document.getElementById('file-input');
-        this.nav = document.getElementById('sidebar-nav');
-        this.tableOutput = document.getElementById('table-output');
-        this.mapContainer = document.getElementById('map-container');
-        this.titleText = document.getElementById('current-sheet-title');
-        this.overlay = document.getElementById('upload-overlay');
-        this.init();
-    }
+        body { 
+            font-family: 'Inter', -apple-system, sans-serif; 
+            background: var(--off-white); 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden;
+        }
 
-    init() {
-        this.fileInput.addEventListener('change', (e) => this.handleFile(e.target.files[0]));
-    }
+        .sidebar { 
+            width: 300px; 
+            background: var(--deep-space); 
+            color: var(--white); 
+            display: flex; 
+            flex-direction: column;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
 
-    handleFile(file) {
-        if (!file) return;
-        const reader = new FileReader();
+        .sidebar-header { 
+            padding: 40px 24px; 
+            background: rgba(0,0,0,0.15);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-header h2 { 
+            font-size: 1.1rem; 
+            margin: 0; 
+            letter-spacing: 1.2px; 
+            font-weight: 900;
+            color: var(--white);
+            text-transform: uppercase;
+        }
+
+        .nav-list { flex: 1; padding: 25px 0; overflow-y: auto; }
         
-        reader.onload = (e) => {
-            const data = new Uint8Array(e.target.result);
-            const wb = XLSX.read(data, { type: 'array', raw: false });
-            
-            this.fileNames = wb.SheetNames;
-            wb.SheetNames.forEach(name => {
-                this.workbookData[name] = XLSX.utils.sheet_to_json(wb.Sheets[name], { header: 1, defval: "" });
-            });
+        .nav-item { 
+            width: 100%; 
+            padding: 16px 28px; 
+            border: none; 
+            background: none; 
+            color: #8E9AAF; 
+            text-align: left; 
+            cursor: pointer; 
+            font-size: 0.85rem;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-transform: uppercase;
+        }
 
-            this.buildSidebar();
-            this.overlay.style.display = 'none';
-            document.getElementById('file-name-display').innerText = file.name.toUpperCase();
-            this.showHomePage(); 
-        };
-        reader.readAsArrayBuffer(file);
-    }
+        .nav-item:hover { background: rgba(255,255,255,0.03); color: var(--white); }
+        .nav-item.active { 
+            background: var(--mi-red); 
+            color: var(--white); 
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(214, 25, 43, 0.4);
+        }
 
-    buildSidebar() {
-        this.nav.innerHTML = '';
+        .content { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
         
-        const homeBtn = document.createElement('button');
-        homeBtn.className = 'nav-item';
-        homeBtn.innerHTML = `<span>🏠</span> DASHBOARD HOME`;
-        homeBtn.onclick = () => this.showHomePage();
-        homeBtn.setAttribute('data-id', 'HOME_PAGE');
-        this.nav.appendChild(homeBtn);
+        .top-bar { 
+            background: var(--white); 
+            padding: 20px 45px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        }
 
-        this.fileNames.forEach(name => {
-            const btn = document.createElement('button');
-            btn.className = 'nav-item';
-            const cleanName = name.replace(/_/g, ' ');
-            btn.innerHTML = `<span>•</span> ${cleanName}`;
-            btn.onclick = () => this.switchPage(name);
-            btn.setAttribute('data-id', name);
-            this.nav.appendChild(btn);
-        });
-    }
+        .view-area { padding: 45px; }
 
-    showHomePage() {
-        this.updateActiveNav('HOME_PAGE');
-        this.titleText.innerText = "Dashboard Overview";
+        .card { 
+            background: var(--white); 
+            border-radius: 20px; 
+            padding: 35px; 
+            box-shadow: 0 15px 35px rgba(36, 34, 63, 0.08);
+            border: 1px solid rgba(226, 232, 240, 0.6);
+        }
+
+        .welcome-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+        .stat-box {
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border-left: 4px solid var(--mi-red);
+        }
+
+        .table-container { overflow-x: auto; border-radius: 12px; }
+        table { width: 100%; border-collapse: collapse; min-width: 800px; }
         
-        const totalSheets = this.fileNames.length;
-        let totalRows = 0;
-        this.fileNames.forEach(name => totalRows += (this.workbookData[name].length - 1));
+        th { 
+            background: #F8FAFC; 
+            color: var(--deep-space); 
+            font-size: 0.7rem; 
+            text-transform: uppercase; 
+            padding: 18px;
+            border-bottom: 2px solid #EDF2F7;
+            text-align: left;
+        }
 
-        this.tableOutput.innerHTML = `
-            <div style="text-align: center; padding: 20px;">
-                <h1 style="color: var(--deep-space); margin-bottom: 10px;">Welcome to IMI Logistics</h1>
-                <p style="color: var(--text-gray);">Select a route or data sheet from the sidebar to begin optimization.</p>
-                
-                <div class="welcome-grid">
-                    <div class="stat-box">
-                        <small>TOTAL SHEETS</small>
-                        <h2 style="margin: 5px 0; color: var(--mi-red);">${totalSheets}</h2>
-                    </div>
-                    <div class="stat-box">
-                        <small>TOTAL DATA ROWS</small>
-                        <h2 style="margin: 5px 0; color: var(--mi-red);">${totalRows}</h2>
-                    </div>
-                    <div class="stat-box">
-                        <small>SYSTEM STATUS</small>
-                        <h2 style="margin: 5px 0; color: #10B981;">ACTIVE</h2>
-                    </div>
-                </div>
+        td { 
+            padding: 16px; 
+            border-bottom: 1px solid #F1F5F9; 
+            font-size: 0.9rem; 
+            color: #334155;
+        }
+
+        #upload-overlay {
+            position: fixed; inset: 0; background: var(--off-white); z-index: 1000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+
+        .drop-box { 
+            background: var(--white);
+            padding: 70px; 
+            border-radius: 30px; 
+            text-align: center; 
+            width: 480px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.1);
+        }
+
+        .btn-upload { 
+            background: var(--mi-red); 
+            color: var(--white); 
+            border: none; 
+            padding: 16px 36px; 
+            border-radius: 12px; 
+            font-weight: 800; 
+            cursor: pointer; 
+            margin-top: 30px;
+        }
+
+        #map-container { margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px; }
+
+        /* Widget Clipping Logic */
+        .widget-wrapper {
+            margin: 0 auto;
+            max-width: 100%;
+            position: relative;
+            /* overflow: hidden is now applied dynamically via JS */
+        }
+
+        /* Forces the Elfsight internal container to obey our wrapper height */
+        .widget-wrapper [class*="elfsight-app"] {
+            height: 100% !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="upload-overlay">
+        <div class="drop-box">
+            <div style="font-size: 50px; margin-bottom: 15px;">🚢</div>
+            <h1 style="color: var(--deep-space); margin: 0; font-weight: 900;">IMI Logistics</h1>
+            <p style="color: var(--text-gray);">Dashboard & Optimization Tool</p>
+            <input type="file" id="file-input" hidden accept=".xlsx, .xls">
+            <button class="btn-upload" onclick="document.getElementById('file-input').click()">UPLOAD DATASET</button>
+        </div>
+    </div>
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>IMI Logistics Dashboard</h2>
+        </div>
+        <div class="nav-list" id="sidebar-nav"></div>
+    </aside>
+
+    <main class="content">
+        <div class="top-bar">
+            <h3 id="current-sheet-title" style="margin:0; font-weight: 800; color: var(--deep-space);">Welcome</h3>
+            <div id="file-name-display" style="background: #E2E8F0; padding: 8px 16px; border-radius: 30px; font-size: 0.7rem; font-weight: 700; color: var(--deep-space);"></div>
+        </div>
+
+        <div class="view-area">
+            <div class="card" id="data-card">
+                <div id="table-output"></div>
+                <div id="map-container"></div>
             </div>
-        `;
+        </div>
+    </main>
 
-        this.mapContainer.innerHTML = `
-            <div style="margin-bottom: 35px; border-bottom: 2px solid var(--off-white); padding-bottom: 30px;">
-                <div style="margin-bottom: 15px; font-weight: 700; color: var(--deep-space); text-transform: uppercase;">🚢 REAL-TIME VESSEL TRACKER</div>
-                <div class="widget-wrapper" style="width: ${this.widgetConfig.shipXplorer.width}; height: ${this.widgetConfig.shipXplorer.height}; overflow: ${this.widgetConfig.shipXplorer.overflow};">
-                    <iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0" 
-                        width="100%" height="100%" 
-                        src="https://www.shipxplorer.com/?widget=1&z=12&lat=40.46244&lng=-73.88822&portCardRight=true&showLabels=true&showStateFlag=true&showVn=true&showIMO=true&showLabelPhoto=true&showMMSI=true&class=CARGO,PASSENGER,TANKER,HSC,TUG,FISHING,PLEASURE,SAILING,OTHER,UNKNOWN">
-                    </iframe>
-                </div>
-            </div>
-
-            <div style="margin-top: 20px;">
-                <div style="margin-bottom: 15px; font-weight: 700; color: var(--deep-space); text-transform: uppercase;">📍 FLEET & STORE LOCATOR</div>
-                <div class="widget-wrapper" style="width: ${this.widgetConfig.elfsight.width}; height: ${this.widgetConfig.elfsight.height}; overflow: ${this.widgetConfig.elfsight.overflow};">
-                    <div class="elfsight-app-d9332a95-3af1-4708-a385-24cef7defd35" data-elfsight-app-lazy></div>
-                </div>
-            </div>
-        `;
-    }
-
-    switchPage(sheetName) {
-        this.updateActiveNav(sheetName);
-        this.titleText.innerText = sheetName.replace(/_/g, ' ');
-        this.mapContainer.innerHTML = '';
-
-        const rows = this.workbookData[sheetName];
-        if (!rows || rows.length === 0) return;
-
-        let html = '<div class="table-container"><table><thead><tr>';
-        rows[0].forEach(cell => html += `<th>${cell}</th>`);
-        html += '</tr></thead><tbody>';
-
-        rows.slice(1).forEach(row => {
-            html += '<tr>';
-            row.forEach(cell => html += `<td>${cell}</td>`);
-            html += '</tr>';
-        });
-
-        html += '</tbody></table></div>';
-        this.tableOutput.innerHTML = html;
-        document.querySelector('.content').scrollTop = 0;
-    }
-
-    updateActiveNav(id) {
-        document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-        const activeBtn = document.querySelector(`[data-id="${id}"]`);
-        if (activeBtn) activeBtn.classList.add('active');
-    }
-}
-
-new MILogisticsApp();
+    <script src="https://elfsightcdn.com/platform.js" async></script>
+    <script src="app.js"></script>
+</body>
+</html>
