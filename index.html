@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>IMI Logistics Dashboard</title>
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
-    <script src="https://elfsightcdn.com/platform.js" async></script>
     <style>
         :root {
             --mi-red: #D6192B;
@@ -20,24 +19,22 @@
             margin: 0; 
             display: flex; 
             height: 100vh; 
-            overflow: hidden; 
+            overflow: hidden; /* Keeps dashboard static */
         }
 
-        /* Sidebar & Layout */
         .sidebar { width: 300px; background: var(--deep-space); color: var(--white); display: flex; flex-direction: column; z-index: 10; }
         .sidebar-header { padding: 40px 24px; background: rgba(0,0,0,0.15); border-bottom: 1px solid rgba(255,255,255,0.1); }
         .sidebar-header h2 { font-size: 1.1rem; margin: 0; letter-spacing: 1.2px; font-weight: 900; color: var(--white); text-transform: uppercase; }
         .nav-list { flex: 1; padding: 25px 0; overflow-y: auto; }
         .nav-item { width: 100%; padding: 16px 28px; border: none; background: none; color: #8E9AAF; text-align: left; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 15px; text-transform: uppercase; }
         .nav-item.active { background: var(--mi-red); color: var(--white); font-weight: 700; }
-        
-        .content { flex: 1; overflow-y: auto; display: flex; flex-direction: column; position: relative; }
+        .content { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
         .top-bar { background: var(--white); padding: 20px 45px; display: flex; justify-content: space-between; align-items: center; }
         .view-area { padding: 45px; }
         .card { background: var(--white); border-radius: 20px; padding: 35px; box-shadow: 0 15px 35px rgba(36, 34, 63, 0.08); }
 
-        /* Map & Widget Styles */
-        .hard-clip-wrapper, .elfsight-scroll-container {
+        /* ShipXplorer Wrapper - Hard Clip */
+        .hard-clip-wrapper {
             margin: 0 auto;
             position: relative;
             overflow: hidden !important;
@@ -45,25 +42,39 @@
             border: 1px solid #eee;
         }
 
+        /* Elfsight Wrapper - Allows internal scroll but crops bottom */
+        .elfsight-scroll-container {
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden !important; /* This crops the widget height */
+            border-radius: 15px;
+            border: 1px solid #eee;
+        }
+
+        /* Re-enable internal scrolling for the elfsight list specifically */
         .elfsight-scroll-container [class*="elfsight-app"] {
             overflow: auto !important; 
             height: 100% !important;
         }
 
-        /* Dashboard Scrollbar Hiding */
-        .nav-list::-webkit-scrollbar, .content::-webkit-scrollbar { display: none; }
-        * { scrollbar-width: none; -ms-overflow-style: none; }
+        /* Custom Scrollbar for the location list (optional, makes it look cleaner) */
+        .elfsight-scroll-container [class*="elfsight-app"]::-webkit-scrollbar {
+            width: 6px;
+            display: block; /* Shows only the internal one */
+        }
+        .elfsight-scroll-container [class*="elfsight-app"]::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 10px;
+        }
 
-        /* Overlay & Buttons */
+        /* Hide the main browser/dashboard scrollbars */
+        .nav-list::-webkit-scrollbar, .content::-webkit-scrollbar {
+            display: none;
+        }
+        
         #upload-overlay { position: fixed; inset: 0; background: var(--off-white); z-index: 1000; display: flex; align-items: center; justify-content: center; }
         .drop-box { background: var(--white); padding: 70px; border-radius: 30px; text-align: center; width: 480px; box-shadow: 0 30px 60px rgba(0,0,0,0.1); }
         .btn-upload { background: var(--mi-red); color: var(--white); border: none; padding: 16px 36px; border-radius: 12px; font-weight: 800; cursor: pointer; margin-top: 30px; }
-
-        /* Custom Table Style */
-        .table-container { overflow-x: auto; border-radius: 12px; }
-        table { width: 100%; border-collapse: collapse; }
-        th { background: #F8FAFC; color: var(--deep-space); font-size: 0.7rem; text-transform: uppercase; padding: 18px; border-bottom: 2px solid #EDF2F7; text-align: left; }
-        td { padding: 16px; border-bottom: 1px solid #F1F5F9; font-size: 0.9rem; color: #334155; }
     </style>
 </head>
 <body>
@@ -92,6 +103,7 @@
             </div>
         </div>
     </main>
+    <script src="https://elfsightcdn.com/platform.js" async></script>
     <script src="app.js"></script>
 </body>
 </html>
