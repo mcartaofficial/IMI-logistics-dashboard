@@ -2,7 +2,7 @@ class MILogisticsApp {
     constructor() {
         this.widgetConfig = {
             shipXplorer: { width: "100%", height: "800px" },
-            elfsight: { width: "100%", height: "700px" }
+            elfsight: { width: "100%", height: "800px" }
         };
 
         this.workbookData = {};
