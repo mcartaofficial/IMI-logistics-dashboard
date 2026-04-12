@@ -8,7 +8,7 @@ class MILogisticsApp {
             },
             elfsight: {
                 width: "100%",
-                height: "800px" // Adjust this to show more or less of the widget
+                height: "600px" 
             }
         };
         // -----------------------------
@@ -84,6 +84,7 @@ class MILogisticsApp {
                     <div class="stat-box"><small>SYSTEM STATUS</small><h2 style="margin: 5px 0; color: #10B981;">ACTIVE</h2></div>
                 </div>
             </div>
+            <div class="elfsight-app-6ba85109-b815-4820-91b7-5719ae4049e2" data-elfsight-app-lazy></div>
         `;
 
         this.mapContainer.innerHTML = `
@@ -112,6 +113,7 @@ class MILogisticsApp {
         this.mapContainer.innerHTML = '';
         const rows = this.workbookData[sheetName];
         if (!rows || rows.length === 0) return;
+
         let html = '<div class="table-container"><table><thead><tr>';
         rows[0].forEach(cell => html += `<th>${cell}</th>`);
         html += '</tr></thead><tbody>';
@@ -121,6 +123,10 @@ class MILogisticsApp {
             html += '</tr>';
         });
         html += '</tbody></table></div>';
+        
+        // Added the AI Chatbot to the internal sheet output
+        html += `<div class="elfsight-app-6ba85109-b815-4820-91b7-5719ae4049e2" data-elfsight-app-lazy></div>`;
+
         this.tableOutput.innerHTML = html;
         document.querySelector('.content').scrollTop = 0;
     }
