@@ -4,13 +4,11 @@ class MILogisticsApp {
         this.widgetConfig = {
             shipXplorer: {
                 width: "100%",
-                height: "800px",
-                overflow: "hidden" // Keeps it clean
+                height: "800px" 
             },
             elfsight: {
                 width: "100%",
-                height: "550px",   // ADJUST THIS to crop the bottom part
-                overflow: "hidden" // Prevents the scroll wheel/extra space
+                height: "550px" // Adjust this value to crop the bottom
             }
         };
         // -----------------------------
@@ -105,9 +103,9 @@ class MILogisticsApp {
         this.mapContainer.innerHTML = `
             <div style="margin-bottom: 35px; border-bottom: 2px solid var(--off-white); padding-bottom: 30px;">
                 <div style="margin-bottom: 15px; font-weight: 700; color: var(--deep-space); text-transform: uppercase;">🚢 REAL-TIME VESSEL TRACKER</div>
-                <div class="widget-wrapper" style="width: ${this.widgetConfig.shipXplorer.width}; height: ${this.widgetConfig.shipXplorer.height}; overflow: ${this.widgetConfig.shipXplorer.overflow};">
+                <div class="hard-clip-wrapper" style="width: ${this.widgetConfig.shipXplorer.width}; height: ${this.widgetConfig.shipXplorer.height};">
                     <iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0" 
-                        width="100%" height="100%" 
+                        style="width: 100%; height: 100%; border: none; overflow: hidden;"
                         src="https://www.shipxplorer.com/?widget=1&z=12&lat=40.46244&lng=-73.88822&portCardRight=true&showLabels=true&showStateFlag=true&showVn=true&showIMO=true&showLabelPhoto=true&showMMSI=true&class=CARGO,PASSENGER,TANKER,HSC,TUG,FISHING,PLEASURE,SAILING,OTHER,UNKNOWN">
                     </iframe>
                 </div>
@@ -115,7 +113,7 @@ class MILogisticsApp {
 
             <div style="margin-top: 20px;">
                 <div style="margin-bottom: 15px; font-weight: 700; color: var(--deep-space); text-transform: uppercase;">📍 FLEET & STORE LOCATOR</div>
-                <div class="widget-wrapper" style="width: ${this.widgetConfig.elfsight.width}; height: ${this.widgetConfig.elfsight.height}; overflow: ${this.widgetConfig.elfsight.overflow};">
+                <div class="hard-clip-wrapper" style="width: ${this.widgetConfig.elfsight.width}; height: ${this.widgetConfig.elfsight.height};">
                     <div class="elfsight-app-d9332a95-3af1-4708-a385-24cef7defd35" data-elfsight-app-lazy></div>
                 </div>
             </div>
