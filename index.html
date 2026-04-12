@@ -45,7 +45,6 @@
             font-weight: 900;
             color: var(--white);
             text-transform: uppercase;
-            line-height: 1.4;
         }
 
         .nav-list { flex: 1; padding: 25px 0; overflow-y: auto; }
@@ -64,7 +63,6 @@
             align-items: center;
             gap: 15px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
         .nav-item:hover { background: rgba(255,255,255,0.03); color: var(--white); }
@@ -118,7 +116,6 @@
             color: var(--deep-space); 
             font-size: 0.7rem; 
             text-transform: uppercase; 
-            letter-spacing: 1.2px;
             padding: 18px;
             border-bottom: 2px solid #EDF2F7;
             text-align: left;
@@ -154,20 +151,21 @@
             font-weight: 800; 
             cursor: pointer; 
             margin-top: 30px;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            letter-spacing: 1px;
         }
 
         #map-container { margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px; }
 
-        /* Dynamic Widget Styles */
+        /* Widget Clipping Logic */
         .widget-wrapper {
             margin: 0 auto;
             max-width: 100%;
-            overflow: auto;
-            border-radius: 15px;
-            background: #fcfcfc;
-            border: 1px solid #eee;
+            position: relative;
+            /* overflow: hidden is now applied dynamically via JS */
+        }
+
+        /* Forces the Elfsight internal container to obey our wrapper height */
+        .widget-wrapper [class*="elfsight-app"] {
+            height: 100% !important;
         }
     </style>
 </head>
