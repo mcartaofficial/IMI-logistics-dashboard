@@ -8,7 +8,7 @@ class MILogisticsApp {
             },
             elfsight: {
                 width: "100%",
-                height: "600px" 
+                height: "550px" // Adjust this value to crop the bottom
             }
         };
         // -----------------------------
@@ -31,13 +31,16 @@ class MILogisticsApp {
     handleFile(file) {
         if (!file) return;
         const reader = new FileReader();
+        
         reader.onload = (e) => {
             const data = new Uint8Array(e.target.result);
             const wb = XLSX.read(data, { type: 'array', raw: false });
+            
             this.fileNames = wb.SheetNames;
             wb.SheetNames.forEach(name => {
                 this.workbookData[name] = XLSX.utils.sheet_to_json(wb.Sheets[name], { header: 1, defval: "" });
             });
+
             this.buildSidebar();
             this.overlay.style.display = 'none';
             document.getElementById('file-name-display').innerText = file.name.toUpperCase();
@@ -48,6 +51,7 @@ class MILogisticsApp {
 
     buildSidebar() {
         this.nav.innerHTML = '';
+        
         const homeBtn = document.createElement('button');
         homeBtn.className = 'nav-item';
         homeBtn.innerHTML = `<span>🏠</span> DASHBOARD HOME`;
@@ -78,13 +82,22 @@ class MILogisticsApp {
             <div style="text-align: center; padding: 20px;">
                 <h1 style="color: var(--deep-space); margin-bottom: 10px;">Welcome to IMI Logistics</h1>
                 <p style="color: var(--text-gray);">Select a route or data sheet from the sidebar to begin optimization.</p>
+                
                 <div class="welcome-grid">
-                    <div class="stat-box"><small>TOTAL SHEETS</small><h2 style="margin: 5px 0; color: var(--mi-red);">${totalSheets}</h2></div>
-                    <div class="stat-box"><small>TOTAL DATA ROWS</small><h2 style="margin: 5px 0; color: var(--mi-red);">${totalRows}</h2></div>
-                    <div class="stat-box"><small>SYSTEM STATUS</small><h2 style="margin: 5px 0; color: #10B981;">ACTIVE</h2></div>
+                    <div class="stat-box">
+                        <small>TOTAL SHEETS</small>
+                        <h2 style="margin: 5px 0; color: var(--mi-red);">${totalSheets}</h2>
+                    </div>
+                    <div class="stat-box">
+                        <small>TOTAL DATA ROWS</small>
+                        <h2 style="margin: 5px 0; color: var(--mi-red);">${totalRows}</h2>
+                    </div>
+                    <div class="stat-box">
+                        <small>SYSTEM STATUS</small>
+                        <h2 style="margin: 5px 0; color: #10B981;">ACTIVE</h2>
+                    </div>
                 </div>
             </div>
-            <div class="elfsight-app-6ba85109-b815-4820-91b7-5719ae4049e2" data-elfsight-app-lazy></div>
         `;
 
         this.mapContainer.innerHTML = `
@@ -100,7 +113,7 @@ class MILogisticsApp {
 
             <div style="margin-top: 20px;">
                 <div style="margin-bottom: 15px; font-weight: 700; color: var(--deep-space); text-transform: uppercase;">📍 FLEET & STORE LOCATOR</div>
-                <div class="elfsight-scroll-container" style="width: ${this.widgetConfig.elfsight.width}; height: ${this.widgetConfig.elfsight.height};">
+                <div class="hard-clip-wrapper" style="width: ${this.widgetConfig.elfsight.width}; height: ${this.widgetConfig.elfsight.height};">
                     <div class="elfsight-app-d9332a95-3af1-4708-a385-24cef7defd35" data-elfsight-app-lazy></div>
                 </div>
             </div>
@@ -111,22 +124,21 @@ class MILogisticsApp {
         this.updateActiveNav(sheetName);
         this.titleText.innerText = sheetName.replace(/_/g, ' ');
         this.mapContainer.innerHTML = '';
+
         const rows = this.workbookData[sheetName];
         if (!rows || rows.length === 0) return;
 
         let html = '<div class="table-container"><table><thead><tr>';
         rows[0].forEach(cell => html += `<th>${cell}</th>`);
         html += '</tr></thead><tbody>';
+
         rows.slice(1).forEach(row => {
             html += '<tr>';
             row.forEach(cell => html += `<td>${cell}</td>`);
             html += '</tr>';
         });
-        html += '</tbody></table></div>';
-        
-        // Added the AI Chatbot to the internal sheet output
-        html += `<div class="elfsight-app-6ba85109-b815-4820-91b7-5719ae4049e2" data-elfsight-app-lazy></div>`;
 
+        html += '</tbody></table></div>';
         this.tableOutput.innerHTML = html;
         document.querySelector('.content').scrollTop = 0;
     }
@@ -137,4 +149,5 @@ class MILogisticsApp {
         if (activeBtn) activeBtn.classList.add('active');
     }
 }
+
 new MILogisticsApp();
