@@ -1,37 +1,29 @@
 class MILogisticsApp {
     constructor() {
-        // --- DIMENSION ADJUSTMENTS ---
         this.widgetConfig = {
-            shipXplorer: {
-                width: "100%",
-                height: "800px" 
-            },
-            elfsight: {
-                width: "100%",
-                height: "700px" 
-            }
+            shipXplorer: { width: "100%", height: "800px" },
+            elfsight: { width: "100%", height: "550px" }
         };
-        // -----------------------------
 
         this.workbookData = {};
         this.fileNames = [];
         this.fileInput = document.getElementById('file-input');
         this.nav = document.getElementById('sidebar-nav');
+        this.sidebar = document.getElementById('sidebar');
+        this.menuToggle = document.getElementById('menu-toggle');
         this.tableOutput = document.getElementById('table-output');
         this.mapContainer = document.getElementById('map-container');
         this.titleText = document.getElementById('current-sheet-title');
         this.overlay = document.getElementById('upload-overlay');
-        this.menuToggle = document.getElementById('menu-toggle');
-        
         this.init();
     }
 
     init() {
         this.fileInput.addEventListener('change', (e) => this.handleFile(e.target.files[0]));
         
-        // Sidebar Toggle Logic
+        // Hamburger toggle logic
         this.menuToggle.addEventListener('click', () => {
-            document.body.classList.toggle('sidebar-collapsed');
+            this.sidebar.classList.toggle('collapsed');
         });
     }
 
@@ -51,6 +43,9 @@ class MILogisticsApp {
             this.buildSidebar();
             this.overlay.style.display = 'none';
             document.getElementById('file-name-display').innerText = file.name.toUpperCase();
+            
+            // Auto-collapse on first load to show full dashboard
+            this.sidebar.classList.add('collapsed');
             this.showHomePage(); 
         };
         reader.readAsArrayBuffer(file);
@@ -62,7 +57,10 @@ class MILogisticsApp {
         const homeBtn = document.createElement('button');
         homeBtn.className = 'nav-item';
         homeBtn.innerHTML = `<span>🏠</span> DASHBOARD HOME`;
-        homeBtn.onclick = () => this.showHomePage();
+        homeBtn.onclick = () => {
+            this.showHomePage();
+            if (window.innerWidth < 1024) this.sidebar.classList.add('collapsed');
+        };
         homeBtn.setAttribute('data-id', 'HOME_PAGE');
         this.nav.appendChild(homeBtn);
 
@@ -70,8 +68,12 @@ class MILogisticsApp {
             const btn = document.createElement('button');
             btn.className = 'nav-item';
             const cleanName = name.replace(/_/g, ' ');
-            btn.innerHTML = `<span>•</span> ${cleanName}`;
-            btn.onclick = () => this.switchPage(name);
+            btn.innerHTML = `<span>📄</span> ${cleanName}`;
+            btn.onclick = () => {
+                this.switchPage(name);
+                // Collapse sidebar after selection
+                this.sidebar.classList.add('collapsed');
+            };
             btn.setAttribute('data-id', name);
             this.nav.appendChild(btn);
         });
@@ -83,9 +85,7 @@ class MILogisticsApp {
         
         const totalSheets = this.fileNames.length;
         let totalRows = 0;
-        this.fileNames.forEach(name => {
-            if(this.workbookData[name]) totalRows += Math.max(0, this.workbookData[name].length - 1);
-        });
+        this.fileNames.forEach(name => totalRows += (this.workbookData[name].length - 1));
 
         this.tableOutput.innerHTML = `
             <div style="text-align: center; padding: 20px;">
@@ -111,7 +111,7 @@ class MILogisticsApp {
 
         this.mapContainer.innerHTML = `
             <div style="margin-bottom: 35px; border-bottom: 2px solid var(--off-white); padding-bottom: 30px;">
-                <div style="margin-bottom: 15px; font-weight: 700; color: var(--deep-space); text-transform: uppercase;">🌐 REAL-TIME VESSEL TRACKER</div>
+                <div style="margin-bottom: 15px; font-weight: 700; color: var(--deep-space); text-transform: uppercase;">🚢 REAL-TIME VESSEL TRACKER</div>
                 <div class="hard-clip-wrapper" style="width: ${this.widgetConfig.shipXplorer.width}; height: ${this.widgetConfig.shipXplorer.height};">
                     <iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0" 
                         style="width: 100%; height: 100%; border: none; overflow: hidden;"
@@ -150,11 +150,6 @@ class MILogisticsApp {
         html += '</tbody></table></div>';
         this.tableOutput.innerHTML = html;
         document.querySelector('.content').scrollTop = 0;
-        
-        // Auto-collapse sidebar on mobile/small screens after selection
-        if(window.innerWidth < 1024) {
-            document.body.classList.add('sidebar-collapsed');
-        }
     }
 
     updateActiveNav(id) {
