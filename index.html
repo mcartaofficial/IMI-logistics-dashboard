@@ -19,7 +19,7 @@
             margin: 0; 
             display: flex; 
             height: 100vh; 
-            overflow: hidden; /* Keeps dashboard static */
+            overflow: hidden; 
         }
 
         .sidebar { width: 300px; background: var(--deep-space); color: var(--white); display: flex; flex-direction: column; z-index: 10; }
@@ -33,7 +33,7 @@
         .view-area { padding: 45px; }
         .card { background: var(--white); border-radius: 20px; padding: 35px; box-shadow: 0 15px 35px rgba(36, 34, 63, 0.08); }
 
-        /* ShipXplorer Wrapper - Hard Clip */
+        /* Map Wrappers */
         .hard-clip-wrapper {
             margin: 0 auto;
             position: relative;
@@ -42,32 +42,30 @@
             border: 1px solid #eee;
         }
 
-        /* Elfsight Wrapper - Allows internal scroll but crops bottom */
         .elfsight-scroll-container {
             margin: 0 auto;
             position: relative;
-            overflow: hidden !important; /* This crops the widget height */
+            overflow: hidden !important; 
             border-radius: 15px;
             border: 1px solid #eee;
         }
 
-        /* Re-enable internal scrolling for the elfsight list specifically */
         .elfsight-scroll-container [class*="elfsight-app"] {
             overflow: auto !important; 
             height: 100% !important;
         }
 
-        /* Custom Scrollbar for the location list (optional, makes it look cleaner) */
+        /* Scrollbar styling for internal lists */
         .elfsight-scroll-container [class*="elfsight-app"]::-webkit-scrollbar {
             width: 6px;
-            display: block; /* Shows only the internal one */
+            display: block;
         }
         .elfsight-scroll-container [class*="elfsight-app"]::-webkit-scrollbar-thumb {
             background: #cbd5e0;
             border-radius: 10px;
         }
 
-        /* Hide the main browser/dashboard scrollbars */
+        /* Hide main dashboard scrollbars */
         .nav-list::-webkit-scrollbar, .content::-webkit-scrollbar {
             display: none;
         }
@@ -78,6 +76,7 @@
     </style>
 </head>
 <body>
+
     <div id="upload-overlay">
         <div class="drop-box">
             <div style="font-size: 50px; margin-bottom: 15px;">🚢</div>
@@ -87,15 +86,20 @@
             <button class="btn-upload" onclick="document.getElementById('file-input').click()">UPLOAD DATASET</button>
         </div>
     </div>
+
     <aside class="sidebar">
-        <div class="sidebar-header"><h2>IMI Logistics Dashboard</h2></div>
+        <div class="sidebar-header">
+            <h2>IMI Logistics Dashboard</h2>
+        </div>
         <div class="nav-list" id="sidebar-nav"></div>
     </aside>
+
     <main class="content">
         <div class="top-bar">
             <h3 id="current-sheet-title" style="margin:0; font-weight: 800; color: var(--deep-space);">Welcome</h3>
-            <div id="file-name-display"></div>
+            <div id="file-name-display" style="background: #E2E8F0; padding: 8px 16px; border-radius: 30px; font-size: 0.7rem; font-weight: 700; color: var(--deep-space);"></div>
         </div>
+
         <div class="view-area">
             <div class="card" id="data-card">
                 <div id="table-output"></div>
@@ -103,7 +107,10 @@
             </div>
         </div>
     </main>
+
     <script src="https://elfsightcdn.com/platform.js" async></script>
+    <div class="elfsight-app-6ba85109-b815-4820-91b7-5719ae4049e2" data-elfsight-app-lazy></div>
+
     <script src="app.js"></script>
 </body>
 </html>
