@@ -7,14 +7,14 @@ class MILogisticsApp {
 
         this.workbookData = {};
         this.fileNames = [];
-        this.sidebar = document.getElementById('sidebar');
-        this.toggleBtn = document.getElementById('toggle-btn');
         this.fileInput = document.getElementById('file-input');
         this.nav = document.getElementById('sidebar-nav');
         this.tableOutput = document.getElementById('table-output');
         this.mapContainer = document.getElementById('map-container');
         this.titleText = document.getElementById('current-sheet-title');
         this.overlay = document.getElementById('upload-overlay');
+        this.sidebar = document.getElementById('sidebar');
+        this.toggleBtn = document.getElementById('sidebar-toggle');
         
         this.init();
     }
@@ -22,7 +22,7 @@ class MILogisticsApp {
     init() {
         this.fileInput.addEventListener('change', (e) => this.handleFile(e.target.files[0]));
         
-        // Hamburger Toggle Logic
+        // Sidebar Toggle Logic
         this.toggleBtn.addEventListener('click', () => {
             this.sidebar.classList.toggle('collapsed');
         });
@@ -52,20 +52,19 @@ class MILogisticsApp {
     buildSidebar() {
         this.nav.innerHTML = '';
         
-        // Home Button
         const homeBtn = document.createElement('button');
         homeBtn.className = 'nav-item';
-        homeBtn.innerHTML = `<span class="icon">🏠</span> <span>DASHBOARD HOME</span>`;
+        // Icon and Text separated for easy hiding in CSS
+        homeBtn.innerHTML = `<span>🏠</span> <span>DASHBOARD HOME</span>`;
         homeBtn.onclick = () => this.showHomePage();
         homeBtn.setAttribute('data-id', 'HOME_PAGE');
         this.nav.appendChild(homeBtn);
 
-        // Dynamic Sheet Buttons
         this.fileNames.forEach(name => {
             const btn = document.createElement('button');
             btn.className = 'nav-item';
             const cleanName = name.replace(/_/g, ' ');
-            btn.innerHTML = `<span class="icon">📄</span> <span>${cleanName}</span>`;
+            btn.innerHTML = `<span>📄</span> <span>${cleanName}</span>`;
             btn.onclick = () => this.switchPage(name);
             btn.setAttribute('data-id', name);
             this.nav.appendChild(btn);
@@ -104,7 +103,7 @@ class MILogisticsApp {
 
         this.mapContainer.innerHTML = `
             <div style="margin-bottom: 35px; border-bottom: 2px solid var(--off-white); padding-bottom: 30px;">
-                <div style="margin-bottom: 15px; font-weight: 700; color: var(--deep-space); text-transform: uppercase;">🚢 REAL-TIME VESSEL TRACKER</div>
+                <div style="margin-bottom: 15px; font-weight: 700; color: var(--deep-space); text-transform: uppercase;">🌐 REAL-TIME VESSEL TRACKER</div>
                 <div class="hard-clip-wrapper" style="width: ${this.widgetConfig.shipXplorer.width}; height: ${this.widgetConfig.shipXplorer.height};">
                     <iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0" 
                         style="width: 100%; height: 100%; border: none; overflow: hidden;"
