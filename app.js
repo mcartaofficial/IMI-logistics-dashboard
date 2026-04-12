@@ -1,6 +1,6 @@
 class MILogisticsApp {
     constructor() {
-        // --- DIMENSION ADJUSTMENT MARKERS ---
+        // --- DIMENSION ADJUSTMENTS ---
         this.widgetConfig = {
             shipXplorer: {
                 width: "100%",
@@ -8,10 +8,10 @@ class MILogisticsApp {
             },
             elfsight: {
                 width: "100%",
-                height: "950px" // <--- CHANGE THIS TO ADJUST THE CROP
+                height: "600px" 
             }
         };
-        // ------------------------------------
+        // -----------------------------
 
         this.workbookData = {};
         this.fileNames = [];
@@ -99,8 +99,8 @@ class MILogisticsApp {
             </div>
 
             <div style="margin-top: 20px;">
-                <div style="margin-bottom: 15px; font-weight: 900; color: var(--deep-space); text-transform: uppercase;">📍 FLEET & STORE LOCATOR</div>
-                <div class="elfsight-window" style="width: ${this.widgetConfig.elfsight.width}; height: ${this.widgetConfig.elfsight.height};">
+                <div style="margin-bottom: 15px; font-weight: 700; color: var(--deep-space); text-transform: uppercase;">📍 FLEET & STORE LOCATOR</div>
+                <div class="elfsight-scroll-container" style="width: ${this.widgetConfig.elfsight.width}; height: ${this.widgetConfig.elfsight.height};">
                     <div class="elfsight-app-d9332a95-3af1-4708-a385-24cef7defd35" data-elfsight-app-lazy></div>
                 </div>
             </div>
@@ -124,7 +124,7 @@ class MILogisticsApp {
         });
         html += '</tbody></table></div>';
         
-        // Add Chatbot to every internal page
+        // Added the AI Chatbot to the internal sheet output
         html += `<div class="elfsight-app-6ba85109-b815-4820-91b7-5719ae4049e2" data-elfsight-app-lazy></div>`;
 
         this.tableOutput.innerHTML = html;
