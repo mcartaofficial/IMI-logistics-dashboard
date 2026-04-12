@@ -22,6 +22,7 @@
             overflow: hidden;
         }
 
+        /* Sidebar Styling */
         .sidebar { 
             width: 300px; 
             background: var(--deep-space); 
@@ -73,6 +74,7 @@
             box-shadow: 0 4px 15px rgba(214, 25, 43, 0.4);
         }
 
+        /* Main Content Layout */
         .content { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
         
         .top-bar { 
@@ -155,17 +157,31 @@
 
         #map-container { margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px; }
 
-        /* Widget Clipping Logic */
-        .widget-wrapper {
+        /* HARD-CODED SCROLL PREVENTION */
+        .hard-clip-wrapper {
             margin: 0 auto;
             max-width: 100%;
             position: relative;
-            /* overflow: hidden is now applied dynamically via JS */
+            overflow: hidden !important; /* Forcefully stops scroll wheel/bars */
+            border-radius: 15px;
+            border: 1px solid #eee;
+            background: #fff;
         }
 
-        /* Forces the Elfsight internal container to obey our wrapper height */
-        .widget-wrapper [class*="elfsight-app"] {
+        /* Prevents Elfsight from creating its own internal scrollbar */
+        .hard-clip-wrapper [class*="elfsight-app"] {
+            overflow: hidden !important;
             height: 100% !important;
+        }
+
+        /* Standardize any internal iframes */
+        iframe {
+            overflow: hidden !important;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE/Edge */
+        }
+        iframe::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
         }
     </style>
 </head>
