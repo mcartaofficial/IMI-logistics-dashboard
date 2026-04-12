@@ -1,11 +1,24 @@
 class MILogisticsApp {
     constructor() {
+        // --- DIMENSION ADJUSTMENTS ---
+        this.widgetConfig = {
+            shipXplorer: {
+                width: "100%",  // Use % or px (e.g., "1200px")
+                height: "800px" 
+            },
+            elfsight: {
+                width: "100%",
+                height: "auto"  // Elfsight usually controls its own height, but you can set px
+            }
+        };
+        // -----------------------------
+
         this.workbookData = {};
         this.fileNames = [];
         this.fileInput = document.getElementById('file-input');
         this.nav = document.getElementById('sidebar-nav');
         this.tableOutput = document.getElementById('table-output');
-        this.mapContainer = document.getElementById('map-container'); 
+        this.mapContainer = document.getElementById('map-container');
         this.titleText = document.getElementById('current-sheet-title');
         this.overlay = document.getElementById('upload-overlay');
         this.init();
@@ -87,16 +100,22 @@ class MILogisticsApp {
             </div>
         `;
 
-        // Updated Map Container with side-by-side layout
+        // Map dimensions are pulled from this.widgetConfig
         this.mapContainer.innerHTML = `
-            <div class="map-grid">
-                <div class="map-wrapper">
-                    <div style="margin-bottom: 15px; font-weight: 700; color: var(--deep-space); text-transform: uppercase; font-size: 0.8rem;">Fleet & Store Locator</div>
-                    <div class="elfsight-app-d9332a95-3af1-4708-a385-24cef7defd35" data-elfsight-app-lazy></div>
+            <div style="margin-bottom: 35px; border-bottom: 2px solid var(--off-white); padding-bottom: 30px;">
+                <div style="margin-bottom: 15px; font-weight: 700; color: var(--deep-space); text-transform: uppercase;">🚢 REAL-TIME VESSEL TRACKER</div>
+                <div class="widget-wrapper" style="width: ${this.widgetConfig.shipXplorer.width}; height: ${this.widgetConfig.shipXplorer.height};">
+                    <iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0" 
+                        width="100%" height="100%" 
+                        src="https://www.shipxplorer.com/?widget=1&z=12&lat=40.46244&lng=-73.88822&portCardRight=true&showLabels=true&showStateFlag=true&showVn=true&showIMO=true&showLabelPhoto=true&showMMSI=true&class=CARGO,PASSENGER,TANKER,HSC,TUG,FISHING,PLEASURE,SAILING,OTHER,UNKNOWN">
+                    </iframe>
                 </div>
-                <div class="map-wrapper">
-                    <div style="margin-bottom: 15px; font-weight: 700; color: var(--deep-space); text-transform: uppercase; font-size: 0.8rem;">Live Vessel Tracking</div>
-                    <iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0" width="100%" height="500" src="https://www.shipxplorer.com/?widget=1&z=12&lat=40.46244&lng=-73.88822&portCardRight=true&showLabels=true&showStateFlag=true&showVn=true&showIMO=true&showLabelPhoto=true&showMMSI=true&class=CARGO,PASSENGER,TANKER,HSC,TUG,FISHING,PLEASURE,SAILING,OTHER,UNKNOWN"></iframe>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <div style="margin-bottom: 15px; font-weight: 700; color: var(--deep-space); text-transform: uppercase;">📍 FLEET & STORE LOCATOR</div>
+                <div class="widget-wrapper" style="width: ${this.widgetConfig.elfsight.width}; height: ${this.widgetConfig.elfsight.height};">
+                    <div class="elfsight-app-d9332a95-3af1-4708-a385-24cef7defd35" data-elfsight-app-lazy></div>
                 </div>
             </div>
         `;
@@ -105,8 +124,6 @@ class MILogisticsApp {
     switchPage(sheetName) {
         this.updateActiveNav(sheetName);
         this.titleText.innerText = sheetName.replace(/_/g, ' ');
-        
-        // Hide map when viewing data tables
         this.mapContainer.innerHTML = '';
 
         const rows = this.workbookData[sheetName];
