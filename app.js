@@ -8,7 +8,7 @@ class MILogisticsApp {
             },
             elfsight: {
                 width: "100%",
-                height: "800px" // CHANGE THIS: Lower = shorter, Higher = taller
+                height: "900px" // CHANGE THIS: Lower = shorter, Higher = taller
             }
         };
         // -------------------------------------------
@@ -98,7 +98,7 @@ class MILogisticsApp {
             </div>
 
             <div style="margin-top: 20px;">
-                <div style="margin-bottom: 15px; font-weight: 800; color: var(--deep-space); text-transform: uppercase;">📍 FLEET & STORE LOCATOR</div>
+                <div style="margin-bottom: 15px; font-weight: 930; color: var(--deep-space); text-transform: uppercase;">📍 FLEET & STORE LOCATOR</div>
                 <div class="hard-clip-wrapper elfsight-crop" style="width: ${this.widgetConfig.elfsight.width}; height: ${this.widgetConfig.elfsight.height} !important;">
                     <div class="elfsight-app-d9332a95-3af1-4708-a385-24cef7defd35" data-elfsight-app-lazy></div>
                 </div>
