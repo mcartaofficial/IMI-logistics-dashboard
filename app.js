@@ -99,7 +99,7 @@ class MILogisticsApp {
             </div>
 
             <div style="margin-top: 20px;">
-                <div style="margin-bottom: 15px; font-weight: 700; color: var(--deep-space); text-transform: uppercase;">📍 FLEET & STORE LOCATOR</div>
+                <div style="margin-bottom: 15px; font-weight: 900; color: var(--deep-space); text-transform: uppercase;">📍 FLEET & STORE LOCATOR</div>
                 <div class="elfsight-window" style="width: ${this.widgetConfig.elfsight.width}; height: ${this.widgetConfig.elfsight.height};">
                     <div class="elfsight-app-d9332a95-3af1-4708-a385-24cef7defd35" data-elfsight-app-lazy></div>
                 </div>
