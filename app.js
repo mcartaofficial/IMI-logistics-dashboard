@@ -1,9 +1,17 @@
 class MILogisticsApp {
     constructor() {
+        // --- DIMENSION ADJUSTMENTS ---
         this.widgetConfig = {
-            shipXplorer: { width: "100%", height: "800px" },
-            elfsight: { width: "100%", height: "550px" }
+            shipXplorer: {
+                width: "100%",
+                height: "800px" 
+            },
+            elfsight: {
+                width: "100%",
+                height: "550px" 
+            }
         };
+        // -----------------------------
 
         this.workbookData = {};
         this.fileNames = [];
@@ -13,7 +21,6 @@ class MILogisticsApp {
         this.mapContainer = document.getElementById('map-container');
         this.titleText = document.getElementById('current-sheet-title');
         this.overlay = document.getElementById('upload-overlay');
-        this.sidebar = document.getElementById('sidebar');
         this.menuToggle = document.getElementById('menu-toggle');
         
         this.init();
@@ -22,9 +29,9 @@ class MILogisticsApp {
     init() {
         this.fileInput.addEventListener('change', (e) => this.handleFile(e.target.files[0]));
         
-        // Toggle Sidebar Logic
+        // Sidebar Toggle Logic
         this.menuToggle.addEventListener('click', () => {
-            this.sidebar.classList.toggle('collapsed');
+            document.body.classList.toggle('sidebar-collapsed');
         });
     }
 
@@ -45,9 +52,6 @@ class MILogisticsApp {
             this.overlay.style.display = 'none';
             document.getElementById('file-name-display').innerText = file.name.toUpperCase();
             this.showHomePage(); 
-            
-            // Start collapsed on mobile or after upload for cleaner look
-            if(window.innerWidth < 1000) this.sidebar.classList.add('collapsed');
         };
         reader.readAsArrayBuffer(file);
     }
@@ -58,10 +62,7 @@ class MILogisticsApp {
         const homeBtn = document.createElement('button');
         homeBtn.className = 'nav-item';
         homeBtn.innerHTML = `<span>🏠</span> DASHBOARD HOME`;
-        homeBtn.onclick = () => {
-            this.showHomePage();
-            this.closeSidebarOnSelect();
-        };
+        homeBtn.onclick = () => this.showHomePage();
         homeBtn.setAttribute('data-id', 'HOME_PAGE');
         this.nav.appendChild(homeBtn);
 
@@ -69,21 +70,11 @@ class MILogisticsApp {
             const btn = document.createElement('button');
             btn.className = 'nav-item';
             const cleanName = name.replace(/_/g, ' ');
-            btn.innerHTML = `<span>📄</span> ${cleanName}`;
-            btn.onclick = () => {
-                this.switchPage(name);
-                this.closeSidebarOnSelect();
-            };
+            btn.innerHTML = `<span>•</span> ${cleanName}`;
+            btn.onclick = () => this.switchPage(name);
             btn.setAttribute('data-id', name);
             this.nav.appendChild(btn);
         });
-    }
-
-    closeSidebarOnSelect() {
-        // Auto-hide sidebar after selection on smaller screens
-        if (window.innerWidth < 1200) {
-            this.sidebar.classList.add('collapsed');
-        }
     }
 
     showHomePage() {
@@ -93,15 +84,13 @@ class MILogisticsApp {
         const totalSheets = this.fileNames.length;
         let totalRows = 0;
         this.fileNames.forEach(name => {
-            if(this.workbookData[name].length > 0) {
-                totalRows += (this.workbookData[name].length - 1);
-            }
+            if(this.workbookData[name]) totalRows += Math.max(0, this.workbookData[name].length - 1);
         });
 
         this.tableOutput.innerHTML = `
             <div style="text-align: center; padding: 20px;">
                 <h1 style="color: var(--deep-space); margin-bottom: 10px;">Welcome to IMI Logistics</h1>
-                <p style="color: var(--text-gray);">Select a route or data sheet from the sidebar menu.</p>
+                <p style="color: var(--text-gray);">Select a route or data sheet from the sidebar to begin optimization.</p>
                 
                 <div class="welcome-grid">
                     <div class="stat-box">
@@ -122,7 +111,7 @@ class MILogisticsApp {
 
         this.mapContainer.innerHTML = `
             <div style="margin-bottom: 35px; border-bottom: 2px solid var(--off-white); padding-bottom: 30px;">
-                <div style="margin-bottom: 15px; font-weight: 700; color: var(--deep-space); text-transform: uppercase;">🚢 REAL-TIME VESSEL TRACKER</div>
+                <div style="margin-bottom: 15px; font-weight: 700; color: var(--deep-space); text-transform: uppercase;">🌐 REAL-TIME VESSEL TRACKER</div>
                 <div class="hard-clip-wrapper" style="width: ${this.widgetConfig.shipXplorer.width}; height: ${this.widgetConfig.shipXplorer.height};">
                     <iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0" 
                         style="width: 100%; height: 100%; border: none; overflow: hidden;"
@@ -146,10 +135,7 @@ class MILogisticsApp {
         this.mapContainer.innerHTML = '';
 
         const rows = this.workbookData[sheetName];
-        if (!rows || rows.length === 0) {
-            this.tableOutput.innerHTML = "No data found in this sheet.";
-            return;
-        }
+        if (!rows || rows.length === 0) return;
 
         let html = '<div class="table-container"><table><thead><tr>';
         rows[0].forEach(cell => html += `<th>${cell}</th>`);
@@ -164,6 +150,11 @@ class MILogisticsApp {
         html += '</tbody></table></div>';
         this.tableOutput.innerHTML = html;
         document.querySelector('.content').scrollTop = 0;
+        
+        // Auto-collapse sidebar on mobile/small screens after selection
+        if(window.innerWidth < 1024) {
+            document.body.classList.add('sidebar-collapsed');
+        }
     }
 
     updateActiveNav(id) {
