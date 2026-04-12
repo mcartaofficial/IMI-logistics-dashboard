@@ -8,7 +8,7 @@ class MILogisticsApp {
             },
             elfsight: {
                 width: "100%",
-                height: "1000px" // Adjust this to show more or less of the widget
+                height: "950px" // Adjust this to show more or less of the widget
             }
         };
         // -----------------------------
