@@ -1,224 +1,105 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>IMI Logistics Dashboard</title>
-    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
-    <style>
-        :root {
-            --mi-red: #D6192B;
-            --deep-space: #24223F;
-            --white: #FFFEFF;
-            --off-white: #F5F7FA;
-            --text-gray: #718096;
-        }
+<style>
+    /* ... existing variables ... */
 
-        body { 
-            font-family: 'Inter', -apple-system, sans-serif; 
-            background: var(--off-white); 
-            margin: 0; 
-            display: flex; 
-            height: 100vh; 
-            overflow: hidden;
-        }
+    /* New Sidebar Styling */
+    .sidebar { 
+        width: 260px; 
+        background: var(--deep-space); 
+        color: var(--white); 
+        display: flex; 
+        flex-direction: column;
+        box-shadow: 4px 0 15px rgba(0,0,0,0.2);
+        z-index: 1001;
+        position: absolute; /* Floating effect */
+        height: auto;
+        max-height: 90vh;
+        left: 20px;
+        top: 80px;
+        border-radius: 12px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow: hidden;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+    }
 
-        /* Sidebar Styling */
-        .sidebar { 
-            width: 300px; 
-            background: var(--deep-space); 
-            color: var(--white); 
-            display: flex; 
-            flex-direction: column;
-            box-shadow: 4px 0 15px rgba(0,0,0,0.2);
-            z-index: 10;
-        }
+    /* When the menu is "Open" */
+    .sidebar.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
 
-        .sidebar-header { 
-            padding: 40px 24px; 
-            background: rgba(0,0,0,0.15);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
+    /* The Hamburger Button */
+    .menu-toggle {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        width: 45px;
+        height: 45px;
+        background: var(--deep-space);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+        z-index: 1002;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
 
-        .sidebar-header h2 { 
-            font-size: 1.1rem; 
-            margin: 0; 
-            letter-spacing: 1.2px; 
-            font-weight: 900;
-            color: var(--white);
-            text-transform: uppercase;
-        }
+    .menu-toggle span {
+        display: block;
+        width: 25px;
+        height: 3px;
+        background: var(--white);
+        border-radius: 2px;
+        transition: 0.3s;
+    }
 
-        .nav-list { flex: 1; padding: 25px 0; overflow-y: auto; }
-        
-        .nav-item { 
-            width: 100%; 
-            padding: 16px 28px; 
-            border: none; 
-            background: none; 
-            color: #8E9AAF; 
-            text-align: left; 
-            cursor: pointer; 
-            font-size: 0.85rem;
-            transition: all 0.25s ease;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            text-transform: uppercase;
-        }
+    /* Hamburger to X Animation */
+    .menu-toggle.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+    .menu-toggle.open span:nth-child(2) { opacity: 0; }
+    .menu-toggle.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
 
-        .nav-item:hover { background: rgba(255,255,255,0.03); color: var(--white); }
-        .nav-item.active { 
-            background: var(--mi-red); 
-            color: var(--white); 
-            font-weight: 700;
-            box-shadow: 0 4px 15px rgba(214, 25, 43, 0.4);
-        }
+    .sidebar-header { 
+        padding: 20px; 
+        background: rgba(0,0,0,0.15);
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
 
-        /* Main Content Layout */
-        .content { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
-        
-        .top-bar { 
-            background: var(--white); 
-            padding: 20px 45px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-        }
+    /* Compact Nav Items */
+    .nav-item { 
+        width: 100%; 
+        padding: 12px 20px; 
+        border: none; 
+        background: none; 
+        color: #8E9AAF; 
+        text-align: left; 
+        cursor: pointer; 
+        font-size: 0.75rem; /* Smaller font */
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
 
-        .view-area { padding: 45px; }
+    /* Adjust main content to take full width since sidebar is floating */
+    .content { flex: 1; margin-left: 0; }
+    .top-bar { padding-left: 85px; } /* Make room for the hamburger */
+</style>
 
-        .card { 
-            background: var(--white); 
-            border-radius: 20px; 
-            padding: 35px; 
-            box-shadow: 0 15px 35px rgba(36, 34, 63, 0.08);
-            border: 1px solid rgba(226, 232, 240, 0.6);
-        }
+<button class="menu-toggle" id="menu-btn">
+    <span></span>
+    <span></span>
+    <span></span>
+</button>
 
-        .welcome-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-top: 30px;
-            margin-bottom: 30px;
-        }
-        .stat-box {
-            padding: 20px;
-            background: #f8fafc;
-            border-radius: 12px;
-            border-left: 4px solid var(--mi-red);
-        }
-
-        .table-container { overflow-x: auto; border-radius: 12px; }
-        table { width: 100%; border-collapse: collapse; min-width: 800px; }
-        
-        th { 
-            background: #F8FAFC; 
-            color: var(--deep-space); 
-            font-size: 0.7rem; 
-            text-transform: uppercase; 
-            padding: 18px;
-            border-bottom: 2px solid #EDF2F7;
-            text-align: left;
-        }
-
-        td { 
-            padding: 16px; 
-            border-bottom: 1px solid #F1F5F9; 
-            font-size: 0.9rem; 
-            color: #334155;
-        }
-
-        #upload-overlay {
-            position: fixed; inset: 0; background: var(--off-white); z-index: 1000;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-        }
-
-        .drop-box { 
-            background: var(--white);
-            padding: 70px; 
-            border-radius: 30px; 
-            text-align: center; 
-            width: 480px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.1);
-        }
-
-        .btn-upload { 
-            background: var(--mi-red); 
-            color: var(--white); 
-            border: none; 
-            padding: 16px 36px; 
-            border-radius: 12px; 
-            font-weight: 800; 
-            cursor: pointer; 
-            margin-top: 30px;
-        }
-
-        #map-container { margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px; }
-
-        /* HARD-CODED SCROLL PREVENTION */
-        .hard-clip-wrapper {
-            margin: 0 auto;
-            max-width: 100%;
-            position: relative;
-            overflow: hidden !important; /* Forcefully stops scroll wheel/bars */
-            border-radius: 15px;
-            border: 1px solid #eee;
-            background: #fff;
-        }
-
-        /* Prevents Elfsight from creating its own internal scrollbar */
-        .hard-clip-wrapper [class*="elfsight-app"] {
-            overflow: hidden !important;
-            height: 100% !important;
-        }
-
-        /* Standardize any internal iframes */
-        iframe {
-            overflow: hidden !important;
-            scrollbar-width: none; /* Firefox */
-            -ms-overflow-style: none; /* IE/Edge */
-        }
-        iframe::-webkit-scrollbar {
-            display: none; /* Chrome/Safari */
-        }
-    </style>
-</head>
-<body>
-
-    <div id="upload-overlay">
-        <div class="drop-box">
-            <div style="font-size: 50px; margin-bottom: 15px;">🚢</div>
-            <h1 style="color: var(--deep-space); margin: 0; font-weight: 900;">IMI Logistics</h1>
-            <p style="color: var(--text-gray);">Dashboard & Optimization Tool</p>
-            <input type="file" id="file-input" hidden accept=".xlsx, .xls">
-            <button class="btn-upload" onclick="document.getElementById('file-input').click()">UPLOAD DATASET</button>
-        </div>
+<aside class="sidebar" id="main-sidebar">
+    <div class="sidebar-header">
+        <h2 style="font-size: 0.8rem;">IMI Navigation</h2>
     </div>
-
-    <aside class="sidebar">
-        <div class="sidebar-header">
-            <h2>IMI Logistics Dashboard</h2>
-        </div>
-        <div class="nav-list" id="sidebar-nav"></div>
-    </aside>
-
-    <main class="content">
-        <div class="top-bar">
-            <h3 id="current-sheet-title" style="margin:0; font-weight: 800; color: var(--deep-space);">Welcome</h3>
-            <div id="file-name-display" style="background: #E2E8F0; padding: 8px 16px; border-radius: 30px; font-size: 0.7rem; font-weight: 700; color: var(--deep-space);"></div>
-        </div>
-
-        <div class="view-area">
-            <div class="card" id="data-card">
-                <div id="table-output"></div>
-                <div id="map-container"></div>
-            </div>
-        </div>
-    </main>
-
-    <script src="https://elfsightcdn.com/platform.js" async></script>
-    <script src="app.js"></script>
-</body>
-</html>
+    <div class="nav-list" id="sidebar-nav"></div>
+</aside>
