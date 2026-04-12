@@ -22,6 +22,7 @@
             overflow: hidden;
         }
 
+        /* Dashboard UI Elements */
         .sidebar { width: 300px; background: var(--deep-space); color: var(--white); display: flex; flex-direction: column; z-index: 10; }
         .sidebar-header { padding: 40px 24px; background: rgba(0,0,0,0.15); border-bottom: 1px solid rgba(255,255,255,0.1); }
         .sidebar-header h2 { font-size: 1.1rem; margin: 0; letter-spacing: 1.2px; font-weight: 900; color: var(--white); text-transform: uppercase; }
@@ -33,39 +34,32 @@
         .view-area { padding: 45px; }
         .card { background: var(--white); border-radius: 20px; padding: 35px; box-shadow: 0 15px 35px rgba(36, 34, 63, 0.08); }
 
-        /* THE CRITICAL FIX FOR SCROLLING AND HEIGHT */
+        /* The Outer Wrapper: Clips the bottom of the widget */
         .hard-clip-wrapper {
             margin: 0 auto;
             position: relative;
-            overflow: hidden !important; /* Clips the bottom map */
+            overflow: hidden !important; 
             border-radius: 15px;
             border: 1px solid #eee;
             background: #fff;
             display: block;
         }
 
-        /* This targets the Elfsight widget once it loads */
-        .elfsight-crop > div, 
-        .elfsight-crop iframe {
-            height: 1000px !important; /* Force internal content to stay large so it doesn't scale down */
-            min-height: 1000px !important;
-            overflow: hidden !important;
-            pointer-events: auto;
+        /* RE-ENABLE INTERNAL SCROLLING FOR THE LIST */
+        /* We target Elfsight's common list containers specifically */
+        [class*="elfsight-app"] [class*="Container"],
+        [class*="elfsight-app"] [class*="List"],
+        [class*="elfsight-app"] [class*="ScrollContainer"] {
+            overflow-y: auto !important;
+            scrollbar-width: thin !important; /* Shows a small scrollbar for the list only */
+            -ms-overflow-style: auto !important;
         }
 
-        /* This ensures the wrapper itself is the master of height */
-        .elfsight-crop {
-            display: block !important;
-            max-width: 100%;
-        }
-
-        /* Hide Scrollbars Everywhere */
-        * {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
-        }
-        *::-webkit-scrollbar {
-            display: none; /* Chrome, Safari and Opera */
+        /* Global Dashboard Scrollbar Hider (Doesn't affect Elfsight internal list) */
+        .content::-webkit-scrollbar,
+        .nav-list::-webkit-scrollbar,
+        body::-webkit-scrollbar {
+            display: none;
         }
         
         #upload-overlay { position: fixed; inset: 0; background: var(--off-white); z-index: 1000; display: flex; align-items: center; justify-content: center; }
