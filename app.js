@@ -8,7 +8,7 @@ class MILogisticsApp {
             },
             elfsight: {
                 width: "100%",
-                height: "auto"  // Elfsight usually controls its own height, but you can set px
+                height: "500px"  // Adjust this value to "crop" the view
             }
         };
         // -----------------------------
