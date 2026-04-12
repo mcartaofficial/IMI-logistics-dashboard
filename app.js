@@ -3,12 +3,14 @@ class MILogisticsApp {
         // --- DIMENSION ADJUSTMENTS ---
         this.widgetConfig = {
             shipXplorer: {
-                width: "100%",  // Use % or px (e.g., "1200px")
-                height: "800px" 
+                width: "100%",
+                height: "800px",
+                overflow: "hidden" // Keeps it clean
             },
             elfsight: {
                 width: "100%",
-                height: "400px"  // Adjust this value to "crop" the view
+                height: "550px",   // ADJUST THIS to crop the bottom part
+                overflow: "hidden" // Prevents the scroll wheel/extra space
             }
         };
         // -----------------------------
@@ -100,11 +102,10 @@ class MILogisticsApp {
             </div>
         `;
 
-        // Map dimensions are pulled from this.widgetConfig
         this.mapContainer.innerHTML = `
             <div style="margin-bottom: 35px; border-bottom: 2px solid var(--off-white); padding-bottom: 30px;">
                 <div style="margin-bottom: 15px; font-weight: 700; color: var(--deep-space); text-transform: uppercase;">🚢 REAL-TIME VESSEL TRACKER</div>
-                <div class="widget-wrapper" style="width: ${this.widgetConfig.shipXplorer.width}; height: ${this.widgetConfig.shipXplorer.height};">
+                <div class="widget-wrapper" style="width: ${this.widgetConfig.shipXplorer.width}; height: ${this.widgetConfig.shipXplorer.height}; overflow: ${this.widgetConfig.shipXplorer.overflow};">
                     <iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0" 
                         width="100%" height="100%" 
                         src="https://www.shipxplorer.com/?widget=1&z=12&lat=40.46244&lng=-73.88822&portCardRight=true&showLabels=true&showStateFlag=true&showVn=true&showIMO=true&showLabelPhoto=true&showMMSI=true&class=CARGO,PASSENGER,TANKER,HSC,TUG,FISHING,PLEASURE,SAILING,OTHER,UNKNOWN">
@@ -114,7 +115,7 @@ class MILogisticsApp {
 
             <div style="margin-top: 20px;">
                 <div style="margin-bottom: 15px; font-weight: 700; color: var(--deep-space); text-transform: uppercase;">📍 FLEET & STORE LOCATOR</div>
-                <div class="widget-wrapper" style="width: ${this.widgetConfig.elfsight.width}; height: ${this.widgetConfig.elfsight.height};">
+                <div class="widget-wrapper" style="width: ${this.widgetConfig.elfsight.width}; height: ${this.widgetConfig.elfsight.height}; overflow: ${this.widgetConfig.elfsight.overflow};">
                     <div class="elfsight-app-d9332a95-3af1-4708-a385-24cef7defd35" data-elfsight-app-lazy></div>
                 </div>
             </div>
