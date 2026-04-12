@@ -8,7 +8,7 @@ class MILogisticsApp {
             },
             elfsight: {
                 width: "100%",
-                height: "500px" // CHANGE THIS: Lower = shorter, Higher = taller
+                height: "800px" // CHANGE THIS: Lower = shorter, Higher = taller
             }
         };
         // -------------------------------------------
