@@ -1,14 +1,20 @@
 class MILogisticsApp {
     constructor() {
+        // --- DIMENSION ADJUSTMENTS ---
         this.widgetConfig = {
-            shipXplorer: { width: "100%", height: "800px" },
-            elfsight: { width: "100%", height: "850px" }
+            shipXplorer: {
+                width: "100%",
+                height: "800px" 
+            },
+            elfsight: {
+                width: "100%",
+                height: "850px" 
+            }
         };
+        // -----------------------------
 
         this.workbookData = {};
         this.fileNames = [];
-        this.interactiveSheet = "LP_Enhanced_IMI_WhatIf_1";
-        
         this.fileInput = document.getElementById('file-input');
         this.nav = document.getElementById('sidebar-nav');
         this.sidebar = document.getElementById('sidebar');
@@ -22,6 +28,8 @@ class MILogisticsApp {
 
     init() {
         this.fileInput.addEventListener('change', (e) => this.handleFile(e.target.files[0]));
+        
+        // Sidebar Toggle
         this.menuToggle.addEventListener('click', () => {
             this.sidebar.classList.toggle('collapsed');
         });
@@ -43,6 +51,7 @@ class MILogisticsApp {
             this.buildSidebar();
             this.overlay.style.display = 'none';
             document.getElementById('file-name-display').innerText = file.name.toUpperCase();
+            
             this.sidebar.classList.add('collapsed');
             this.showHomePage(); 
         };
@@ -51,10 +60,14 @@ class MILogisticsApp {
 
     buildSidebar() {
         this.nav.innerHTML = '';
+        
         const homeBtn = document.createElement('button');
         homeBtn.className = 'nav-item';
         homeBtn.innerHTML = `<span>🏠</span> DASHBOARD HOME`;
-        homeBtn.onclick = () => { this.showHomePage(); this.sidebar.classList.add('collapsed'); };
+        homeBtn.onclick = () => {
+            this.showHomePage();
+            this.sidebar.classList.add('collapsed');
+        };
         homeBtn.setAttribute('data-id', 'HOME_PAGE');
         this.nav.appendChild(homeBtn);
 
@@ -63,7 +76,10 @@ class MILogisticsApp {
             btn.className = 'nav-item';
             const cleanName = name.replace(/_/g, ' ');
             btn.innerHTML = `<span>📊</span> ${cleanName}`;
-            btn.onclick = () => { this.switchPage(name); this.sidebar.classList.add('collapsed'); };
+            btn.onclick = () => {
+                this.switchPage(name);
+                this.sidebar.classList.add('collapsed');
+            };
             btn.setAttribute('data-id', name);
             this.nav.appendChild(btn);
         });
@@ -72,6 +88,8 @@ class MILogisticsApp {
     showHomePage() {
         this.updateActiveNav('HOME_PAGE');
         this.titleText.innerText = "Dashboard Overview";
+        
+        const totalSheets = this.fileNames.length;
         let totalRows = 0;
         this.fileNames.forEach(name => totalRows += (this.workbookData[name].length - 1));
 
@@ -79,10 +97,20 @@ class MILogisticsApp {
             <div style="text-align: center; padding: 20px;">
                 <h1 style="color: var(--deep-space); margin-bottom: 10px;">Welcome to IMI Logistics</h1>
                 <p style="color: var(--text-gray);">Select a route or data sheet from the sidebar to begin optimization.</p>
+                
                 <div class="welcome-grid">
-                    <div class="stat-box"><small>TOTAL SHEETS</small><h2 style="margin: 5px 0; color: var(--mi-red);">${this.fileNames.length}</h2></div>
-                    <div class="stat-box"><small>TOTAL DATA ROWS</small><h2 style="margin: 5px 0; color: var(--mi-red);">${totalRows}</h2></div>
-                    <div class="stat-box"><small>SYSTEM STATUS</small><h2 style="margin: 5px 0; color: #10B981;">ACTIVE</h2></div>
+                    <div class="stat-box">
+                        <small>TOTAL SHEETS</small>
+                        <h2 style="margin: 5px 0; color: var(--mi-red);">${totalSheets}</h2>
+                    </div>
+                    <div class="stat-box">
+                        <small>TOTAL DATA ROWS</small>
+                        <h2 style="margin: 5px 0; color: var(--mi-red);">${totalRows}</h2>
+                    </div>
+                    <div class="stat-box">
+                        <small>SYSTEM STATUS</small>
+                        <h2 style="margin: 5px 0; color: #10B981;">ACTIVE</h2>
+                    </div>
                 </div>
             </div>
         `;
@@ -91,9 +119,13 @@ class MILogisticsApp {
             <div style="margin-bottom: 35px; border-bottom: 2px solid var(--off-white); padding-bottom: 30px;">
                 <div style="margin-bottom: 15px; font-weight: 700; color: var(--deep-space); text-transform: uppercase;">🚢 REAL-TIME VESSEL TRACKER</div>
                 <div class="hard-clip-wrapper" style="width: ${this.widgetConfig.shipXplorer.width}; height: ${this.widgetConfig.shipXplorer.height};">
-                    <iframe frameborder="0" scrolling="no" src="https://www.shipxplorer.com/?widget=1&z=12&lat=40.46244&lng=-73.88822&portCardRight=true&showLabels=true&showStateFlag=true&showVn=true&showIMO=true&showLabelPhoto=true&showMMSI=true&class=CARGO,PASSENGER,TANKER,HSC,TUG,FISHING,PLEASURE,SAILING,OTHER,UNKNOWN" style="width: 100%; height: 100%; border: none; overflow: hidden;"></iframe>
+                    <iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0" 
+                        style="width: 100%; height: 100%; border: none; overflow: hidden;"
+                        src="https://www.shipxplorer.com/?widget=1&z=12&lat=40.46244&lng=-73.88822&portCardRight=true&showLabels=true&showStateFlag=true&showVn=true&showIMO=true&showLabelPhoto=true&showMMSI=true&class=CARGO,PASSENGER,TANKER,HSC,TUG,FISHING,PLEASURE,SAILING,OTHER,UNKNOWN">
+                    </iframe>
                 </div>
             </div>
+
             <div style="margin-top: 20px;">
                 <div style="margin-bottom: 15px; font-weight: 700; color: var(--deep-space); text-transform: uppercase;">📍 FLEET & STORE LOCATOR</div>
                 <div class="hard-clip-wrapper" style="width: ${this.widgetConfig.elfsight.width}; height: ${this.widgetConfig.elfsight.height};">
@@ -111,50 +143,40 @@ class MILogisticsApp {
         const rows = this.workbookData[sheetName];
         if (!rows || rows.length === 0) return;
 
-        const isInteractive = sheetName === this.interactiveSheet;
-        const tableClass = isInteractive ? 'excel-dark-table' : 'standard-table';
-
-        let html = `<div class="table-container"><table class="${tableClass}"><thead><tr>`;
+        const isInteractive = sheetName === "LP_Enhanced_IMI_WhatIf_1";
+        
+        let html = `
+            ${isInteractive ? '<div style="background: #fff9db; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.8rem; border: 1px solid #ffe066;">📝 <b>Simulation Mode:</b> Changes made to cells below update the dashboard in real-time.</div>' : ''}
+            <div class="table-container">
+                <table>
+                    <thead><tr>`;
+        
         rows[0].forEach(cell => html += `<th>${cell}</th>`);
         html += '</tr></thead><tbody>';
 
         rows.slice(1).forEach((row, rowIndex) => {
             html += '<tr>';
-            row.forEach((cell, cellIndex) => {
-                const editable = isInteractive ? 'contenteditable="true"' : '';
-                html += `<td ${editable} data-row="${rowIndex + 1}" data-col="${cellIndex}">${cell}</td>`;
+            row.forEach((cell, colIndex) => {
+                if (isInteractive) {
+                    html += `<td><input type="text" class="cell-input" value="${cell}" oninput="window.app.updateCellValue('${sheetName}', ${rowIndex + 1}, ${colIndex}, this.value)"></td>`;
+                } else {
+                    html += `<td>${cell}</td>`;
+                }
             });
             html += '</tr>';
         });
 
         html += '</tbody></table></div>';
-        
-        if (isInteractive) {
-            html = `<div style="background: #1a1830; padding: 10px; color: #10B981; font-size: 0.7rem; font-weight: bold; border-radius: 8px 8px 0 0;">MODE: INTERACTIVE WHAT-IF SCENARIO</div>` + html;
-        }
-
         this.tableOutput.innerHTML = html;
-
-        if (isInteractive) {
-            this.attachTableListeners(sheetName);
-        }
-
         document.querySelector('.content').scrollTop = 0;
     }
 
-    attachTableListeners(sheetName) {
-        const cells = this.tableOutput.querySelectorAll('td[contenteditable="true"]');
-        cells.forEach(cell => {
-            cell.addEventListener('blur', (e) => {
-                const r = e.target.getAttribute('data-row');
-                const c = e.target.getAttribute('data-col');
-                const newValue = e.target.innerText;
-                
-                // Update internal data model
-                this.workbookData[sheetName][r][c] = newValue;
-                console.log(`Updated [${sheetName}] Cell (${r},${c}) to: ${newValue}`);
-            });
-        });
+    updateCellValue(sheetName, row, col, val) {
+        // Update the data object
+        this.workbookData[sheetName][row][col] = val;
+        
+        // Optional: Trigger recalculations here if you add formulas later
+        console.log(`Updated [${sheetName}] Row ${row}, Col ${col} to: ${val}`);
     }
 
     updateActiveNav(id) {
@@ -164,4 +186,5 @@ class MILogisticsApp {
     }
 }
 
-new MILogisticsApp();
+// Expose to window so the inline oninput can find it
+window.app = new MILogisticsApp();
