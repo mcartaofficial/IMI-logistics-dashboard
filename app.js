@@ -1,17 +1,9 @@
 class MILogisticsApp {
     constructor() {
-        // --- DIMENSION ADJUSTMENTS ---
         this.widgetConfig = {
-            shipXplorer: {
-                width: "100%",
-                height: "800px" 
-            },
-            elfsight: {
-                width: "100%",
-                height: "850px" 
-            }
+            shipXplorer: { width: "100%", height: "800px" },
+            elfsight: { width: "100%", height: "850px" }
         };
-        // -----------------------------
 
         this.workbookData = {};
         this.fileNames = [];
@@ -28,8 +20,6 @@ class MILogisticsApp {
 
     init() {
         this.fileInput.addEventListener('change', (e) => this.handleFile(e.target.files[0]));
-        
-        // Sidebar Toggle
         this.menuToggle.addEventListener('click', () => {
             this.sidebar.classList.toggle('collapsed');
         });
@@ -51,7 +41,6 @@ class MILogisticsApp {
             this.buildSidebar();
             this.overlay.style.display = 'none';
             document.getElementById('file-name-display').innerText = file.name.toUpperCase();
-            
             this.sidebar.classList.add('collapsed');
             this.showHomePage(); 
         };
@@ -60,7 +49,6 @@ class MILogisticsApp {
 
     buildSidebar() {
         this.nav.innerHTML = '';
-        
         const homeBtn = document.createElement('button');
         homeBtn.className = 'nav-item';
         homeBtn.innerHTML = `<span>🏠</span> DASHBOARD HOME`;
@@ -88,6 +76,7 @@ class MILogisticsApp {
     showHomePage() {
         this.updateActiveNav('HOME_PAGE');
         this.titleText.innerText = "Dashboard Overview";
+        this.mapContainer.style.display = 'block'; // Show maps on home
         
         const totalSheets = this.fileNames.length;
         let totalRows = 0;
@@ -97,20 +86,10 @@ class MILogisticsApp {
             <div style="text-align: center; padding: 20px;">
                 <h1 style="color: var(--deep-space); margin-bottom: 10px;">Welcome to IMI Logistics</h1>
                 <p style="color: var(--text-gray);">Select a route or data sheet from the sidebar to begin optimization.</p>
-                
                 <div class="welcome-grid">
-                    <div class="stat-box">
-                        <small>TOTAL SHEETS</small>
-                        <h2 style="margin: 5px 0; color: var(--mi-red);">${totalSheets}</h2>
-                    </div>
-                    <div class="stat-box">
-                        <small>TOTAL DATA ROWS</small>
-                        <h2 style="margin: 5px 0; color: var(--mi-red);">${totalRows}</h2>
-                    </div>
-                    <div class="stat-box">
-                        <small>SYSTEM STATUS</small>
-                        <h2 style="margin: 5px 0; color: #10B981;">ACTIVE</h2>
-                    </div>
+                    <div class="stat-box"><small>TOTAL SHEETS</small><h2 style="margin: 5px 0; color: var(--mi-red);">${totalSheets}</h2></div>
+                    <div class="stat-box"><small>TOTAL DATA ROWS</small><h2 style="margin: 5px 0; color: var(--mi-red);">${totalRows}</h2></div>
+                    <div class="stat-box"><small>SYSTEM STATUS</small><h2 style="margin: 5px 0; color: #10B981;">ACTIVE</h2></div>
                 </div>
             </div>
         `;
@@ -119,13 +98,9 @@ class MILogisticsApp {
             <div style="margin-bottom: 35px; border-bottom: 2px solid var(--off-white); padding-bottom: 30px;">
                 <div style="margin-bottom: 15px; font-weight: 700; color: var(--deep-space); text-transform: uppercase;">🚢 REAL-TIME VESSEL TRACKER</div>
                 <div class="hard-clip-wrapper" style="width: ${this.widgetConfig.shipXplorer.width}; height: ${this.widgetConfig.shipXplorer.height};">
-                    <iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0" 
-                        style="width: 100%; height: 100%; border: none; overflow: hidden;"
-                        src="https://www.shipxplorer.com/?widget=1&z=12&lat=40.46244&lng=-73.88822&portCardRight=true&showLabels=true&showStateFlag=true&showVn=true&showIMO=true&showLabelPhoto=true&showMMSI=true&class=CARGO,PASSENGER,TANKER,HSC,TUG,FISHING,PLEASURE,SAILING,OTHER,UNKNOWN">
-                    </iframe>
+                    <iframe src="https://www.shipxplorer.com/?widget=1&z=12&lat=40.46244&lng=-73.88822&portCardRight=true&showLabels=true" style="width: 100%; height: 100%; border: none;"></iframe>
                 </div>
             </div>
-
             <div style="margin-top: 20px;">
                 <div style="margin-bottom: 15px; font-weight: 700; color: var(--deep-space); text-transform: uppercase;">📍 FLEET & STORE LOCATOR</div>
                 <div class="hard-clip-wrapper" style="width: ${this.widgetConfig.elfsight.width}; height: ${this.widgetConfig.elfsight.height};">
@@ -138,29 +113,42 @@ class MILogisticsApp {
     switchPage(sheetName) {
         this.updateActiveNav(sheetName);
         this.titleText.innerText = sheetName.replace(/_/g, ' ');
-        this.mapContainer.innerHTML = '';
+        
+        // Hide maps when viewing data sheets to focus on the table
+        this.mapContainer.style.display = 'none';
+        this.renderTable(sheetName);
+    }
 
+    renderTable(sheetName) {
         const rows = this.workbookData[sheetName];
-        if (!rows || rows.length === 0) return;
+        if (!rows || rows.length === 0) {
+            this.tableOutput.innerHTML = '<p>No data found in this sheet.</p>';
+            return;
+        }
 
-        const isInteractive = sheetName === "LP_Enhanced_IMI_WhatIf_1";
+        // Flex check: matches if name contains "WhatIf" or is exactly the name you provided
+        const isInteractive = sheetName.includes("WhatIf") || sheetName === "LP_Enhanced_IMI_WhatIf_1";
         
-        let html = `
-            ${isInteractive ? '<div style="background: #fff9db; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.8rem; border: 1px solid #ffe066;">📝 <b>Simulation Mode:</b> Changes made to cells below update the dashboard in real-time.</div>' : ''}
-            <div class="table-container">
-                <table>
-                    <thead><tr>`;
-        
-        rows[0].forEach(cell => html += `<th>${cell}</th>`);
+        let html = '';
+        if (isInteractive) {
+            html += `<div style="background: #fff9db; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 0.85rem; border: 1px solid #ffe066; color: #856404;">
+                        <strong>📝 Simulation Mode Enabled:</strong> You can edit the cells below. Changes are saved to memory in real-time.
+                     </div>`;
+        }
+
+        html += '<div class="table-container"><table><thead><tr>';
+        rows[0].forEach(cell => html += `<th>${cell || ''}</th>`);
         html += '</tr></thead><tbody>';
 
         rows.slice(1).forEach((row, rowIndex) => {
             html += '<tr>';
             row.forEach((cell, colIndex) => {
+                const displayVal = cell === undefined || cell === null ? "" : cell;
                 if (isInteractive) {
-                    html += `<td><input type="text" class="cell-input" value="${cell}" oninput="window.app.updateCellValue('${sheetName}', ${rowIndex + 1}, ${colIndex}, this.value)"></td>`;
+                    html += `<td><input type="text" class="cell-input" value="${displayVal}" 
+                             oninput="window.app.updateCellValue('${sheetName}', ${rowIndex + 1}, ${colIndex}, this.value)"></td>`;
                 } else {
-                    html += `<td>${cell}</td>`;
+                    html += `<td>${displayVal}</td>`;
                 }
             });
             html += '</tr>';
@@ -172,11 +160,9 @@ class MILogisticsApp {
     }
 
     updateCellValue(sheetName, row, col, val) {
-        // Update the data object
-        this.workbookData[sheetName][row][col] = val;
-        
-        // Optional: Trigger recalculations here if you add formulas later
-        console.log(`Updated [${sheetName}] Row ${row}, Col ${col} to: ${val}`);
+        if (this.workbookData[sheetName]) {
+            this.workbookData[sheetName][row][col] = val;
+        }
     }
 
     updateActiveNav(id) {
@@ -186,5 +172,5 @@ class MILogisticsApp {
     }
 }
 
-// Expose to window so the inline oninput can find it
+// Global initialization
 window.app = new MILogisticsApp();
