@@ -1,11 +1,19 @@
 class MILogisticsApp {
     constructor() {
+        this.widgetConfig = {
+            shipXplorer: { width: "100%", height: "800px" },
+            elfsight: { width: "100%", height: "850px" }
+        };
+
         this.workbookData = {};
         this.fileNames = [];
 
         this.fileInput = document.getElementById('file-input');
         this.nav = document.getElementById('sidebar-nav');
+        this.sidebar = document.getElementById('sidebar');
+        this.menuToggle = document.getElementById('menu-toggle');
         this.tableOutput = document.getElementById('table-output');
+        this.mapContainer = document.getElementById('map-container');
         this.titleText = document.getElementById('current-sheet-title');
         this.overlay = document.getElementById('upload-overlay');
 
@@ -21,7 +29,7 @@ class MILogisticsApp {
 
         reader.onload = (e) => {
             const data = new Uint8Array(e.target.result);
-            const wb = XLSX.read(data, { type: 'array' });
+            const wb = XLSX.read(data, { type: 'array', raw: false });
 
             this.fileNames = wb.SheetNames;
 
@@ -34,6 +42,9 @@ class MILogisticsApp {
 
             this.buildSidebar();
             this.overlay.style.display = 'none';
+            document.getElementById('file-name-display').innerText = file.name.toUpperCase();
+
+            this.showHomePage();
         };
 
         reader.readAsArrayBuffer(file);
@@ -45,77 +56,65 @@ class MILogisticsApp {
         this.fileNames.forEach(name => {
             const btn = document.createElement('button');
             btn.className = 'nav-item';
-            btn.innerText = name;
+            btn.innerHTML = `<span>📄</span> ${name.replace(/_/g, ' ')}`;
             btn.onclick = () => this.switchPage(name);
+            btn.setAttribute('data-id', name);
             this.nav.appendChild(btn);
         });
     }
 
     switchPage(sheetName) {
-        this.titleText.innerText = sheetName;
+        this.titleText.innerText = sheetName.replace(/_/g, ' ');
+        this.mapContainer.innerHTML = '';
+
+        const rows = this.workbookData[sheetName];
+        if (!rows || rows.length === 0) return;
 
         if (sheetName === "LP_Enhanced_IMI_WhatIf_1") {
-            this.renderInteractive(sheetName);
-        } else {
-            this.renderStatic(sheetName);
+            this.renderInteractiveTable(sheetName);
+            return;
         }
-    }
 
-    renderStatic(sheetName) {
-        const data = this.workbookData[sheetName];
+        let html = '<div class="table-container"><table><thead><tr>';
+        rows[0].forEach(cell => html += `<th>${cell}</th>`);
+        html += '</tr></thead><tbody>';
 
-        let html = "<table><thead><tr>";
-        data[0].forEach(h => html += `<th>${h}</th>`);
-        html += "</tr></thead><tbody>";
-
-        data.slice(1).forEach(row => {
-            html += "<tr>";
+        rows.slice(1).forEach(row => {
+            html += '<tr>';
             row.forEach(cell => html += `<td>${cell}</td>`);
-            html += "</tr>";
+            html += '</tr>';
         });
 
-        html += "</tbody></table>";
+        html += '</tbody></table></div>';
         this.tableOutput.innerHTML = html;
     }
 
-    renderInteractive(sheetName) {
+    /* 🔥 INTERACTIVE TABLE (ADDED ONLY) */
+    renderInteractiveTable(sheetName) {
         const data = this.workbookData[sheetName];
+        this.tableOutput.innerHTML = '';
 
-        this.tableOutput.innerHTML = "";
+        const container = document.createElement('div');
+        container.className = 'table-container';
 
-        const table = document.createElement("table");
-        const thead = document.createElement("thead");
-        const tbody = document.createElement("tbody");
+        const table = document.createElement('table');
+        const thead = document.createElement('thead');
+        const tbody = document.createElement('tbody');
 
-        // HEADER
-        const trHead = document.createElement("tr");
+        const headerRow = document.createElement('tr');
+
         data[0].forEach((cell, col) => {
-            const th = document.createElement("th");
-            th.contentEditable = true;
-            th.innerText = cell;
-            th.dataset.row = 0;
-            th.dataset.col = col;
-
-            this.attachEvents(th, sheetName);
-
-            trHead.appendChild(th);
+            const th = this.createCell(cell, 0, col, sheetName, true);
+            headerRow.appendChild(th);
         });
-        thead.appendChild(trHead);
 
-        // BODY
-        data.slice(1).forEach((rowData, rowIndex) => {
-            const tr = document.createElement("tr");
+        thead.appendChild(headerRow);
 
-            rowData.forEach((cell, col) => {
-                const td = document.createElement("td");
-                td.contentEditable = true;
-                td.innerText = cell;
+        data.slice(1).forEach((row, rIndex) => {
+            const tr = document.createElement('tr');
 
-                td.dataset.row = rowIndex + 1;
-                td.dataset.col = col;
-
-                this.attachEvents(td, sheetName);
-
+            row.forEach((cell, cIndex) => {
+                const td = this.createCell(cell, rIndex + 1, cIndex, sheetName);
                 tr.appendChild(td);
             });
 
@@ -124,25 +123,28 @@ class MILogisticsApp {
 
         table.appendChild(thead);
         table.appendChild(tbody);
-        this.tableOutput.appendChild(table);
+        container.appendChild(table);
+        this.tableOutput.appendChild(container);
     }
 
-    attachEvents(cell, sheetName) {
-        cell.addEventListener("input", (e) => {
-            const row = parseInt(cell.dataset.row);
-            const col = parseInt(cell.dataset.col);
-            this.workbookData[sheetName][row][col] = e.target.innerText;
+    createCell(value, row, col, sheetName, isHeader = false) {
+        const cell = document.createElement(isHeader ? 'th' : 'td');
+
+        cell.contentEditable = true;
+        cell.innerText = value;
+        cell.dataset.row = row;
+        cell.dataset.col = col;
+
+        cell.addEventListener('input', () => {
+            this.workbookData[sheetName][row][col] = cell.innerText;
         });
 
-        cell.addEventListener("focus", () => {
-            document.querySelectorAll(".active-cell").forEach(c => c.classList.remove("active-cell"));
-            cell.classList.add("active-cell");
+        cell.addEventListener('focus', () => {
+            document.querySelectorAll('.active-cell').forEach(c => c.classList.remove('active-cell'));
+            cell.classList.add('active-cell');
         });
 
-        cell.addEventListener("keydown", (e) => {
-            const row = parseInt(cell.dataset.row);
-            const col = parseInt(cell.dataset.col);
-
+        cell.addEventListener('keydown', (e) => {
             let next;
 
             if (e.key === "ArrowRight") next = this.getCell(row, col + 1);
@@ -155,10 +157,26 @@ class MILogisticsApp {
                 next.focus();
             }
         });
+
+        return cell;
     }
 
     getCell(row, col) {
         return document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+    }
+
+    showHomePage() {
+        this.titleText.innerText = "Dashboard Overview";
+        this.tableOutput.innerHTML = `<h2>Welcome</h2>`;
+
+        this.mapContainer.innerHTML = `
+            <div>
+                <iframe style="width:100%; height:800px;" src="https://www.shipxplorer.com/?widget=1"></iframe>
+            </div>
+            <div>
+                <div class="elfsight-app-d9332a95-3af1-4708-a385-24cef7defd35"></div>
+            </div>
+        `;
     }
 }
 
