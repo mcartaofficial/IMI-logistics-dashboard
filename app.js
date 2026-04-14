@@ -7,15 +7,12 @@ class MILogisticsApp {
             },
             elfsight: {
                 width: "100%",
-                height: "850px"
+                height: "850px" 
             }
         };
 
         this.workbookData = {};
         this.fileNames = [];
-        this.targetSheet = "LP_Enhanced_IMI_WhatIf_1";
-        
-        // Element cache
         this.fileInput = document.getElementById('file-input');
         this.nav = document.getElementById('sidebar-nav');
         this.sidebar = document.getElementById('sidebar');
@@ -24,29 +21,14 @@ class MILogisticsApp {
         this.mapContainer = document.getElementById('map-container');
         this.titleText = document.getElementById('current-sheet-title');
         this.overlay = document.getElementById('upload-overlay');
-        
         this.init();
     }
 
     init() {
         this.fileInput.addEventListener('change', (e) => this.handleFile(e.target.files[0]));
         
-        // Sidebar Toggle
         this.menuToggle.addEventListener('click', () => {
             this.sidebar.classList.toggle('collapsed');
-        });
-
-        // Event Delegation for Interactive Table
-        this.tableOutput.addEventListener('input', (e) => {
-            if (e.target.hasAttribute('data-row')) {
-                this.handleCellEdit(e);
-            }
-        });
-
-        this.tableOutput.addEventListener('keydown', (e) => {
-            if (e.target.hasAttribute('data-row')) {
-                this.handleKeyboardNavigation(e);
-            }
         });
     }
 
@@ -106,7 +88,11 @@ class MILogisticsApp {
         
         const totalSheets = this.fileNames.length;
         let totalRows = 0;
-        this.fileNames.forEach(name => totalRows += (this.workbookData[name].length - 1));
+        this.fileNames.forEach(name => {
+            if (this.workbookData[name]) {
+                totalRows += Math.max(0, this.workbookData[name].length - 1);
+            }
+        });
 
         this.tableOutput.innerHTML = `
             <div style="text-align: center; padding: 20px;">
@@ -155,129 +141,124 @@ class MILogisticsApp {
         this.titleText.innerText = sheetName.replace(/_/g, ' ');
         this.mapContainer.innerHTML = '';
 
-        if (sheetName === this.targetSheet) {
+        if (sheetName === "LP_Enhanced_IMI_WhatIf_1") {
             this.renderInteractiveTable(sheetName);
         } else {
             this.renderStaticTable(sheetName);
         }
-        
-        document.querySelector('.content').scrollTop = 0;
     }
 
     renderStaticTable(sheetName) {
         const rows = this.workbookData[sheetName];
-        if (!rows || rows.length === 0) {
-            this.tableOutput.innerHTML = '<p>No data available in this sheet.</p>';
-            return;
-        }
+        if (!rows || rows.length === 0) return;
 
-        let html = '<div class="table-container"><table><thead><tr>';
-        rows[0].forEach(cell => html += `<th>${cell}</th>`);
-        html += '</tr></thead><tbody>';
+        this.tableOutput.innerHTML = '';
+        const container = document.createElement('div');
+        container.className = 'table-container';
 
-        rows.slice(1).forEach(row => {
-            html += '<tr>';
-            row.forEach(cell => html += `<td>${cell}</td>`);
-            html += '</tr>';
+        const table = document.createElement('table');
+        const thead = document.createElement('thead');
+        const tbody = document.createElement('tbody');
+
+        // Header
+        const headerRow = document.createElement('tr');
+        rows[0].forEach(cellText => {
+            const th = document.createElement('th');
+            th.textContent = cellText;
+            headerRow.appendChild(th);
+        });
+        thead.appendChild(headerRow);
+
+        // Body
+        rows.slice(1).forEach(rowData => {
+            const tr = document.createElement('tr');
+            rowData.forEach(cellData => {
+                const td = document.createElement('td');
+                td.textContent = cellData;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
         });
 
-        html += '</tbody></table></div>';
-        this.tableOutput.innerHTML = html;
+        table.appendChild(thead);
+        table.appendChild(tbody);
+        container.appendChild(table);
+        this.tableOutput.appendChild(container);
+        document.querySelector('.content').scrollTop = 0;
     }
 
     renderInteractiveTable(sheetName) {
         const rows = this.workbookData[sheetName];
         if (!rows || rows.length === 0) return;
 
-        let html = `
-            <div class="edit-badge">Interactive Mode Enabled</div>
-            <div class="table-container">
-                <table class="interactive-table" data-sheet="${sheetName}">
-                    <thead>
-                        <tr>`;
-        
-        // Headers are editable too
-        rows[0].forEach((cell, colIdx) => {
-            html += `<th contenteditable="true" data-row="0" data-col="${colIdx}">${cell}</th>`;
-        });
-        
-        html += `       </tr>
-                    </thead>
-                    <tbody>`;
+        this.tableOutput.innerHTML = '';
+        const container = document.createElement('div');
+        container.className = 'table-container';
 
-        rows.slice(1).forEach((row, rowIdx) => {
-            const actualRowIdx = rowIdx + 1;
-            html += '<tr>';
-            row.forEach((cell, colIdx) => {
-                html += `<td contenteditable="true" data-row="${actualRowIdx}" data-col="${colIdx}">${cell}</td>`;
+        const table = document.createElement('table');
+        const thead = document.createElement('thead');
+        const tbody = document.createElement('tbody');
+
+        // Build Header Manually
+        const headerRow = document.createElement('tr');
+        rows[0].forEach((cellText, colIndex) => {
+            const th = document.createElement('th');
+            th.contentEditable = true;
+            th.textContent = cellText;
+            th.dataset.row = 0;
+            th.dataset.col = colIndex;
+
+            // Live binding for header
+            th.addEventListener('input', (e) => {
+                this.workbookData[sheetName][0][colIndex] = e.target.innerText;
             });
-            html += '</tr>';
+
+            th.addEventListener('focus', () => {
+                this.clearActiveCells();
+                th.classList.add('active-cell');
+            });
+
+            headerRow.appendChild(th);
+        });
+        thead.appendChild(headerRow);
+
+        // Build Body Manually
+        rows.slice(1).forEach((rowData, rowIndexRelative) => {
+            const rowIndex = rowIndexRelative + 1;
+            const tr = document.createElement('tr');
+
+            rowData.forEach((cellData, colIndex) => {
+                const td = document.createElement('td');
+                td.contentEditable = true;
+                td.textContent = cellData;
+                td.dataset.row = rowIndex;
+                td.dataset.col = colIndex;
+
+                // Sync data on input
+                td.addEventListener('input', (e) => {
+                    this.workbookData[sheetName][rowIndex][colIndex] = e.target.innerText;
+                });
+
+                // Focus/Visual feedback
+                td.addEventListener('focus', () => {
+                    this.clearActiveCells();
+                    td.classList.add('active-cell');
+                });
+
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
         });
 
-        html += '</tbody></table></div>';
-        this.tableOutput.innerHTML = html;
+        table.appendChild(thead);
+        table.appendChild(tbody);
+        container.appendChild(table);
+        this.tableOutput.appendChild(container);
+        document.querySelector('.content').scrollTop = 0;
     }
 
-    handleCellEdit(e) {
-        const cell = e.target;
-        const row = parseInt(cell.getAttribute('data-row'));
-        const col = parseInt(cell.getAttribute('data-col'));
-        const sheetName = cell.closest('table').getAttribute('data-sheet');
-        const newValue = cell.innerText;
-
-        // Ensure the array structure exists (robust handling)
-        if (!this.workbookData[sheetName][row]) {
-            this.workbookData[sheetName][row] = [];
-        }
-        
-        // Update data model in memory
-        this.workbookData[sheetName][row][col] = newValue;
-        
-        // Log for developer audit
-        console.log(`Updated ${sheetName} [${row},${col}]: ${newValue}`);
-    }
-
-    handleKeyboardNavigation(e) {
-        const cell = e.target;
-        const row = parseInt(cell.getAttribute('data-row'));
-        const col = parseInt(cell.getAttribute('data-col'));
-        const table = cell.closest('table');
-        
-        let targetRow = row;
-        let targetCol = col;
-
-        switch(e.key) {
-            case 'ArrowUp':
-                targetRow = Math.max(0, row - 1);
-                e.preventDefault();
-                break;
-            case 'ArrowDown':
-                targetRow = row + 1;
-                e.preventDefault();
-                break;
-            case 'ArrowLeft':
-                targetCol = Math.max(0, col - 1);
-                e.preventDefault();
-                break;
-            case 'ArrowRight':
-                targetCol = col + 1;
-                e.preventDefault();
-                break;
-            case 'Enter':
-                targetRow = row + 1;
-                e.preventDefault();
-                break;
-            case 'Tab':
-                // Native tab works, but we can override for wrapping if desired
-                return; 
-            default:
-                return;
-        }
-
-        const nextCell = table.querySelector(`[data-row="${targetRow}"][data-col="${targetCol}"]`);
-        if (nextCell) {
-            nextCell.focus();
-        }
+    clearActiveCells() {
+        document.querySelectorAll(".active-cell").forEach(c => c.classList.remove("active-cell"));
     }
 
     updateActiveNav(id) {
@@ -287,5 +268,4 @@ class MILogisticsApp {
     }
 }
 
-// Initialize the enterprise dashboard
 new MILogisticsApp();
