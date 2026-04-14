@@ -112,7 +112,7 @@ class MILogisticsApp {
                         height="800px" 
                         frameborder="0" 
                         scrolling="no" 
-                        src="https://fau-my.sharepoint.com/personal/hardyj2025_fau_edu/_layouts/15/Doc.aspx?sourcedoc={546c8dd2-3f61-4d74-86f7-3da881b4eece}&action=embedview&AllowTyping=True&ActiveCell='Port%20Routes'!A1&wdDownloadButton=True&wdInConfigurator=True&wdInConfigurator=True">
+                        src="https://fau-my.sharepoint.com/personal/hardyj2025_fau_edu/_layouts/15/Doc.aspx?sourcedoc={546c8dd2-3f61-4d74-86f7-3da881b4eece}&action=embedview&AllowTyping=True&ActiveCell='Port%20Routes'!A1&wdHideGridlines=True&wdDownloadButton=True&wdInConfigurator=True&wdInConfigurator=True">
                     </iframe>
                 </div>
             `;
