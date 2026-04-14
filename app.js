@@ -1,20 +1,18 @@
 class MILogisticsApp {
     constructor() {
-        // --- DIMENSION ADJUSTMENTS ---
         this.widgetConfig = {
-            shipXplorer: {
-                width: "100%",
-                height: "800px" 
-            },
-            elfsight: {
-                width: "100%",
-                height: "850px" 
-            }
+            shipXplorer: { width: "100%", height: "800px" },
+            elfsight: { width: "100%", height: "850px" }
         };
-        // -----------------------------
 
-        this.workbookData = {};
-        this.fileNames = [];
+        // Define the sheet names available in your Excel file
+        this.availableSheets = [
+            "Port Routes",
+            "Fleet Status",
+            "Inventory",
+            "Schedules"
+        ];
+
         this.nav = document.getElementById('sidebar-nav');
         this.sidebar = document.getElementById('sidebar');
         this.menuToggle = document.getElementById('menu-toggle');
@@ -26,38 +24,41 @@ class MILogisticsApp {
     }
 
     init() {
-        // Sidebar Toggle
         this.menuToggle.addEventListener('click', () => {
             this.sidebar.classList.toggle('collapsed');
         });
 
-        // Initialize production dashboard immediately
         this.buildSidebar();
         this.sidebar.classList.add('collapsed');
-        this.showHomePage();
+        
+        // Initial load on the first sheet
+        this.switchTab(this.availableSheets[0]);
+        this.renderWidgets();
     }
 
     buildSidebar() {
         this.nav.innerHTML = '';
         
-        const homeBtn = document.createElement('button');
-        homeBtn.className = 'nav-item active';
-        homeBtn.innerHTML = `<span>🚢</span> DASHBOARD HOME`;
-        homeBtn.onclick = () => {
-            this.showHomePage();
-            this.sidebar.classList.add('collapsed');
-        };
-        homeBtn.setAttribute('data-id', 'HOME_PAGE');
-        this.nav.appendChild(homeBtn);
-        
-        // Note: Dynamic sheet buttons from file uploads are disabled in this live-view version
+        this.availableSheets.forEach(sheetName => {
+            const btn = document.createElement('button');
+            btn.className = 'nav-item';
+            btn.innerHTML = `<span>📑</span> ${sheetName.toUpperCase()}`;
+            btn.onclick = () => {
+                this.switchTab(sheetName);
+                this.sidebar.classList.add('collapsed');
+            };
+            btn.setAttribute('data-id', sheetName);
+            this.nav.appendChild(btn);
+        });
     }
 
-    showHomePage() {
-        this.updateActiveNav('HOME_PAGE');
-        this.titleText.innerText = "Dashboard Overview";
+    switchTab(sheetName) {
+        this.updateActiveNav(sheetName);
+        this.titleText.innerText = sheetName;
         
-        // Embed the live Excel document into the table output area
+        // Construct URI-encoded sheet name for the SharePoint iframe
+        const encodedSheet = encodeURIComponent(sheetName);
+        
         this.tableOutput.innerHTML = `
             <div style="margin-bottom: 20px;">
                 <iframe 
@@ -65,11 +66,13 @@ class MILogisticsApp {
                     height="800px" 
                     frameborder="0" 
                     scrolling="no" 
-                    src="https://fau-my.sharepoint.com/personal/hardyj2025_fau_edu/_layouts/15/Doc.aspx?sourcedoc={546c8dd2-3f61-4d74-86f7-3da881b4eece}&action=embedview&AllowTyping=True&ActiveCell='Port%20Routes'!A1&wdDownloadButton=True&wdInConfigurator=True">
+                    src="https://fau-my.sharepoint.com/personal/hardyj2025_fau_edu/_layouts/15/Doc.aspx?sourcedoc={546c8dd2-3f61-4d74-86f7-3da881b4eece}&action=embedview&AllowTyping=True&ActiveCell='${encodedSheet}'!A1&wdDownloadButton=True&wdInConfigurator=True">
                 </iframe>
             </div>
         `;
+    }
 
+    renderWidgets() {
         this.mapContainer.innerHTML = `
             <div style="margin-bottom: 35px; border-bottom: 2px solid var(--off-white); padding-bottom: 30px;">
                 <div style="margin-bottom: 15px; font-weight: 700; color: var(--deep-space); text-transform: uppercase;">🚢 REAL-TIME VESSEL TRACKER</div>
