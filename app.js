@@ -44,10 +44,10 @@ class MILogisticsApp {
     buildSidebar() {
         this.nav.innerHTML = '';
         
-        // Dashboard Home Button
+        // Dashboard Home Button (Text Only)
         const homeBtn = document.createElement('button');
         homeBtn.className = 'nav-item';
-        homeBtn.innerHTML = `<span>🏠</span> DASHBOARD HOME`;
+        homeBtn.innerText = `DASHBOARD HOME`;
         homeBtn.onclick = () => {
             this.showHomePage();
             this.sidebar.classList.add('collapsed');
@@ -55,10 +55,10 @@ class MILogisticsApp {
         homeBtn.setAttribute('data-id', 'HOME_PAGE');
         this.nav.appendChild(homeBtn);
 
-        // "What-If" Analysis Page Button
+        // "What-If" Analysis Page Button (Text Only)
         const excelBtn = document.createElement('button');
         excelBtn.className = 'nav-item';
-        excelBtn.innerHTML = `<span>📊</span> IMI WHAT-IF ANALYSIS`;
+        excelBtn.innerText = `IMI WHAT-IF ANALYSIS`;
         excelBtn.onclick = () => {
             this.switchPage("LP_Enhanced_IMI_WhatIf");
             this.sidebar.classList.add('collapsed');
