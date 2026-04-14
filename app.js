@@ -33,10 +33,12 @@ class MILogisticsApp {
 
         // Initialize production dashboard
         this.buildSidebar();
+        
+        // Ensure sidebar starts collapsed for mobile/clean view
         this.sidebar.classList.add('collapsed');
         
-        // Start on the new Excel page as requested
-        this.switchPage("LP_Enhanced_IMI_WhatIf");
+        // LANDING PAGE LOGIC: Set to Home Page on refresh
+        this.showHomePage();
     }
 
     buildSidebar() {
@@ -53,7 +55,7 @@ class MILogisticsApp {
         homeBtn.setAttribute('data-id', 'HOME_PAGE');
         this.nav.appendChild(homeBtn);
 
-        // New "What-If" Analysis Page Button
+        // "What-If" Analysis Page Button
         const excelBtn = document.createElement('button');
         excelBtn.className = 'nav-item';
         excelBtn.innerHTML = `<span>📊</span> IMI WHAT-IF ANALYSIS`;
