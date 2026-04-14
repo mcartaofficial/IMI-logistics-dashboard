@@ -8,7 +8,7 @@ class MILogisticsApp {
             },
             elfsight: {
                 width: "100%",
-                height: "850px" // INCREASED HEIGHT for the bottom map
+                height: "850px" 
             }
         };
         // -----------------------------
@@ -23,6 +23,7 @@ class MILogisticsApp {
         this.mapContainer = document.getElementById('map-container');
         this.titleText = document.getElementById('current-sheet-title');
         this.overlay = document.getElementById('upload-overlay');
+        this.saveTimer = null; // For auto-save debounce
         this.init();
     }
 
@@ -48,11 +49,22 @@ class MILogisticsApp {
                 this.workbookData[name] = XLSX.utils.sheet_to_json(wb.Sheets[name], { header: 1, defval: "" });
             });
 
+            // LIVE FEED: Try to load locally saved edits
+            const saved = localStorage.getItem("imi-live-data");
+            if (saved) {
+                const liveData = JSON.parse(saved);
+                // Merge live data into the freshly loaded workbook structure
+                Object.keys(liveData).forEach(key => {
+                    if (this.workbookData[key]) {
+                        this.workbookData[key] = liveData[key];
+                    }
+                });
+            }
+
             this.buildSidebar();
             this.overlay.style.display = 'none';
             document.getElementById('file-name-display').innerText = file.name.toUpperCase();
             
-            // Default to collapsed for more screen space
             this.sidebar.classList.add('collapsed');
             this.showHomePage(); 
         };
@@ -64,7 +76,7 @@ class MILogisticsApp {
         
         const homeBtn = document.createElement('button');
         homeBtn.className = 'nav-item';
-        homeBtn.innerHTML = `<span>🚢</span> DASHBOARD HOME`;
+        homeBtn.innerHTML = `<span>🏠</span> DASHBOARD HOME`;
         homeBtn.onclick = () => {
             this.showHomePage();
             this.sidebar.classList.add('collapsed');
@@ -76,7 +88,7 @@ class MILogisticsApp {
             const btn = document.createElement('button');
             btn.className = 'nav-item';
             const cleanName = name.replace(/_/g, ' ');
-            btn.innerHTML = `<span>🛳️</span> ${cleanName}`;
+            btn.innerHTML = `<span>🚢</span> ${cleanName}`;
             btn.onclick = () => {
                 this.switchPage(name);
                 this.sidebar.classList.add('collapsed');
@@ -118,7 +130,7 @@ class MILogisticsApp {
 
         this.mapContainer.innerHTML = `
             <div style="margin-bottom: 35px; border-bottom: 2px solid var(--off-white); padding-bottom: 30px;">
-                <div style="margin-bottom: 15px; font-weight: 700; color: var(--deep-space); text-transform: uppercase;">🌐 REAL-TIME VESSEL TRACKER</div>
+                <div style="margin-bottom: 15px; font-weight: 700; color: var(--deep-space); text-transform: uppercase;">🚢 REAL-TIME VESSEL TRACKER</div>
                 <div class="hard-clip-wrapper" style="width: ${this.widgetConfig.shipXplorer.width}; height: ${this.widgetConfig.shipXplorer.height};">
                     <iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0" 
                         style="width: 100%; height: 100%; border: none; overflow: hidden;"
@@ -141,12 +153,11 @@ class MILogisticsApp {
         this.titleText.innerText = sheetName.replace(/_/g, ' ');
         this.mapContainer.innerHTML = '';
 
-        // --- INTERACTIVE TABLE CONDITIONAL ---
+        // TARGETED PATCH: Interactive logic for specific sheet
         if (sheetName === "LP_Enhanced_IMI_WhatIf_1") {
             this.renderInteractiveTable(sheetName);
             return;
         }
-        // -------------------------------------
 
         const rows = this.workbookData[sheetName];
         if (!rows || rows.length === 0) return;
@@ -167,10 +178,10 @@ class MILogisticsApp {
     }
 
     renderInteractiveTable(sheetName) {
+        this.tableOutput.innerHTML = '';
         const rows = this.workbookData[sheetName];
         if (!rows || rows.length === 0) return;
 
-        this.tableOutput.innerHTML = ''; // Clear existing
         const container = document.createElement('div');
         container.className = 'table-container';
         
@@ -179,67 +190,59 @@ class MILogisticsApp {
         const tbody = document.createElement('tbody');
 
         // Build Header
-        const headerRow = document.createElement('tr');
-        rows[0].forEach((cellText, colIndex) => {
+        const headerTr = document.createElement('tr');
+        rows[0].forEach(headerText => {
             const th = document.createElement('th');
-            th.innerText = cellText;
-            headerRow.appendChild(th);
+            th.textContent = headerText;
+            headerTr.appendChild(th);
         });
-        thead.appendChild(headerRow);
+        thead.appendChild(headerTr);
 
-        // Build Body
-        rows.slice(1).forEach((rowData, rowIndex) => {
+        // Build Rows
+        rows.slice(1).forEach((rowData, rIdx) => {
+            const rowIndex = rIdx + 1; // Map back to original sheet array index
             const tr = document.createElement('tr');
-            // Adjust rowIndex because of slice(1)
-            const actualRowIndex = rowIndex + 1;
-
+            
             rowData.forEach((cellData, colIndex) => {
                 const td = document.createElement('td');
-                td.innerText = cellData;
+                td.textContent = cellData;
                 td.contentEditable = true;
-                td.dataset.row = actualRowIndex;
+                td.dataset.row = rowIndex;
                 td.dataset.col = colIndex;
 
-                // Sync data model on edit
-                td.addEventListener('input', () => {
-                    this.workbookData[sheetName][actualRowIndex][colIndex] = td.innerText;
+                // Live Update & Persistence
+                td.addEventListener("input", () => {
+                    this.workbookData[sheetName][rowIndex][colIndex] = td.innerText;
+                    
+                    // Auto-save debounce (300ms)
+                    clearTimeout(this.saveTimer);
+                    this.saveTimer = setTimeout(() => {
+                        localStorage.setItem("imi-live-data", JSON.stringify(this.workbookData));
+                    }, 300);
                 });
 
-                // Focus/Highlight logic
-                td.addEventListener('focus', () => {
-                    document.querySelectorAll('.active-cell').forEach(c => c.classList.remove('active-cell'));
-                    td.classList.add('active-cell');
+                // Excel-style UX: Highlight Active Cell
+                td.addEventListener("focus", () => {
+                    document.querySelectorAll(".active-cell").forEach(c => c.classList.remove("active-cell"));
+                    td.classList.add("active-cell");
                 });
 
-                // Keyboard Navigation
-                td.addEventListener('keydown', (e) => {
-                    let nextRow = actualRowIndex;
-                    let nextCol = colIndex;
+                // Excel-style UX: Keyboard Navigation
+                td.addEventListener("keydown", (e) => {
+                    let targetRow = rowIndex;
+                    let targetCol = colIndex;
 
-                    switch(e.key) {
-                        case 'ArrowUp':
-                            nextRow--;
-                            e.preventDefault();
-                            break;
-                        case 'ArrowDown':
-                        case 'Enter':
-                            nextRow++;
-                            e.preventDefault();
-                            break;
-                        case 'ArrowLeft':
-                            nextCol--;
-                            e.preventDefault();
-                            break;
-                        case 'ArrowRight':
-                            nextCol++;
-                            e.preventDefault();
-                            break;
-                        default:
-                            return;
+                    if (e.key === "ArrowUp") targetRow--;
+                    else if (e.key === "ArrowDown" || e.key === "Enter") {
+                        e.preventDefault();
+                        targetRow++;
                     }
+                    else if (e.key === "ArrowLeft") targetCol--;
+                    else if (e.key === "ArrowRight") targetCol++;
+                    else return;
 
-                    const target = this.getCell(nextRow, nextCol);
-                    if (target) target.focus();
+                    const nextCell = this.getCell(targetRow, targetCol);
+                    if (nextCell) nextCell.focus();
                 });
 
                 tr.appendChild(td);
@@ -251,7 +254,6 @@ class MILogisticsApp {
         table.appendChild(tbody);
         container.appendChild(table);
         this.tableOutput.appendChild(container);
-        document.querySelector('.content').scrollTop = 0;
     }
 
     getCell(row, col) {
