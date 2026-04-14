@@ -29,6 +29,8 @@
             color: var(--white); 
             display: flex; 
             flex-direction: column;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.2);
+            z-index: 1001;
         }
 
         .sidebar-header { padding: 40px 24px; }
@@ -56,23 +58,30 @@
             align-items: center;
         }
 
-        .view-area { padding: 30px; }
+        .view-area { padding: 45px; }
 
-        .table-container { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; }
-
-        th, td {
-            padding: 12px;
-            border: 1px solid #e5e7eb;
+        .card { 
+            background: var(--white); 
+            border-radius: 20px; 
+            padding: 35px; 
+            margin-bottom: 20px;
         }
 
-        /* INTERACTIVE STYLES */
+        .table-container { overflow-x: auto; border-radius: 12px; }
+        table { width: 100%; border-collapse: collapse; min-width: 800px; }
+
+        th { padding: 18px; }
+        td { padding: 16px; }
+
+        /* ✅ ADDED INTERACTIVE STYLES */
         td[contenteditable="true"], th[contenteditable="true"] {
             background: #fff;
             cursor: text;
         }
 
-        td:hover { background: #f9fafb; }
+        td[contenteditable="true"]:hover {
+            background: #f9fafb;
+        }
 
         .active-cell {
             outline: 2px solid #D6192B;
@@ -81,21 +90,25 @@
 
         #upload-overlay {
             position: fixed; inset: 0; background: var(--off-white); z-index: 2000;
-            display: flex; align-items: center; justify-content: center;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
     </style>
 </head>
 <body>
 
 <div id="upload-overlay">
-    <input type="file" id="file-input" accept=".xlsx, .xls">
+    <div class="drop-box">
+        <h1>IMI Logistics</h1>
+        <input type="file" id="file-input" hidden accept=".xlsx, .xls">
+        <button onclick="document.getElementById('file-input').click()">UPLOAD</button>
+    </div>
 </div>
 
-<aside class="sidebar">
+<aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-        <h2>IMI Dashboard</h2>
+        <h2>IMI Logistics Dashboard</h2>
     </div>
-    <div id="sidebar-nav" class="nav-list"></div>
+    <div class="nav-list" id="sidebar-nav"></div>
 </aside>
 
 <main class="content">
@@ -105,10 +118,14 @@
     </div>
 
     <div class="view-area">
-        <div id="table-output"></div>
+        <div class="card" id="data-card">
+            <div id="table-output"></div>
+            <div id="map-container"></div>
+        </div>
     </div>
 </main>
 
+<script src="https://elfsightcdn.com/platform.js" async></script>
 <script src="app.js"></script>
 </body>
 </html>
