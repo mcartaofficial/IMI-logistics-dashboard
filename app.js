@@ -1,18 +1,10 @@
 class MILogisticsApp {
     constructor() {
-        // --- DIMENSION ADJUSTMENTS ---
         this.widgetConfig = {
-            shipXplorer: {
-                width: "100%",
-                height: "800px" 
-            },
-            elfsight: {
-                width: "100%",
-                height: "850px" 
-            }
+            shipXplorer: "https://www.shipxplorer.com/?widget=1&z=12&lat=40.46244&lng=-73.88822&portCardRight=true&showLabels=true&showStateFlag=true&showVn=true&showIMO=true&showLabelPhoto=true&showMMSI=true&class=CARGO,PASSENGER,TANKER,HSC,TUG,FISHING,PLEASURE,SAILING,OTHER,UNKNOWN",
+            elfsightId: "d9332a95-3af1-4708-a385-24cef7defd35"
         };
 
-        // Mapping of pages to their specific SharePoint Embed URLs
         this.analysisPages = {
             "DATA_VISUALIZATION": "https://fau-my.sharepoint.com/personal/nmadrazo2024_fau_edu/_layouts/15/Doc.aspx?sourcedoc={2ad6d295-9173-46a3-8886-54f0efa6cc42}&action=embedview&wdAllowInteractivity=False&wdHideGridlines=True&wdHideHeaders=True&wdDownloadButton=True&wdInConfigurator=True",
             "WHAT_IF_INPUTS": "https://fau-my.sharepoint.com/personal/nmadrazo2024_fau_edu/_layouts/15/Doc.aspx?sourcedoc={674aec4a-2ec5-4068-95af-af55c4818fd4}&action=embedview&AllowTyping=True&ActiveCell='What_If_Inputs'!A1&wdDownloadButton=True&wdInConfigurator=True",
@@ -20,12 +12,17 @@ class MILogisticsApp {
             "ROTTERDAM_STAT": "https://fau-my.sharepoint.com/personal/nmadrazo2024_fau_edu/_layouts/15/Doc.aspx?sourcedoc={fc00bff8-29ee-4a6c-b472-ef0fd72dfd47}&action=embedview&AllowTyping=True&ActiveCell='Rotterdam%20Stat.%20Sign.'!A1&wdDownloadButton=True&wdInConfigurator=True"
         };
 
+        // Cache for pre-loaded iframes to prevent re-compiling on every click
+        this.iframeCache = {};
+        
         this.nav = document.getElementById('sidebar-nav');
         this.sidebar = document.getElementById('sidebar');
         this.menuToggle = document.getElementById('menu-toggle');
-        this.tableOutput = document.getElementById('table-output');
-        this.mapContainer = document.getElementById('map-container');
+        this.homeView = document.getElementById('home-view');
+        this.excelViewport = document.getElementById('excel-viewport');
+        this.iframeContainer = document.getElementById('iframe-cache-container');
         this.titleText = document.getElementById('current-sheet-title');
+        this.loader = document.getElementById('loading-indicator');
         
         this.init();
     }
@@ -42,21 +39,11 @@ class MILogisticsApp {
 
     buildSidebar() {
         this.nav.innerHTML = '';
-        
-        // 1. Home Page
         this.createNavItem('DASHBOARD HOME', 'HOME_PAGE', () => this.showHomePage());
-
-        // 2. Data Visualization Page
-        this.createNavItem('DATA VISUALIZATION', 'DATA_VISUALIZATION', () => this.switchPage('DATA_VISUALIZATION', 'Data Visualization'));
-
-        // 3. What If Inputs Page
-        this.createNavItem('WHAT IF INPUTS', 'WHAT_IF_INPUTS', () => this.switchPage('WHAT_IF_INPUTS', 'What If Inputs Analysis'));
-
-        // 4. Brent Crude Oil Page
-        this.createNavItem('BRENT CRUDE OIL', 'BRENT_CRUDE_OIL', () => this.switchPage('BRENT_CRUDE_OIL', 'Brent Crude Oil Statistical Significance'));
-
-        // 5. Rotterdam Stat Page
-        this.createNavItem('ROTTERDAM STAT', 'ROTTERDAM_STAT', () => this.switchPage('ROTTERDAM_STAT', 'Rotterdam Statistical Significance'));
+        this.createNavItem('DATA VISUALIZATION', 'DATA_VISUALIZATION', () => this.switchExcelPage('DATA_VISUALIZATION', 'Data Visualization'));
+        this.createNavItem('WHAT IF INPUTS', 'WHAT_IF_INPUTS', () => this.switchExcelPage('WHAT_IF_INPUTS', 'What If Inputs Analysis'));
+        this.createNavItem('BRENT CRUDE OIL', 'BRENT_CRUDE_OIL', () => this.switchExcelPage('BRENT_CRUDE_OIL', 'Brent Crude Oil Stat Sign'));
+        this.createNavItem('ROTTERDAM STAT', 'ROTTERDAM_STAT', () => this.switchExcelPage('ROTTERDAM_STAT', 'Rotterdam Stat Sign'));
     }
 
     createNavItem(text, id, callback) {
@@ -74,53 +61,61 @@ class MILogisticsApp {
     showHomePage() {
         this.updateActiveNav('HOME_PAGE');
         this.titleText.innerText = "Dashboard Overview";
-        this.tableOutput.innerHTML = `
-            <div style="text-align: center; padding: 20px;">
-                <h1 style="color: var(--deep-space); margin-bottom: 10px;">Welcome to IMI Logistics</h1>
-                <p style="color: var(--text-gray);">Select an analysis module from the sidebar to begin.</p>
-                <div class="welcome-grid">
-                    <div class="stat-box"><small>SYSTEM STATUS</small><h2 style="margin: 5px 0; color: #10B981;">ACTIVE</h2></div>
-                    <div class="stat-box"><small>MODULARS</small><h2 style="margin: 5px 0; color: var(--mi-red);">4 LOADED</h2></div>
-                </div>
-            </div>
-        `;
+        
+        // Hide Excel, Show Home
+        this.excelViewport.classList.remove('active');
+        this.homeView.classList.add('active');
 
-        this.mapContainer.innerHTML = `
-            <div style="margin-bottom: 35px; border-bottom: 2px solid var(--off-white); padding-bottom: 30px;">
-                <div style="margin-bottom: 15px; font-weight: 700; color: var(--deep-space); text-transform: uppercase;">🚢 REAL-TIME VESSEL TRACKER</div>
-                <div class="hard-clip-wrapper" style="width: ${this.widgetConfig.shipXplorer.width}; height: ${this.widgetConfig.shipXplorer.height};">
-                    <iframe frameborder="0" scrolling="no" style="width: 100%; height: 100%; border: none;"
-                        src="https://www.shipxplorer.com/?widget=1&z=12&lat=40.46244&lng=-73.88822&portCardRight=true&showLabels=true&showStateFlag=true&showVn=true&showIMO=true&showLabelPhoto=true&showMMSI=true&class=CARGO,PASSENGER,TANKER,HSC,TUG,FISHING,PLEASURE,SAILING,OTHER,UNKNOWN">
-                    </iframe>
+        if (!document.getElementById('home-content').innerHTML) {
+            document.getElementById('home-content').innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <h1 style="color: var(--deep-space); margin-bottom: 10px;">Welcome to IMI Logistics</h1>
+                    <p style="color: var(--text-gray);">Select an analysis module from the sidebar to begin.</p>
+                    <div class="welcome-grid">
+                        <div class="stat-box"><small>SYSTEM STATUS</small><h2 style="margin: 5px 0; color: #10B981;">ACTIVE</h2></div>
+                        <div class="stat-box"><small>MODULARS</small><h2 style="margin: 5px 0; color: var(--mi-red);">4 LOADED</h2></div>
+                    </div>
+                </div>`;
+
+            document.getElementById('map-container').innerHTML = `
+                <div class="hard-clip-wrapper" style="height: 800px;">
+                    <iframe frameborder="0" scrolling="no" style="width: 100%; height: 100%; border: none;" src="${this.widgetConfig.shipXplorer}"></iframe>
                 </div>
-            </div>
-            <div style="margin-top: 20px;">
-                <div style="margin-bottom: 15px; font-weight: 700; color: var(--deep-space); text-transform: uppercase;">📍 FLEET & STORE LOCATOR</div>
-                <div class="hard-clip-wrapper" style="width: ${this.widgetConfig.elfsight.width}; height: ${this.widgetConfig.elfsight.height};">
-                    <div class="elfsight-app-d9332a95-3af1-4708-a385-24cef7defd35" data-elfsight-app-lazy></div>
-                </div>
-            </div>
-        `;
+                <div class="hard-clip-wrapper" style="height: 850px;">
+                    <div class="elfsight-app-${this.widgetConfig.elfsightId}" data-elfsight-app-lazy></div>
+                </div>`;
+        }
     }
 
-    switchPage(pageId, displayTitle) {
+    switchExcelPage(pageId, displayTitle) {
         this.updateActiveNav(pageId);
         this.titleText.innerText = displayTitle;
-        this.mapContainer.innerHTML = '';
         
-        const embedUrl = this.analysisPages[pageId];
-        
-        this.tableOutput.innerHTML = `
-            <div style="margin-bottom: 20px;">
-                <iframe 
-                    width="100%" 
-                    height="850px" 
-                    frameborder="0" 
-                    scrolling="no" 
-                    src="${embedUrl}">
-                </iframe>
-            </div>
-        `;
+        // UI State Switch
+        this.homeView.classList.remove('active');
+        this.excelViewport.classList.add('active');
+
+        // Hide all cached iframes
+        Object.values(this.iframeCache).forEach(frame => frame.style.display = 'none');
+
+        // Check if iframe already exists in cache
+        if (this.iframeCache[pageId]) {
+            this.iframeCache[pageId].style.display = 'block';
+        } else {
+            // Create new iframe and cache it
+            this.loader.style.display = 'block';
+            const newFrame = document.createElement('iframe');
+            newFrame.style.width = "100%";
+            newFrame.style.height = "850px";
+            newFrame.style.border = "none";
+            newFrame.style.overflow = "hidden";
+            newFrame.src = this.analysisPages[pageId];
+            
+            newFrame.onload = () => { this.loader.style.display = 'none'; };
+            
+            this.iframeContainer.appendChild(newFrame);
+            this.iframeCache[pageId] = newFrame;
+        }
     }
 
     updateActiveNav(id) {
