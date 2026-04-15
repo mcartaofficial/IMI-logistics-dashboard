@@ -6,15 +6,13 @@ class MILogisticsApp {
         };
 
         this.analysisPages = {
-            "DATA_VISUALIZATION": "https://fau-my.sharepoint.com/personal/nmadrazo2024_fau_edu/_layouts/15/Doc.aspx?sourcedoc={2ad6d295-9173-46a3-8886-54f0efa6cc42}&action=embedview&wdAllowInteractivity=False&wdHideGridlines=True&wdHideHeaders=True&wdDownloadButton=True&wdInConfigurator=True",
-            "WHAT_IF_INPUTS": "https://fau-my.sharepoint.com/personal/nmadrazo2024_fau_edu/_layouts/15/Doc.aspx?sourcedoc={674aec4a-2ec5-4068-95af-af55c4818fd4}&action=embedview&AllowTyping=True&ActiveCell='What_If_Inputs'!A1&wdDownloadButton=True&wdInConfigurator=True",
+            // Replaced Data Visualization with the new What-If Input source
+            "DATA_VISUALIZATION": "https://fau-my.sharepoint.com/personal/hardyj2025_fau_edu/_layouts/15/Doc.aspx?sourcedoc={546c8dd2-3f61-4d74-86f7-3da881b4eece}&action=embedview&AllowTyping=True&ActiveCell='What_If_Inputs'!A1&wdDownloadButton=True&wdInConfigurator=True",
             "BRENT_CRUDE_OIL": "https://fau-my.sharepoint.com/personal/nmadrazo2024_fau_edu/_layouts/15/Doc.aspx?sourcedoc={f5bcbb70-554b-4e08-9f3d-bc8ec9668941}&action=embedview&AllowTyping=True&ActiveCell='Brent%20Crude%20Oil%20Stat.%20Sign.'!A1&wdDownloadButton=True&wdInConfigurator=True",
             "ROTTERDAM_STAT": "https://fau-my.sharepoint.com/personal/nmadrazo2024_fau_edu/_layouts/15/Doc.aspx?sourcedoc={fc00bff8-29ee-4a6c-b472-ef0fd72dfd47}&action=embedview&AllowTyping=True&ActiveCell='Rotterdam%20Stat.%20Sign.'!A1&wdDownloadButton=True&wdInConfigurator=True"
         };
 
-        // Cache for pre-loaded iframes to prevent re-compiling on every click
         this.iframeCache = {};
-        
         this.nav = document.getElementById('sidebar-nav');
         this.sidebar = document.getElementById('sidebar');
         this.menuToggle = document.getElementById('menu-toggle');
@@ -40,8 +38,12 @@ class MILogisticsApp {
     buildSidebar() {
         this.nav.innerHTML = '';
         this.createNavItem('DASHBOARD HOME', 'HOME_PAGE', () => this.showHomePage());
+        
+        // Updated label to reflect the new visualization content
         this.createNavItem('DATA VISUALIZATION', 'DATA_VISUALIZATION', () => this.switchExcelPage('DATA_VISUALIZATION', 'Data Visualization'));
-        this.createNavItem('WHAT IF INPUTS', 'WHAT_IF_INPUTS', () => this.switchExcelPage('WHAT_IF_INPUTS', 'What If Inputs Analysis'));
+        
+        // "What If Inputs" has been removed from the navigation as requested
+        
         this.createNavItem('BRENT CRUDE OIL', 'BRENT_CRUDE_OIL', () => this.switchExcelPage('BRENT_CRUDE_OIL', 'Brent Crude Oil Stat Sign'));
         this.createNavItem('ROTTERDAM STAT', 'ROTTERDAM_STAT', () => this.switchExcelPage('ROTTERDAM_STAT', 'Rotterdam Stat Sign'));
     }
@@ -61,8 +63,6 @@ class MILogisticsApp {
     showHomePage() {
         this.updateActiveNav('HOME_PAGE');
         this.titleText.innerText = "Dashboard Overview";
-        
-        // Hide Excel, Show Home
         this.excelViewport.classList.remove('active');
         this.homeView.classList.add('active');
 
@@ -73,7 +73,7 @@ class MILogisticsApp {
                     <p style="color: var(--text-gray);">Select an analysis module from the sidebar to begin.</p>
                     <div class="welcome-grid">
                         <div class="stat-box"><small>SYSTEM STATUS</small><h2 style="margin: 5px 0; color: #10B981;">ACTIVE</h2></div>
-                        <div class="stat-box"><small>MODULARS</small><h2 style="margin: 5px 0; color: var(--mi-red);">4 LOADED</h2></div>
+                        <div class="stat-box"><small>MODULARS</small><h2 style="margin: 5px 0; color: var(--mi-red);">3 LOADED</h2></div>
                     </div>
                 </div>`;
 
@@ -90,25 +90,19 @@ class MILogisticsApp {
     switchExcelPage(pageId, displayTitle) {
         this.updateActiveNav(pageId);
         this.titleText.innerText = displayTitle;
-        
-        // UI State Switch
         this.homeView.classList.remove('active');
         this.excelViewport.classList.add('active');
 
-        // Hide all cached iframes
         Object.values(this.iframeCache).forEach(frame => frame.style.display = 'none');
 
-        // Check if iframe already exists in cache
         if (this.iframeCache[pageId]) {
             this.iframeCache[pageId].style.display = 'block';
         } else {
-            // Create new iframe and cache it
             this.loader.style.display = 'block';
             const newFrame = document.createElement('iframe');
             newFrame.style.width = "100%";
             newFrame.style.height = "850px";
             newFrame.style.border = "none";
-            newFrame.style.overflow = "hidden";
             newFrame.src = this.analysisPages[pageId];
             
             newFrame.onload = () => { this.loader.style.display = 'none'; };
