@@ -10,6 +10,7 @@
         :root {
             --mi-red: #D6192B;
             --deep-space: #24223F;
+            --deep-blue: #1A1832;
             --white: #FFFEFF;
             --off-white: #F5F7FA;
             --text-gray: #718096;
@@ -73,8 +74,17 @@
         .red-bullet { min-width: 25px; height: 25px; background-color: var(--mi-red); margin-top: 5px; }
         .commitment-text { font-size: 1.1rem; line-height: 1.6; font-weight: 300; }
 
-        @media (max-width: 1024px) { .services-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (max-width: 768px) { .services-grid { grid-template-columns: 1fr; } }
+        /* Headquarters Styling */
+        .hq-container { background-color: var(--deep-blue); color: white; padding: 50px; border-radius: 10px; }
+        .hq-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px 30px; margin-top: 20px; }
+        .hq-item h4 { color: #8E9AAF; font-size: 0.95rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; margin-bottom: 12px; text-transform: uppercase; }
+        .hq-item p { font-size: 0.8rem; line-height: 1.5; margin: 4px 0; color: #CBD5E0; }
+        .hq-item .map-link { color: var(--white); font-weight: 600; text-decoration: underline; font-size: 0.75rem; margin-top: 8px; display: inline-block; }
+        .hq-item .label-red { color: var(--mi-red); font-weight: 700; }
+
+        @media (max-width: 1200px) { .hq-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 900px) { .hq-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 600px) { .hq-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
