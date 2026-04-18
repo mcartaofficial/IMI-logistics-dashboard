@@ -51,8 +51,8 @@ class MILogisticsApp {
         this.createNavItem('OUR PRODUCTS', 'PRODUCTS', () => this.showGenericPage('Our Products', 'Advanced tracking and forecasting tools.'));
         this.createNavItem('OUR PARTNERS & AFFILIATES', 'PARTNERS', () => this.showGenericPage('Partners & Affiliates', 'Collaborating with global shipping lanes.'));
         
-        // Updated call for Our Environmental Commitment
-        this.createNavItem('OUR ENVIRONMENTAL COMMITMENT', 'ENV_COMMIT', () => this.showEnvPage());
+        // Navigation for Environmental Commitment
+        this.createNavItem('OUR ENVIRONMENTAL COMMITMENT', 'ENV_COMMIT', () => this.showCommitmentPage());
         
         this.createNavItem('OUR SERVICES', 'SERVICES', () => this.showServicesPage());
         this.createNavItem('HEADQUARTERS', 'HQ', () => this.showGenericPage('Headquarters', 'Our central operations hub manages global logistics 24/7.'));
@@ -70,26 +70,27 @@ class MILogisticsApp {
         this.nav.appendChild(btn);
     }
 
-    showEnvPage() {
+    showCommitmentPage() {
         this.updateActiveNav('ENV_COMMIT');
-        this.titleText.innerText = "Our Environmental Commitment";
+        this.titleText.innerText = "Environmental Commitment";
         this.hideAllViews();
         this.genericView.classList.add('active');
-        
         this.genericContent.innerHTML = `
-            <div class="env-commitment-section">
-                <h2>Our Environmental Commitment</h2>
-                <div class="env-item">
-                    <div class="env-square"></div>
-                    <div class="env-text">We work toward sourcing our raw materials from producers who engage in responsible mining processes. This includes implementing measures to reduce ecological disruption and enhancing resource efficiency.</div>
-                </div>
-                <div class="env-item">
-                    <div class="env-square"></div>
-                    <div class="env-text">By selecting suppliers dedicated to these principles, we aim to support efforts that contribute to more sustainable resource management within the industry.</div>
-                </div>
-                <div class="env-item">
-                    <div class="env-square"></div>
-                    <div class="env-text">Our environmental stewardship is not just a present concern but a commitment to future generations. We are attentive to preserving and enhancing the resources and environments we rely on today for those who will come after us.</div>
+            <div class="commitment-container">
+                <div class="commitment-title">Our Environmental<br>Commitment</div>
+                <div class="commitment-list">
+                    <div class="commitment-item">
+                        <div class="red-square"></div>
+                        <div>We work toward sourcing our raw materials from producers who engage in responsible mining processes. This includes implementing measures to reduce ecological disruption and enhancing resource efficiency.</div>
+                    </div>
+                    <div class="commitment-item">
+                        <div class="red-square"></div>
+                        <div>By selecting suppliers dedicated to these principles, we aim to support efforts that contribute to more sustainable resource management within the industry.</div>
+                    </div>
+                    <div class="commitment-item">
+                        <div class="red-square"></div>
+                        <div>Our environmental stewardship is not just a present concern but a commitment to future generations. We are attentive to preserving and enhancing the resources and environments we rely on today for those who will come after us.</div>
+                    </div>
                 </div>
             </div>
         `;
@@ -212,7 +213,6 @@ class MILogisticsApp {
             'Our Team': 'TEAM',
             'Our Products': 'PRODUCTS',
             'Partners & Affiliates': 'PARTNERS',
-            'Our Environmental Commitment': 'ENV_COMMIT',
             'Headquarters': 'HQ'
         };
         return mapping[title] || '';
