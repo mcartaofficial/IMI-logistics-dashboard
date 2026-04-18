@@ -38,26 +38,24 @@ class MILogisticsApp {
     buildSidebar() {
         this.nav.innerHTML = '';
         
-        // Navigation Sections
         this.createNavLabel('Core Dashboard');
         this.createNavItem('DASHBOARD HOME', 'HOME_PAGE', () => this.showHomePage());
+        this.createNavItem('OUR SERVICES', 'SERVICES_PAGE', () => this.showServicesPage());
         this.createNavItem('DATA VISUALIZATION', 'DATA_VISUALIZATION', () => this.switchExcelPage('DATA_VISUALIZATION', 'Data Visualization'));
         this.createNavItem('FORECASTING MODELS', 'ROTTERDAM_EXP_SMOOTH', () => this.switchExcelPage('ROTTERDAM_EXP_SMOOTH', 'Forecasting Time Series Models'));
-        this.createNavItem('BRENT CRUDE OIL', 'BRENT_CRUDE_OIL', () => this.switchExcelPage('BRENT_CRUDE_OIL', 'Brent Crude Oil Stat Sign'));
-        this.createNavItem('ROTTERDAM STAT', 'ROTTERDAM_STAT', () => this.switchExcelPage('ROTTERDAM_STAT', 'Rotterdam Stat Sign'));
 
         this.createNavLabel('Company Profile');
-        this.createNavItem('ABOUT US', 'ABOUT_PAGE', () => this.showStaticPage('About IMI Logistics', 'Learn about our mission to redefine maritime logistics through data-driven precision.'));
-        this.createNavItem('OUR TEAM', 'OUR_TEAM', () => this.showStaticPage('Our Team', 'Meet the specialists driving our logistics and data engineering excellence.'));
-        this.createNavItem('OUR PRODUCTS', 'OUR_PRODUCTS', () => this.showStaticPage('Our Products', 'Customized freight solutions and real-time monitoring tools.'));
-        this.createNavItem('PARTNERS & AFFILIATES', 'PARTNERS', () => this.showStaticPage('Partners & Affiliates', 'Collaborating with global maritime leaders to expand our reach.'));
-        this.createNavItem('ENV. COMMITMENT', 'ENV_COMMITMENT', () => this.showStaticPage('Environmental Commitment', 'Dedicated to reducing maritime carbon footprints through optimized routing.'));
-        this.createNavItem('HEADQUARTERS', 'HQ', () => this.showStaticPage('Headquarters', 'Located at the heart of global trade routes.'));
+        this.createNavItem('ABOUT US', 'ABOUT_PAGE', () => this.showStaticPage('About IMI Logistics', 'Redefining maritime logistics through data-driven precision.'));
+        this.createNavItem('OUR TEAM', 'OUR_TEAM', () => this.showStaticPage('Our Team', 'Meet the specialists driving our logistics excellence.'));
+        this.createNavItem('OUR PRODUCTS', 'OUR_PRODUCTS', () => this.showStaticPage('Our Products', 'Customized freight solutions and monitoring tools.'));
+        this.createNavItem('PARTNERS & AFFILIATES', 'PARTNERS', () => this.showStaticPage('Partners & Affiliates', 'Collaborating with global maritime leaders.'));
+        this.createNavItem('ENV. COMMITMENT', 'ENV_COMMITMENT', () => this.showStaticPage('Environmental Commitment', 'Optimizing routes to reduce carbon footprints.'));
+        this.createNavItem('HEADQUARTERS', 'HQ', () => this.showStaticPage('Headquarters', 'Centered at the heart of global trade.'));
     }
 
     createNavLabel(text) {
         const label = document.createElement('div');
-        label.style = "padding: 20px 28px 10px; font-size: 0.7rem; color: #555e70; text-transform: uppercase; letter-spacing: 2px; font-weight: 800;";
+        label.className = 'nav-label';
         label.textContent = text;
         this.nav.appendChild(label);
     }
@@ -80,26 +78,76 @@ class MILogisticsApp {
         this.excelViewport.classList.remove('active');
         this.homeView.classList.add('active');
 
-        if (!document.getElementById('home-content').innerHTML) {
+        if (!document.getElementById('home-content').innerHTML || this.currentView === 'STATIC') {
+            this.currentView = 'HOME';
             document.getElementById('home-content').innerHTML = `
                 <div style="text-align: center; padding: 20px;">
                     <h1 style="color: var(--deep-space); margin-bottom: 10px;">Welcome to IMI Logistics</h1>
-                    <p style="color: var(--text-gray);">Select an analysis module from the sidebar to begin.</p>
                     <div class="welcome-grid">
                         <div class="stat-box"><small>SYSTEM STATUS</small><h2 style="margin: 5px 0; color: #10B981;">ACTIVE</h2></div>
-                        <div class="stat-box"><small>MODULARS</small><h2 style="margin: 5px 0; color: var(--mi-red);">4 LOADED</h2></div>
+                        <div class="stat-box"><small>SERVICES</small><h2 style="margin: 5px 0; color: var(--mi-red);">6 MODULES</h2></div>
                     </div>
                 </div>`;
 
             document.getElementById('map-container').innerHTML = `
-                <div class="hard-clip-wrapper" style="height: 800px;">
+                <div class="hard-clip-wrapper" style="height: 600px;">
                     <iframe frameborder="0" scrolling="no" style="width: 100%; height: 100%; border: none;" src="${this.widgetConfig.shipXplorer}"></iframe>
                 </div>`;
         }
     }
 
+    showServicesPage() {
+        this.updateActiveNav('SERVICES_PAGE');
+        this.currentView = 'STATIC';
+        this.titleText.innerText = "Our Services";
+        this.excelViewport.classList.remove('active');
+        this.homeView.classList.add('active');
+
+        const services = [
+            {
+                title: "GLOBAL BULK RAW MATERIALS TRADING",
+                text: "IMI is one of the leading privately-owned, independent, bulk raw materials trading firms in the world today. With more than 38 years of history, IMI has established a reputation for exceptional service and high quality product offerings."
+            },
+            {
+                title: "SOURCING",
+                text: "IMI holds multi-year contracts and marketing rights with suppliers for many products including natural gypsum from Oman, Spain and Mexico; bauxite from Australia and Turkey; and solid fuels from South America, USA, and Asia."
+            },
+            {
+                title: "CHARTERING",
+                text: "Through our in-house Chartering and Traffic operations departments, IMI has a first class reputation as a reliable expert in ocean vessel chartering, import/export operations, and logistics planning."
+            },
+            {
+                title: "LOGISTICS",
+                text: "IMI manages +50 global stock-and-sell centers for coal, gypsum, bauxite, slag, iron ore products and clinker. IMI negotiates and manages port leases and offsite stockpiles to support door-to-door deliveries."
+            },
+            {
+                title: "MARKETING",
+                text: "In addition to its normal trading activities, IMI has secured exclusive marketing rights for Gypsum in South Spain from Saint-Gobain and Gypsum in Mexico from COMSA."
+            },
+            {
+                title: "SERVICE AND SUPPORT",
+                text: "IMI's technical and trade support capabilities are unmatched in the industry and the 'high-touch' approach ensures accurate, on-time delivery of product and custom financing solutions."
+            }
+        ];
+
+        let html = `<div class="services-grid">`;
+        services.forEach(s => {
+            html += `
+                <div class="service-box">
+                    <h4>${s.title}</h4>
+                    <p>${s.text}</p>
+                    <button class="service-btn">READ MORE</button>
+                </div>`;
+        });
+        html += `</div>`;
+
+        document.getElementById('home-content').innerHTML = html;
+        document.getElementById('map-container').innerHTML = '';
+    }
+
     showStaticPage(title, content) {
-        this.updateActiveNav(null); // Clear nav active state or map to specific ID
+        this.updateActiveNav(null);
+        this.currentView = 'STATIC';
         this.titleText.innerText = title;
         this.excelViewport.classList.remove('active');
         this.homeView.classList.add('active');
@@ -110,11 +158,12 @@ class MILogisticsApp {
                 <hr style="border: none; border-top: 2px solid var(--mi-red); width: 50px; margin: 20px 0;">
                 <p style="color: var(--text-gray); line-height: 1.6; font-size: 1.1rem;">${content}</p>
             </div>`;
-        document.getElementById('map-container').innerHTML = ''; // Clear map for static pages
+        document.getElementById('map-container').innerHTML = '';
     }
 
     switchExcelPage(pageId, displayTitle) {
         this.updateActiveNav(pageId);
+        this.currentView = 'EXCEL';
         this.titleText.innerText = displayTitle;
         this.homeView.classList.remove('active');
         this.excelViewport.classList.add('active');
@@ -130,9 +179,7 @@ class MILogisticsApp {
             newFrame.style.height = "850px";
             newFrame.style.border = "none";
             newFrame.src = this.analysisPages[pageId];
-            
             newFrame.onload = () => { this.loader.style.display = 'none'; };
-            
             this.iframeContainer.appendChild(newFrame);
             this.iframeCache[pageId] = newFrame;
         }
