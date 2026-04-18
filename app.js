@@ -48,11 +48,11 @@ class MILogisticsApp {
 
         this.createNavItem('ABOUT PAGE', 'ABOUT', () => this.showGenericPage('About IMI Logistics', 'International Maritime Industries (IMI) is a leader in global freight and logistics management.'));
         this.createNavItem('OUR TEAM', 'TEAM', () => this.showGenericPage('Our Team', 'Meet the experts driving IMI Logistics forward.'));
-        this.createNavItem('OUR PRODUCTS', 'PRODUCTS', () => this.showGenericPage('Our Products', 'From real-time tracking modules to advanced forecasting tools.'));
-        this.createNavItem('OUR PARTNERS & AFFILIATES', 'PARTNERS', () => this.showGenericPage('Partners & Affiliates', 'Collaborating with global shipping lanes and port authorities.'));
-        this.createNavItem('OUR ENVIRONMENTAL COMMITMENT', 'ENV_COMMIT', () => this.showGenericPage('Environmental Commitment', 'IMI is dedicated to reducing carbon footprints.'));
+        this.createNavItem('OUR PRODUCTS', 'PRODUCTS', () => this.showGenericPage('Our Products', 'Advanced tracking and forecasting tools.'));
+        this.createNavItem('OUR PARTNERS & AFFILIATES', 'PARTNERS', () => this.showGenericPage('Partners & Affiliates', 'Collaborating with global shipping lanes.'));
+        this.createNavItem('OUR ENVIRONMENTAL COMMITMENT', 'ENV_COMMIT', () => this.showGenericPage('Environmental Commitment', 'Dedicated to reducing carbon footprints.'));
         
-        // Updated "Our Services" with new logic
+        // Updated call for Our Services
         this.createNavItem('OUR SERVICES', 'SERVICES', () => this.showServicesPage());
         
         this.createNavItem('HEADQUARTERS', 'HQ', () => this.showGenericPage('Headquarters', 'Our central operations hub manages global logistics 24/7.'));
@@ -68,6 +68,48 @@ class MILogisticsApp {
         };
         btn.setAttribute('data-id', id);
         this.nav.appendChild(btn);
+    }
+
+    showServicesPage() {
+        this.updateActiveNav('SERVICES');
+        this.titleText.innerText = "Our Services";
+        this.hideAllViews();
+        this.genericView.classList.add('active');
+        
+        this.genericContent.innerHTML = `
+            <div class="services-grid">
+                <div class="service-box">
+                    <h4>Global Bulk Raw Materials Trading</h4>
+                    <p>IMI is one of the leading privately-owned, independent, bulk raw materials trading firms in the world today. With more than 38 years of history, IMI has established a reputation for exceptional service and high quality product offerings. Our experienced and diversified trading department is dedicated to professional, personal service and is committed to delivering products on time to suit the technical / material requirements of our customers.</p>
+                    <button class="read-me-btn">Read Me</button>
+                </div>
+                <div class="service-box">
+                    <h4>Sourcing</h4>
+                    <p>IMI holds multi-year contracts and marketing rights with suppliers for many products including natural gypsum from Oman, Spain and Mexico; bauxite from Australia and Turkey; cement and clinker from Europe, Latin America and Asia; iron ore-related products from Trinidad, USA, Egypt, Persian Gulf and South America; and solid fuels (coal, petcoke, anthracite) from South America, USA, South Africa and Asia.</p>
+                    <button class="read-me-btn">Read Me</button>
+                </div>
+                <div class="service-box">
+                    <h4>Chartering</h4>
+                    <p>Through our in-house Chartering and Traffic operations departments, IMI has a first class reputation as a reliable expert in ocean vessel chartering, import/export operations, ship loading and discharge operations, and logistics planning and management for the cement, wallboard and steel making industries.</p>
+                    <button class="read-me-btn">Read Me</button>
+                </div>
+                <div class="service-box">
+                    <h4>Logistics</h4>
+                    <p>IMI manages +50 global stock-and-sell centers for coal, gypsum, bauxite, slag, iron ore products and clinker.<br><br>IMI negotiates and manages port leases and offsite stockpiles to support door-to-door deliveries. IMI manages numerous stevedoring operations to ensure safe and fast cargo handling.</p>
+                    <button class="read-me-btn">Read Me</button>
+                </div>
+                <div class="service-box">
+                    <h4>Marketing</h4>
+                    <p>In addition to its normal trading activities, IMI has secured exclusive marketing rights for Gypsum in South Spain from Saint-Gobain and Gypsum in Mexico from COMSA.</p>
+                    <button class="read-me-btn">Read Me</button>
+                </div>
+                <div class="service-box">
+                    <h4>Service and Support</h4>
+                    <p>IMI’s technical and trade support capabilities are unmatched in the industry and the “high-touch” approach ensures accurate, on-time delivery of product.<br><br>IMI has the ability to provide custom financing solutions to suppliers and customers.</p>
+                    <button class="read-me-btn">Read Me</button>
+                </div>
+            </div>
+        `;
     }
 
     showHomePage() {
@@ -133,55 +175,6 @@ class MILogisticsApp {
         `;
     }
 
-    showServicesPage() {
-        this.updateActiveNav('SERVICES');
-        this.titleText.innerText = "Our Services";
-        this.hideAllViews();
-        this.genericView.classList.add('active');
-
-        const services = [
-            {
-                title: "Global Bulk Raw Materials Trading",
-                desc: "IMI is one of the leading privately-owned, independent, bulk raw materials trading firms in the world today. With more than 38 years of history, IMI has established a reputation for exceptional service and high quality product offerings. Our experienced and diversified trading department is dedicated to delivering products on time to suit the technical / material requirements of our customers."
-            },
-            {
-                title: "Sourcing",
-                desc: "IMI holds multi-year contracts and marketing rights with suppliers for many products including natural gypsum from Oman, Spain and Mexico; bauxite from Australia and Turkey; cement and clinker from Europe, Latin America and Asia; iron ore-related products from Trinidad, USA, Egypt, Persian Gulf and South America; and solid fuels (coal, petcoke, anthracite) from South America, USA, South Africa and Asia."
-            },
-            {
-                title: "Chartering",
-                desc: "Through our in-house Chartering and Traffic operations departments, IMI has a first class reputation as a reliable expert in ocean vessel chartering, import/export operations, ship loading and discharge operations, and logistics planning and management for the cement, wallboard and steel making industries."
-            },
-            {
-                title: "Logistics",
-                desc: "IMI manages +50 global stock-and-sell centers for coal, gypsum, bauxite, slag, iron ore products and clinker. IMI negotiates and manages port leases and offsite stockpiles to support door-to-door deliveries. IMI manages numerous stevedoring operations to ensure safe and fast cargo handling."
-            },
-            {
-                title: "Marketing",
-                desc: "In addition to its normal trading activities, IMI has secured exclusive marketing rights for Gypsum in South Spain from Saint-Gobain and Gypsum in Mexico from COMSA."
-            },
-            {
-                title: "Service and Support",
-                desc: "IMI's technical and trade support capabilities are unmatched in the industry and the \"high-touch\" approach ensures accurate, on-time delivery of product. IMI has the ability to provide custom financing solutions to suppliers and customers."
-            }
-        ];
-
-        let gridHtml = '<div class="services-grid">';
-        services.forEach(s => {
-            gridHtml += `
-                <div class="service-card">
-                    <div>
-                        <h4>${s.title}</h4>
-                        <p>${s.desc}</p>
-                    </div>
-                    <button class="read-more-btn">Read More</button>
-                </div>`;
-        });
-        gridHtml += '</div>';
-
-        this.genericContent.innerHTML = gridHtml;
-    }
-
     hideAllViews() {
         this.homeView.classList.remove('active');
         this.excelViewport.classList.remove('active');
@@ -195,7 +188,6 @@ class MILogisticsApp {
             'Our Products': 'PRODUCTS',
             'Partners & Affiliates': 'PARTNERS',
             'Environmental Commitment': 'ENV_COMMIT',
-            'Our Services': 'SERVICES',
             'Headquarters': 'HQ'
         };
         return mapping[title] || '';
