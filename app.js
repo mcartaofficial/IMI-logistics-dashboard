@@ -39,23 +39,23 @@ class MILogisticsApp {
 
     buildSidebar() {
         this.nav.innerHTML = '';
-        
         this.createNavItem('DASHBOARD HOME', 'HOME_PAGE', () => this.showHomePage());
         this.createNavItem('DATA VISUALIZATION', 'DATA_VISUALIZATION', () => this.switchExcelPage('DATA_VISUALIZATION', 'Data Visualization'));
         this.createNavItem('FORECASTING TIME SERIES MODELS', 'ROTTERDAM_EXP_SMOOTH', () => this.switchExcelPage('ROTTERDAM_EXP_SMOOTH', 'Forecasting Time Series Models'));
         this.createNavItem('BRENT CRUDE OIL', 'BRENT_CRUDE_OIL', () => this.switchExcelPage('BRENT_CRUDE_OIL', 'Brent Crude Oil Stat Sign'));
         this.createNavItem('ROTTERDAM STAT', 'ROTTERDAM_STAT', () => this.switchExcelPage('ROTTERDAM_STAT', 'Rotterdam Stat Sign'));
 
-        this.createNavItem('ABOUT PAGE', 'ABOUT', () => this.showGenericPage('About IMI Logistics', 'International Maritime Industries (IMI) is a leader in global freight and logistics management.'));
-        this.createNavItem('OUR TEAM', 'TEAM', () => this.showGenericPage('Our Team', 'Meet the experts driving IMI Logistics forward.'));
-        this.createNavItem('OUR PRODUCTS', 'PRODUCTS', () => this.showGenericPage('Our Products', 'Advanced tracking and forecasting tools.'));
-        this.createNavItem('OUR PARTNERS & AFFILIATES', 'PARTNERS', () => this.showGenericPage('Partners & Affiliates', 'Collaborating with global shipping lanes.'));
-        this.createNavItem('OUR ENVIRONMENTAL COMMITMENT', 'ENV_COMMIT', () => this.showGenericPage('Environmental Commitment', 'Dedicated to reducing carbon footprints.'));
+        // Corporate Pages
+        this.createNavItem('ABOUT PAGE', 'ABOUT', () => this.showGenericPage('About IMI Logistics', 'Building the future of maritime trade.'));
+        this.createNavItem('OUR TEAM', 'TEAM', () => this.showGenericPage('Our Team', 'Meet the experts behind the dashboard.'));
+        this.createNavItem('OUR PRODUCTS', 'PRODUCTS', () => this.showGenericPage('Our Products', 'Innovative solutions for global transport.'));
+        this.createNavItem('OUR PARTNERS & AFFILIATES', 'PARTNERS', () => this.showGenericPage('Partners & Affiliates', 'Our global network.'));
         
-        // Updated call for Our Services
-        this.createNavItem('OUR SERVICES', 'SERVICES', () => this.showServicesPage());
+        // Updated call for Environmental Commitment
+        this.createNavItem('OUR ENVIRONMENTAL COMMITMENT', 'ENV_COMMIT', () => this.showEnvironmentalPage());
         
-        this.createNavItem('HEADQUARTERS', 'HQ', () => this.showGenericPage('Headquarters', 'Our central operations hub manages global logistics 24/7.'));
+        this.createNavItem('OUR SERVICES', 'SERVICES', () => this.showGenericPage('Our Services', 'Comprehensive logistics management.'));
+        this.createNavItem('HEADQUARTERS', 'HQ', () => this.showGenericPage('Headquarters', 'Located at the heart of the trade.'));
     }
 
     createNavItem(text, id, callback) {
@@ -70,43 +70,29 @@ class MILogisticsApp {
         this.nav.appendChild(btn);
     }
 
-    showServicesPage() {
-        this.updateActiveNav('SERVICES');
-        this.titleText.innerText = "Our Services";
+    showEnvironmentalPage() {
+        this.updateActiveNav('ENV_COMMIT');
+        this.titleText.innerText = "Our Environmental Commitment";
         this.hideAllViews();
         this.genericView.classList.add('active');
         
         this.genericContent.innerHTML = `
-            <div class="services-grid">
-                <div class="service-box">
-                    <h4>Global Bulk Raw Materials Trading</h4>
-                    <p>IMI is one of the leading privately-owned, independent, bulk raw materials trading firms in the world today. With more than 38 years of history, IMI has established a reputation for exceptional service and high quality product offerings. Our experienced and diversified trading department is dedicated to professional, personal service and is committed to delivering products on time to suit the technical / material requirements of our customers.</p>
-                    <button class="read-me-btn">Read Me</button>
-                </div>
-                <div class="service-box">
-                    <h4>Sourcing</h4>
-                    <p>IMI holds multi-year contracts and marketing rights with suppliers for many products including natural gypsum from Oman, Spain and Mexico; bauxite from Australia and Turkey; cement and clinker from Europe, Latin America and Asia; iron ore-related products from Trinidad, USA, Egypt, Persian Gulf and South America; and solid fuels (coal, petcoke, anthracite) from South America, USA, South Africa and Asia.</p>
-                    <button class="read-me-btn">Read Me</button>
-                </div>
-                <div class="service-box">
-                    <h4>Chartering</h4>
-                    <p>Through our in-house Chartering and Traffic operations departments, IMI has a first class reputation as a reliable expert in ocean vessel chartering, import/export operations, ship loading and discharge operations, and logistics planning and management for the cement, wallboard and steel making industries.</p>
-                    <button class="read-me-btn">Read Me</button>
-                </div>
-                <div class="service-box">
-                    <h4>Logistics</h4>
-                    <p>IMI manages +50 global stock-and-sell centers for coal, gypsum, bauxite, slag, iron ore products and clinker.<br><br>IMI negotiates and manages port leases and offsite stockpiles to support door-to-door deliveries. IMI manages numerous stevedoring operations to ensure safe and fast cargo handling.</p>
-                    <button class="read-me-btn">Read Me</button>
-                </div>
-                <div class="service-box">
-                    <h4>Marketing</h4>
-                    <p>In addition to its normal trading activities, IMI has secured exclusive marketing rights for Gypsum in South Spain from Saint-Gobain and Gypsum in Mexico from COMSA.</p>
-                    <button class="read-me-btn">Read Me</button>
-                </div>
-                <div class="service-box">
-                    <h4>Service and Support</h4>
-                    <p>IMI’s technical and trade support capabilities are unmatched in the industry and the “high-touch” approach ensures accurate, on-time delivery of product.<br><br>IMI has the ability to provide custom financing solutions to suppliers and customers.</p>
-                    <button class="read-me-btn">Read Me</button>
+            <div class="commitment-view">
+                <div class="commitment-header"></div>
+                <h2>Our Environmental<br>Commitment</h2>
+                <div class="commitment-list">
+                    <div class="commitment-item">
+                        <div class="red-square"></div>
+                        <p>We work toward sourcing our raw materials from producers who engage in responsible mining processes. This includes implementing measures to reduce ecological disruption and enhancing resource efficiency.</p>
+                    </div>
+                    <div class="commitment-item">
+                        <div class="red-square"></div>
+                        <p>By selecting suppliers dedicated to these principles, we aim to support efforts that contribute to more sustainable resource management within the industry.</p>
+                    </div>
+                    <div class="commitment-item">
+                        <div class="red-square"></div>
+                        <p>Our environmental stewardship is not just a present concern but a commitment to future generations. We are attentive to preserving and enhancing the resources and environments we rely on today for those who will come after us.</p>
+                    </div>
                 </div>
             </div>
         `;
@@ -122,7 +108,6 @@ class MILogisticsApp {
             document.getElementById('home-content').innerHTML = `
                 <div style="text-align: center; padding: 20px;">
                     <h1 style="color: var(--deep-space); margin-bottom: 10px;">Welcome to IMI Logistics</h1>
-                    <p style="color: var(--text-gray);">Select an analysis module from the sidebar to begin.</p>
                     <div class="welcome-grid">
                         <div class="stat-box"><small>SYSTEM STATUS</small><h2 style="margin: 5px 0; color: #10B981;">ACTIVE</h2></div>
                         <div class="stat-box"><small>MODULARS</small><h2 style="margin: 5px 0; color: var(--mi-red);">4 LOADED</h2></div>
@@ -132,9 +117,6 @@ class MILogisticsApp {
             document.getElementById('map-container').innerHTML = `
                 <div class="hard-clip-wrapper" style="height: 800px;">
                     <iframe frameborder="0" scrolling="no" style="width: 100%; height: 100%; border: none;" src="${this.widgetConfig.shipXplorer}"></iframe>
-                </div>
-                <div class="hard-clip-wrapper" style="height: 850px;">
-                    <div class="elfsight-app-${this.widgetConfig.elfsightId}" data-elfsight-app-lazy></div>
                 </div>`;
         }
     }
@@ -156,9 +138,7 @@ class MILogisticsApp {
             newFrame.style.height = "850px";
             newFrame.style.border = "none";
             newFrame.src = this.analysisPages[pageId];
-            
             newFrame.onload = () => { this.loader.style.display = 'none'; };
-            
             this.iframeContainer.appendChild(newFrame);
             this.iframeCache[pageId] = newFrame;
         }
@@ -170,8 +150,10 @@ class MILogisticsApp {
         this.hideAllViews();
         this.genericView.classList.add('active');
         this.genericContent.innerHTML = `
-            <h2>${title}</h2>
-            <p>${description}</p>
+            <div style="padding: 20px;">
+                <h2 style="color: var(--mi-red)">${title}</h2>
+                <p style="color: var(--deep-space); line-height: 1.6;">${description}</p>
+            </div>
         `;
     }
 
@@ -187,7 +169,7 @@ class MILogisticsApp {
             'Our Team': 'TEAM',
             'Our Products': 'PRODUCTS',
             'Partners & Affiliates': 'PARTNERS',
-            'Environmental Commitment': 'ENV_COMMIT',
+            'Our Services': 'SERVICES',
             'Headquarters': 'HQ'
         };
         return mapping[title] || '';
