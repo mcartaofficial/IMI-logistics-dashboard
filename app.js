@@ -37,14 +37,29 @@ class MILogisticsApp {
 
     buildSidebar() {
         this.nav.innerHTML = '';
+        
+        // Navigation Sections
+        this.createNavLabel('Core Dashboard');
         this.createNavItem('DASHBOARD HOME', 'HOME_PAGE', () => this.showHomePage());
         this.createNavItem('DATA VISUALIZATION', 'DATA_VISUALIZATION', () => this.switchExcelPage('DATA_VISUALIZATION', 'Data Visualization'));
-        
-        // Tab name updated to Forecasting Time Series Models
-        this.createNavItem('FORECASTING TIME SERIES MODELS', 'ROTTERDAM_EXP_SMOOTH', () => this.switchExcelPage('ROTTERDAM_EXP_SMOOTH', 'Forecasting Time Series Models'));
-        
+        this.createNavItem('FORECASTING MODELS', 'ROTTERDAM_EXP_SMOOTH', () => this.switchExcelPage('ROTTERDAM_EXP_SMOOTH', 'Forecasting Time Series Models'));
         this.createNavItem('BRENT CRUDE OIL', 'BRENT_CRUDE_OIL', () => this.switchExcelPage('BRENT_CRUDE_OIL', 'Brent Crude Oil Stat Sign'));
         this.createNavItem('ROTTERDAM STAT', 'ROTTERDAM_STAT', () => this.switchExcelPage('ROTTERDAM_STAT', 'Rotterdam Stat Sign'));
+
+        this.createNavLabel('Company Profile');
+        this.createNavItem('ABOUT US', 'ABOUT_PAGE', () => this.showStaticPage('About IMI Logistics', 'Learn about our mission to redefine maritime logistics through data-driven precision.'));
+        this.createNavItem('OUR TEAM', 'OUR_TEAM', () => this.showStaticPage('Our Team', 'Meet the specialists driving our logistics and data engineering excellence.'));
+        this.createNavItem('OUR PRODUCTS', 'OUR_PRODUCTS', () => this.showStaticPage('Our Products', 'Customized freight solutions and real-time monitoring tools.'));
+        this.createNavItem('PARTNERS & AFFILIATES', 'PARTNERS', () => this.showStaticPage('Partners & Affiliates', 'Collaborating with global maritime leaders to expand our reach.'));
+        this.createNavItem('ENV. COMMITMENT', 'ENV_COMMITMENT', () => this.showStaticPage('Environmental Commitment', 'Dedicated to reducing maritime carbon footprints through optimized routing.'));
+        this.createNavItem('HEADQUARTERS', 'HQ', () => this.showStaticPage('Headquarters', 'Located at the heart of global trade routes.'));
+    }
+
+    createNavLabel(text) {
+        const label = document.createElement('div');
+        label.style = "padding: 20px 28px 10px; font-size: 0.7rem; color: #555e70; text-transform: uppercase; letter-spacing: 2px; font-weight: 800;";
+        label.textContent = text;
+        this.nav.appendChild(label);
     }
 
     createNavItem(text, id, callback) {
@@ -79,11 +94,23 @@ class MILogisticsApp {
             document.getElementById('map-container').innerHTML = `
                 <div class="hard-clip-wrapper" style="height: 800px;">
                     <iframe frameborder="0" scrolling="no" style="width: 100%; height: 100%; border: none;" src="${this.widgetConfig.shipXplorer}"></iframe>
-                </div>
-                <div class="hard-clip-wrapper" style="height: 850px;">
-                    <div class="elfsight-app-${this.widgetConfig.elfsightId}" data-elfsight-app-lazy></div>
                 </div>`;
         }
+    }
+
+    showStaticPage(title, content) {
+        this.updateActiveNav(null); // Clear nav active state or map to specific ID
+        this.titleText.innerText = title;
+        this.excelViewport.classList.remove('active');
+        this.homeView.classList.add('active');
+        
+        document.getElementById('home-content').innerHTML = `
+            <div style="padding: 20px; max-width: 800px; margin: 0 auto;">
+                <h2 style="color: var(--deep-space);">${title}</h2>
+                <hr style="border: none; border-top: 2px solid var(--mi-red); width: 50px; margin: 20px 0;">
+                <p style="color: var(--text-gray); line-height: 1.6; font-size: 1.1rem;">${content}</p>
+            </div>`;
+        document.getElementById('map-container').innerHTML = ''; // Clear map for static pages
     }
 
     switchExcelPage(pageId, displayTitle) {
@@ -113,8 +140,10 @@ class MILogisticsApp {
 
     updateActiveNav(id) {
         document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-        const activeBtn = document.querySelector(`[data-id="${id}"]`);
-        if (activeBtn) activeBtn.classList.add('active');
+        if (id) {
+            const activeBtn = document.querySelector(`[data-id="${id}"]`);
+            if (activeBtn) activeBtn.classList.add('active');
+        }
     }
 }
 
