@@ -22,22 +22,14 @@
         /* Sidebar */
         .sidebar { width: var(--sidebar-width); background: var(--deep-space); color: var(--white); display: flex; flex-direction: column; z-index: 1001; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .sidebar.collapsed { transform: translateX(-100%); position: absolute; height: 100%; }
-        .sidebar-header { padding: 40px 24px; background: rgba(0,0,0,0.15); border-bottom: 1px solid rgba(255,255,255,0.1); text-align: center; }
-        
-        /* New Logo Styling */
-        .sidebar-logo {
-            width: 100%;
-            max-width: 180px;
-            height: auto;
-            margin-bottom: 15px;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
+        .sidebar-header { padding: 40px 24px; background: rgba(0,0,0,0.15); border-bottom: 1px solid rgba(255,255,255,0.1); }
         .sidebar-header h2 { font-size: 1.1rem; margin: 0; letter-spacing: 1.2px; font-weight: 900; text-transform: uppercase; }
 
-        .nav-list { flex: 1; padding: 25px 0; overflow-y: auto; }
+        /* Logo Styling */
+        .sidebar-logo-container { padding: 20px 24px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .sidebar-logo { max-width: 100%; height: auto; border-radius: 4px; }
+
+        .nav-list { flex: 1; padding: 10px 0; overflow-y: auto; }
         .nav-item { width: 100%; padding: 16px 28px; border: none; background: none; color: #8E9AAF; text-align: left; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; text-transform: uppercase; letter-spacing: 1px; transition: background 0.2s; }
         .nav-item:hover { background: rgba(255,255,255,0.03); color: var(--white); }
         .nav-item.active { background: var(--mi-red); color: var(--white); font-weight: 700; }
@@ -102,9 +94,9 @@
 </head>
 <body>
     <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <img src="images/IMI logo.jpg" alt="IMI Logistics Logo" class="sidebar-logo">
-            <h2>IMI Logistics</h2>
+        <div class="sidebar-header"><h2>IMI Logistics</h2></div>
+        <div class="sidebar-logo-container">
+            <img src="IMI logo.jpg" alt="IMI International Materials Logo" class="sidebar-logo">
         </div>
         <div class="nav-list" id="sidebar-nav"></div>
     </aside>
