@@ -24,14 +24,24 @@ class MILogisticsApp {
         this.iframeContainer = document.getElementById('iframe-cache-container');
         this.titleText = document.getElementById('current-sheet-title');
         this.loader = document.getElementById('loading-indicator');
-        
-        // Calculator State
+
+        // Calculator State & Data
         this.calcState = {
             dataset: 'ROTTERDAM',
             model: 'EXP',
-            inputs: {}
+            historicalDemand: [
+                536.41, 534.63, 556.89, 584.66, 497.92, 426.3, 451.65, 488.47, 496.92, 515.23,
+                507.9, 480.37, 489.87, 455.56, 466.38, 468.61, 475.2, 514.59, 506.18, 421.17,
+                258.1, 219.19, 224.75, 278.07, 303.18, 307.13, 287.34, 292.26, 318.22, 363.89,
+                395.3, 456.16, 473.48, 458.26, 469.4, 504.8, 516.53, 480.91, 509.55, 565.47,
+                540.59, 519.19, 597.94, 658.24, 791.43, 740.39, 779.33, 828.05, 720.66, 653.77,
+                596.76, 611.71, 551.73, 502.95, 538.9, 534.68, 513.55, 533.38, 488.14, 502.49,
+                529.45, 571.26, 590.73, 571.16, 540.55, 520.05, 534.32, 548.25, 573.57, 592.48,
+                542.73, 542.56, 547.67, 521.61, 486.39, 513.47, 490.34, 505.13, 524.98, 502.67,
+                468.58, 437.2, 438.87, 481.87, 468.5, 457.09
+            ]
         };
-
+        
         this.init();
     }
 
@@ -42,16 +52,20 @@ class MILogisticsApp {
 
         this.buildSidebar();
         this.sidebar.classList.add('collapsed');
-        
-        // Calculator Events
-        document.getElementById('calc-dataset').addEventListener('change', (e) => {
-            this.calcState.dataset = e.target.value;
-            this.renderCalcInterface();
-        });
-        document.getElementById('calc-model').addEventListener('change', (e) => {
-            this.calcState.model = e.target.value;
-            this.renderCalcInterface();
-        });
+
+        // Calculator Event Listeners
+        const dsSelect = document.getElementById('calc-dataset');
+        const moSelect = document.getElementById('calc-model');
+        if (dsSelect && moSelect) {
+            dsSelect.addEventListener('change', (e) => {
+                this.calcState.dataset = e.target.value;
+                this.renderCalcInterface();
+            });
+            moSelect.addEventListener('change', (e) => {
+                this.calcState.model = e.target.value;
+                this.renderCalcInterface();
+            });
+        }
 
         this.showHomePage();
     }
@@ -87,7 +101,8 @@ class MILogisticsApp {
         this.nav.appendChild(btn);
     }
 
-    /* Calculator Logic */
+    /* --- CALCULATOR METHODS --- */
+
     showCalculator() {
         this.updateActiveNav('CALC');
         this.titleText.innerText = "Forecasting Models Calculator";
@@ -111,7 +126,7 @@ class MILogisticsApp {
             <div class="calc-hint">${rangeText}</div>
             <div class="calc-grid">
                 <div class="calc-item">
-                    <label>Current Demand (D)</label>
+                    <label>New Demand Input (D_t)</label>
                     <input type="number" step="0.01" class="calc-input" id="inp-d" placeholder="0.00">
                 </div>`;
 
@@ -131,11 +146,11 @@ class MILogisticsApp {
             </div>`;
         } else if (mo === 'ARIMA') {
             html += `<div class="calc-item">
-                <label>Prev Demand (D_prev)</label>
+                <label>Prev Demand (D_t-1)</label>
                 <input type="number" step="0.01" class="calc-input" id="inp-d-prev" placeholder="0.00">
             </div>
             <div class="calc-item">
-                <label>Demand S-periods ago (D_s)</label>
+                <label>Seasonal Demand (D_t-s)</label>
                 <input type="number" step="0.01" class="calc-input" id="inp-d-s" placeholder="0.00">
             </div>`;
         }
@@ -144,7 +159,6 @@ class MILogisticsApp {
         interfaceEl.innerHTML = html;
         resultsEl.innerHTML = '';
 
-        // Add listeners to new inputs
         interfaceEl.querySelectorAll('input').forEach(input => {
             input.addEventListener('input', () => this.processCalculation());
         });
@@ -179,23 +193,28 @@ class MILogisticsApp {
     }
 
     calculateExponential(d, fPrev, ds) {
-        const alpha = ds === 'ROTTERDAM' ? 0.511 : 0.5; // Brent derived from MAE/MSE consistency
+        const alpha = ds === 'ROTTERDAM' ? 0.511 : 0.5;
         const forecast = (alpha * d) + ((1 - alpha) * fPrev);
         const absErr = Math.abs(d - forecast);
         const sqErr = Math.pow(d - forecast, 2);
         
+        // Calculate average using the back-loaded demand list + new entry
+        const history = [...this.calcState.historicalDemand, d];
+        const avgDemand = history.reduce((a, b) => a + b, 0) / history.length;
+
         return {
             "Forecast (F)": forecast.toFixed(2),
             "Absolute Error": absErr.toFixed(2),
             "Squared Error": sqErr.toFixed(2),
-            "Alpha (Constant)": alpha,
-            "Target MAE": ds === 'ROTTERDAM' ? 52.88 : 5.48
+            "Alpha": alpha,
+            "History Avg Demand": avgDemand.toFixed(2),
+            "Dataset MAE": ds === 'ROTTERDAM' ? 52.88 : 5.48
         };
     }
 
     calculateHolt(d, lPrev, tPrev, ds) {
-        const alpha = ds === 'ROTTERDAM' ? 0.038 : 0.1; // Derived
-        const beta = ds === 'ROTTERDAM' ? 0.001 : 0.05; // Derived
+        const alpha = ds === 'ROTTERDAM' ? 0.038 : 0.1;
+        const beta = ds === 'ROTTERDAM' ? 0.001 : 0.05;
         
         const level = (alpha * d) + ((1 - alpha) * (lPrev + tPrev));
         const trend = (beta * (level - lPrev)) + ((1 - beta) * tPrev);
@@ -203,8 +222,8 @@ class MILogisticsApp {
         const error = d - forecast;
 
         return {
-            "New Level (L)": level.toFixed(2),
-            "New Trend (T)": trend.toFixed(2),
+            "Level (L)": level.toFixed(2),
+            "Trend (T)": trend.toFixed(2),
             "Forecast (F)": forecast.toFixed(2),
             "Error (D-F)": error.toFixed(2),
             "Alpha": alpha,
@@ -216,7 +235,7 @@ class MILogisticsApp {
         return {
             "First Difference": (d - dPrev).toFixed(2),
             "Seasonal Difference": (d - dS).toFixed(2),
-            "Status": "Stationarity Stabilized"
+            "Status": "Differencing Applied"
         };
     }
 
@@ -233,7 +252,8 @@ class MILogisticsApp {
         document.getElementById('calc-results').innerHTML = html;
     }
 
-    /* Original Page Methods */
+    /* --- END CALCULATOR METHODS --- */
+
     showHeadquartersPage() {
         this.updateActiveNav('HQ');
         this.titleText.innerText = "Global Headquarters";
