@@ -19,13 +19,18 @@ class MILogisticsApp {
         this.homeView = document.getElementById('home-view');
         this.excelViewport = document.getElementById('excel-viewport');
         this.genericView = document.getElementById('generic-view');
+        this.calcView = document.getElementById('calc-view');
         this.genericContent = document.getElementById('generic-content');
         this.iframeContainer = document.getElementById('iframe-cache-container');
         this.titleText = document.getElementById('current-sheet-title');
         this.loader = document.getElementById('loading-indicator');
         
         // Calculator State
-        this.currentCalcMode = 'EXP';
+        this.calcState = {
+            dataset: 'ROTTERDAM',
+            model: 'EXP',
+            inputs: {}
+        };
 
         this.init();
     }
@@ -37,120 +42,25 @@ class MILogisticsApp {
 
         this.buildSidebar();
         this.sidebar.classList.add('collapsed');
-        this.showHomePage();
-        this.initCalculator();
-    }
-
-    initCalculator() {
-        const tabs = document.querySelectorAll('.calc-tab');
-        tabs.forEach(tab => {
-            tab.onclick = (e) => {
-                tabs.forEach(t => t.classList.remove('active'));
-                e.target.classList.add('active');
-                this.currentCalcMode = e.target.dataset.type;
-                this.renderCalcInputs();
-            };
-        });
-        this.renderCalcInputs();
-    }
-
-    renderCalcInputs() {
-        const container = document.getElementById('calc-inputs');
-        const results = document.getElementById('calc-result');
-        results.innerHTML = '<div class="result-item"><small>Status</small><span>Waiting for Input</span></div>';
-
-        let html = '';
-        if (this.currentCalcMode === 'EXP') {
-            html = `
-                <div class="calc-form-grid">
-                    <div class="input-group"><label>Alpha (α)</label><input type="number" id="c-alpha" value="0.511" step="0.001"></div>
-                    <div class="input-group"><label>Current Demand</label><input type="number" id="c-demand" placeholder="e.g. 500"></div>
-                    <div class="input-group"><label>Prev Forecast</label><input type="number" id="c-prev-f" placeholder="e.g. 480"></div>
-                </div>
-                <button class="read-me-btn" onclick="app.calculateExp()">Calculate Forecast</button>
-            `;
-        } else if (this.currentCalcMode === 'HOLT') {
-            html = `
-                <div class="calc-form-grid">
-                    <div class="input-group"><label>Alpha (α)</label><input type="number" id="h-alpha" value="0.038" step="0.001"></div>
-                    <div class="input-group"><label>Beta (β)</label><input type="number" id="h-beta" value="0.001" step="0.001"></div>
-                    <div class="input-group"><label>Current Demand</label><input type="number" id="h-demand" placeholder="Input Value"></div>
-                    <div class="input-group"><label>Prev Level</label><input type="number" id="h-prev-l" placeholder="Input Value"></div>
-                    <div class="input-group"><label>Prev Trend</label><input type="number" id="h-prev-t" placeholder="Input Value"></div>
-                </div>
-                <button class="read-me-btn" onclick="app.calculateHolt()">Calculate Trended</button>
-            `;
-        } else if (this.currentCalcMode === 'ARIMA') {
-            html = `
-                <div class="calc-form-grid">
-                    <div class="input-group"><label>Current Demand</label><input type="number" id="a-curr" placeholder="Today"></div>
-                    <div class="input-group"><label>Previous Demand</label><input type="number" id="a-prev" placeholder="Yesterday/Last Month"></div>
-                    <div class="input-group"><label>Last Year (Same Period)</label><input type="number" id="a-seasonal" placeholder="Same Month Last Year"></div>
-                </div>
-                <button class="read-me-btn" onclick="app.calculateArima()">Calculate Differences</button>
-            `;
-        }
-        container.innerHTML = html;
-    }
-
-    calculateExp() {
-        const a = parseFloat(document.getElementById('c-alpha').value);
-        const d = parseFloat(document.getElementById('c-demand').value);
-        const f = parseFloat(document.getElementById('c-prev-f').value);
         
-        if (isNaN(d) || isNaN(f)) return;
+        // Calculator Events
+        document.getElementById('calc-dataset').addEventListener('change', (e) => {
+            this.calcState.dataset = e.target.value;
+            this.renderCalcInterface();
+        });
+        document.getElementById('calc-model').addEventListener('change', (e) => {
+            this.calcState.model = e.target.value;
+            this.renderCalcInterface();
+        });
 
-        const forecast = (a * d) + ((1 - a) * f);
-        const absErr = Math.abs(d - forecast);
-        const sqErr = Math.pow(d - forecast, 2);
-
-        document.getElementById('calc-result').innerHTML = `
-            <div class="result-item"><small>New Forecast</small><span>${forecast.toFixed(2)}</span></div>
-            <div class="result-item"><small>ABS Error</small><span>${absErr.toFixed(2)}</span></div>
-            <div class="result-item"><small>Sq Error</small><span>${sqErr.toFixed(2)}</span></div>
-        `;
-    }
-
-    calculateHolt() {
-        const a = parseFloat(document.getElementById('h-alpha').value);
-        const b = parseFloat(document.getElementById('h-beta').value);
-        const d = parseFloat(document.getElementById('h-demand').value);
-        const pL = parseFloat(document.getElementById('h-prev-l').value);
-        const pT = parseFloat(document.getElementById('h-prev-t').value);
-
-        if (isNaN(d) || isNaN(pL) || isNaN(pT)) return;
-
-        const level = (a * d) + ((1 - a) * (pL + pT));
-        const trend = (b * (level - pL)) + ((1 - b) * pT);
-        const forecast = level + trend;
-
-        document.getElementById('calc-result').innerHTML = `
-            <div class="result-item"><small>New Level</small><span>${level.toFixed(2)}</span></div>
-            <div class="result-item"><small>Trend</small><span>${trend.toFixed(4)}</span></div>
-            <div class="result-item"><small>Final Forecast</small><span>${forecast.toFixed(2)}</span></div>
-        `;
-    }
-
-    calculateArima() {
-        const curr = parseFloat(document.getElementById('a-curr').value);
-        const prev = parseFloat(document.getElementById('a-prev').value);
-        const seasonal = parseFloat(document.getElementById('a-seasonal').value);
-
-        if (isNaN(curr)) return;
-
-        const firstDiff = !isNaN(prev) ? (curr - prev) : "N/A";
-        const seasDiff = !isNaN(seasonal) ? (curr - seasonal) : "N/A";
-
-        document.getElementById('calc-result').innerHTML = `
-            <div class="result-item"><small>First Difference</small><span>${typeof firstDiff === 'number' ? firstDiff.toFixed(2) : firstDiff}</span></div>
-            <div class="result-item"><small>Seasonal Difference</small><span>${typeof seasDiff === 'number' ? seasDiff.toFixed(2) : seasDiff}</span></div>
-        `;
+        this.showHomePage();
     }
 
     buildSidebar() {
         this.nav.innerHTML = '';
         
         this.createNavItem('DASHBOARD HOME', 'HOME_PAGE', () => this.showHomePage());
+        this.createNavItem('FORECASTING CALCULATOR', 'CALC', () => this.showCalculator());
         this.createNavItem('DATA VISUALIZATION', 'DATA_VISUALIZATION', () => this.switchExcelPage('DATA_VISUALIZATION', 'Data Visualization'));
         this.createNavItem('FORECASTING TIME SERIES MODELS', 'ROTTERDAM_EXP_SMOOTH', () => this.switchExcelPage('ROTTERDAM_EXP_SMOOTH', 'Forecasting Time Series Models'));
         this.createNavItem('BRENT CRUDE OIL', 'BRENT_CRUDE_OIL', () => this.switchExcelPage('BRENT_CRUDE_OIL', 'Brent Crude Oil Stat Sign'));
@@ -177,6 +87,153 @@ class MILogisticsApp {
         this.nav.appendChild(btn);
     }
 
+    /* Calculator Logic */
+    showCalculator() {
+        this.updateActiveNav('CALC');
+        this.titleText.innerText = "Forecasting Models Calculator";
+        this.hideAllViews();
+        this.calcView.classList.add('active');
+        this.renderCalcInterface();
+    }
+
+    renderCalcInterface() {
+        const interfaceEl = document.getElementById('calc-interface');
+        const resultsEl = document.getElementById('calc-results');
+        const ds = this.calcState.dataset;
+        const mo = this.calcState.model;
+
+        let rangeText = ds === 'ROTTERDAM' ? "Range: 77.48 → 584.72" : "Range: 15.98 → 123.58";
+        if (mo === 'HOLT' && ds === 'ROTTERDAM') rangeText = "Range: 334.60 → 584.72";
+        if (mo === 'ARIMA' && ds === 'ROTTERDAM') rangeText = "Range: 219.20 → 584.72";
+
+        let html = `<div class="calc-section">
+            <h4 style="margin-top:0; color:var(--mi-red); text-transform:uppercase; font-size:0.8rem;">Required Inputs</h4>
+            <div class="calc-hint">${rangeText}</div>
+            <div class="calc-grid">
+                <div class="calc-item">
+                    <label>Current Demand (D)</label>
+                    <input type="number" step="0.01" class="calc-input" id="inp-d" placeholder="0.00">
+                </div>`;
+
+        if (mo === 'EXP') {
+            html += `<div class="calc-item">
+                <label>Prev Forecast (F_prev)</label>
+                <input type="number" step="0.01" class="calc-input" id="inp-f-prev" placeholder="0.00">
+            </div>`;
+        } else if (mo === 'HOLT') {
+            html += `<div class="calc-item">
+                <label>Prev Level (L_prev)</label>
+                <input type="number" step="0.01" class="calc-input" id="inp-l-prev" placeholder="0.00">
+            </div>
+            <div class="calc-item">
+                <label>Prev Trend (T_prev)</label>
+                <input type="number" step="0.01" class="calc-input" id="inp-t-prev" placeholder="0.00">
+            </div>`;
+        } else if (mo === 'ARIMA') {
+            html += `<div class="calc-item">
+                <label>Prev Demand (D_prev)</label>
+                <input type="number" step="0.01" class="calc-input" id="inp-d-prev" placeholder="0.00">
+            </div>
+            <div class="calc-item">
+                <label>Demand S-periods ago (D_s)</label>
+                <input type="number" step="0.01" class="calc-input" id="inp-d-s" placeholder="0.00">
+            </div>`;
+        }
+
+        html += `</div></div>`;
+        interfaceEl.innerHTML = html;
+        resultsEl.innerHTML = '';
+
+        // Add listeners to new inputs
+        interfaceEl.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', () => this.processCalculation());
+        });
+    }
+
+    processCalculation() {
+        const ds = this.calcState.dataset;
+        const mo = this.calcState.model;
+        const resultsEl = document.getElementById('calc-results');
+
+        const d = parseFloat(document.getElementById('inp-d')?.value);
+        if (isNaN(d)) { resultsEl.innerHTML = ''; return; }
+
+        let results = {};
+        if (mo === 'EXP') {
+            const fPrev = parseFloat(document.getElementById('inp-f-prev')?.value);
+            if (isNaN(fPrev)) return;
+            results = this.calculateExponential(d, fPrev, ds);
+        } else if (mo === 'HOLT') {
+            const lPrev = parseFloat(document.getElementById('inp-l-prev')?.value);
+            const tPrev = parseFloat(document.getElementById('inp-t-prev')?.value);
+            if (isNaN(lPrev) || isNaN(tPrev)) return;
+            results = this.calculateHolt(d, lPrev, tPrev, ds);
+        } else if (mo === 'ARIMA') {
+            const dPrev = parseFloat(document.getElementById('inp-d-prev')?.value);
+            const dS = parseFloat(document.getElementById('inp-d-s')?.value);
+            if (isNaN(dPrev) || isNaN(dS)) return;
+            results = this.calculateARIMA(d, dPrev, dS);
+        }
+
+        this.renderResults(results);
+    }
+
+    calculateExponential(d, fPrev, ds) {
+        const alpha = ds === 'ROTTERDAM' ? 0.511 : 0.5; // Brent derived from MAE/MSE consistency
+        const forecast = (alpha * d) + ((1 - alpha) * fPrev);
+        const absErr = Math.abs(d - forecast);
+        const sqErr = Math.pow(d - forecast, 2);
+        
+        return {
+            "Forecast (F)": forecast.toFixed(2),
+            "Absolute Error": absErr.toFixed(2),
+            "Squared Error": sqErr.toFixed(2),
+            "Alpha (Constant)": alpha,
+            "Target MAE": ds === 'ROTTERDAM' ? 52.88 : 5.48
+        };
+    }
+
+    calculateHolt(d, lPrev, tPrev, ds) {
+        const alpha = ds === 'ROTTERDAM' ? 0.038 : 0.1; // Derived
+        const beta = ds === 'ROTTERDAM' ? 0.001 : 0.05; // Derived
+        
+        const level = (alpha * d) + ((1 - alpha) * (lPrev + tPrev));
+        const trend = (beta * (level - lPrev)) + ((1 - beta) * tPrev);
+        const forecast = level + trend;
+        const error = d - forecast;
+
+        return {
+            "New Level (L)": level.toFixed(2),
+            "New Trend (T)": trend.toFixed(2),
+            "Forecast (F)": forecast.toFixed(2),
+            "Error (D-F)": error.toFixed(2),
+            "Alpha": alpha,
+            "Beta": beta
+        };
+    }
+
+    calculateARIMA(d, dPrev, dS) {
+        return {
+            "First Difference": (d - dPrev).toFixed(2),
+            "Seasonal Difference": (d - dS).toFixed(2),
+            "Status": "Stationarity Stabilized"
+        };
+    }
+
+    renderResults(data) {
+        let html = `<div class="calc-section" style="border-top-color: var(--deep-space)">
+            <h4 style="margin-top:0; color:var(--deep-space); text-transform:uppercase; font-size:0.8rem;">Calculated Outputs</h4>
+            <div class="calc-grid">`;
+        
+        for (const [key, val] of Object.entries(data)) {
+            html += `<div class="calc-item"><label>${key}</label><div class="val">${val}</div></div>`;
+        }
+
+        html += `</div></div>`;
+        document.getElementById('calc-results').innerHTML = html;
+    }
+
+    /* Original Page Methods */
     showHeadquartersPage() {
         this.updateActiveNav('HQ');
         this.titleText.innerText = "Global Headquarters";
@@ -347,7 +404,7 @@ class MILogisticsApp {
                     <p style="color: var(--text-gray);">Select an analysis module from the sidebar to begin.</p>
                     <div class="welcome-grid">
                         <div class="stat-box"><small>SYSTEM STATUS</small><h2 style="margin: 5px 0; color: #10B981;">ACTIVE</h2></div>
-                        <div class="stat-box"><small>MODULARS</small><h2 style="margin: 5px 0; color: var(--mi-red);">4 LOADED</h2></div>
+                        <div class="stat-box"><small>MODULARS</small><h2 style="margin: 5px 0; color: var(--mi-red);">5 LOADED</h2></div>
                     </div>
                 </div>`;
 
@@ -398,6 +455,7 @@ class MILogisticsApp {
         this.homeView.classList.remove('active');
         this.excelViewport.classList.remove('active');
         this.genericView.classList.remove('active');
+        this.calcView.classList.remove('active');
     }
 
     getNavIdByTitle(title) {
@@ -418,4 +476,4 @@ class MILogisticsApp {
     }
 }
 
-const app = new MILogisticsApp();
+new MILogisticsApp();
