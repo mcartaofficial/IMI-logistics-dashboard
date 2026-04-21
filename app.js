@@ -265,28 +265,28 @@ class MILogisticsApp {
             this.genericContent.innerHTML = `
                 <div class="img-about-header">
                     <div class="img-about-card">
-                        <img src="https://img.icons8.com/wired/64/ffffff/box.png" class="img-about-icon"/>
+                        <img src="https://img.icons8.com/ios/100/ffffff/open-box.png" class="img-about-icon" alt="Volume"/>
                         <div class="img-about-data">
                             <div class="img-about-val">45M MT</div>
                             <div class="img-about-label">Total Volume</div>
                         </div>
                     </div>
                     <div class="img-about-card">
-                        <img src="https://img.icons8.com/wired/64/ffffff/cargo-ship.png" class="img-about-icon"/>
+                        <img src="https://img.icons8.com/ios/100/ffffff/cargo-ship.png" class="img-about-icon" alt="Shipments"/>
                         <div class="img-about-data">
                             <div class="img-about-val">+1000</div>
                             <div class="img-about-label">Shipments</div>
                         </div>
                     </div>
                     <div class="img-about-card">
-                        <img src="https://img.icons8.com/wired/64/ffffff/bar-chart--v1.png" class="img-about-icon"/>
+                        <img src="https://img.icons8.com/ios/100/ffffff/money-bag-euro.png" class="img-about-icon" alt="Turnover"/>
                         <div class="img-about-data">
                             <div class="img-about-val">+$4 Billion</div>
                             <div class="img-about-label">Turnover</div>
                         </div>
                     </div>
                     <div class="img-about-card">
-                        <img src="https://img.icons8.com/wired/64/ffffff/globe.png" class="img-about-icon"/>
+                        <img src="https://img.icons8.com/ios/100/ffffff/conference-call.png" class="img-about-icon" alt="Employees"/>
                         <div class="img-about-data">
                             <div class="img-about-val">+170</div>
                             <div class="img-about-label">Global Employees</div>
