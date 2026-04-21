@@ -44,32 +44,32 @@ class MILogisticsApp {
             <div class="services-grid">
                 <div class="service-box">
                     <h4>Global Bulk Raw Materials Trading</h4>
-                    <p>IMI is one of the leading privately-owned, independent, bulk raw materials trading firms in the world today. With more than 38 years of history, IMI has established a reputation for exceptional service and high quality product offerings.</p>
+                    <p>IMI is one of the leading privately-owned, independent, bulk raw materials trading firms in the world today. With more than 38 years of history, IMI has established a reputation for exceptional service and high quality product offerings. Our experienced and diversified trading department is dedicated to professional, personal service and is committed to delivering products on time to suit the technical / material requirements of our customers.</p>
                     <button class="read-me-btn">Read Me</button>
                 </div>
                 <div class="service-box">
                     <h4>Sourcing</h4>
-                    <p>IMI holds multi-year contracts and marketing rights with suppliers for many products including natural gypsum, bauxite, cement and clinker, iron ore-related products, and solid fuels.</p>
+                    <p>IMI holds multi-year contracts and marketing rights with suppliers for many products including natural gypsum from Oman, Spain and Mexico; bauxite from Australia and Turkey; cement and clinker from Europe, Latin America and Asia; iron ore-related products from Trinidad, USA, Egypt, Persian Gulf and South America; and solid fuels (coal, petcoke, anthracite) from South America, USA, South Africa and Asia.</p>
                     <button class="read-me-btn">Read Me</button>
                 </div>
                 <div class="service-box">
                     <h4>Chartering</h4>
-                    <p>Through our in-house Chartering and Traffic operations departments, IMI has a first class reputation as a reliable expert in ocean vessel chartering and logistics planning.</p>
+                    <p>Through our in-house Chartering and Traffic operations departments, IMI has a first class reputation as a reliable expert in ocean vessel chartering, import/export operations, ship loading and discharge operations, and logistics planning and management for the cement, wallboard and steel making industries.</p>
                     <button class="read-me-btn">Read Me</button>
                 </div>
                 <div class="service-box">
                     <h4>Logistics</h4>
-                    <p>IMI manages +50 global stock-and-sell centers and negotiates port leases and offsite stockpiles to support door-to-door deliveries.</p>
+                    <p>IMI manages +50 global stock-and-sell centers for coal, gypsum, bauxite, slag, iron ore products and clinker. IMI negotiates and manages port leases and offsite stockpiles to support door-to-door deliveries. IMI manages numerous stevedoring operations to ensure safe and fast cargo handling.</p>
                     <button class="read-me-btn">Read Me</button>
                 </div>
                 <div class="service-box">
                     <h4>Marketing</h4>
-                    <p>In addition to normal trading activities, IMI has secured exclusive marketing rights for Gypsum in South Spain and Mexico.</p>
+                    <p>In addition to its normal trading activities, IMI has secured exclusive marketing rights for Gypsum in South Spain from Saint-Gobain and Gypsum in Mexico from COMSA.</p>
                     <button class="read-me-btn">Read Me</button>
                 </div>
                 <div class="service-box">
                     <h4>Service and Support</h4>
-                    <p>Technical and trade support capabilities including custom financing solutions for suppliers and customers.</p>
+                    <p>IMI’s technical and trade support capabilities are unmatched in the industry and the “high-touch” approach ensures accurate, on-time delivery of product. IMI has the ability to provide custom financing solutions to suppliers and customers.</p>
                     <button class="read-me-btn">Read Me</button>
                 </div>
             </div>
