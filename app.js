@@ -23,6 +23,7 @@ class MILogisticsApp {
         this.iframeContainer = document.getElementById('iframe-cache-container');
         this.titleText = document.getElementById('current-sheet-title');
         this.loader = document.getElementById('loading-indicator');
+        this.scrollContainer = document.getElementById('main-scroll-container');
         
         this.init();
     }
@@ -50,6 +51,11 @@ class MILogisticsApp {
         this.createNavItem('OUR TEAM', 'TEAM', () => this.showGenericPage('Our Team', 'Meet the experts driving IMI Logistics forward.'));
         this.createNavItem('OUR PRODUCTS', 'PRODUCTS', () => this.showGenericPage('Our Products', 'Advanced tracking and forecasting tools.'));
         this.createNavItem('OUR PARTNERS & AFFILIATES', 'PARTNERS', () => this.showGenericPage('Partners & Affiliates', 'Collaborating with global shipping lanes.'));
+        
+        // Relocated sections navigation now scrolls to internal sections
+        this.createNavItem('OUR ENVIRONMENTAL COMMITMENT', 'ENV_COMMIT', () => this.scrollToSection('env-section', 'ENV_COMMIT'));
+        this.createNavItem('OUR SERVICES', 'SERVICES', () => this.scrollToSection('services-section', 'SERVICES'));
+        this.createNavItem('HEADQUARTERS', 'HQ', () => this.scrollToSection('hq-section', 'HQ'));
     }
 
     createNavItem(text, id, callback) {
@@ -64,47 +70,146 @@ class MILogisticsApp {
         this.nav.appendChild(btn);
     }
 
-    showHomePage() {
-        this.updateActiveNav('HOME_PAGE');
-        this.titleText.innerText = "Dashboard Overview";
-        this.hideAllViews();
-        this.homeView.classList.add('active');
+    scrollToSection(sectionId, navId) {
+        this.showHomePage(); // Ensure we are on home view
+        this.updateActiveNav(navId);
+        const element = document.getElementById(sectionId);
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
 
-        // Combined content for Dashboard Overview
-        document.getElementById('home-content').innerHTML = `
-            <div style="text-align: center; padding: 20px;">
-                <h1 style="color: var(--deep-space); margin-bottom: 10px;">Welcome to IMI Logistics</h1>
-                <p style="color: var(--text-gray);">Live tracking and analysis system.</p>
-                <div class="welcome-grid">
-                    <div class="stat-box"><small>SYSTEM STATUS</small><h2 style="margin: 5px 0; color: #10B981;">ACTIVE</h2></div>
-                    <div class="stat-box"><small>MODULARS</small><h2 style="margin: 5px 0; color: var(--mi-red);">4 LOADED</h2></div>
+    // Data injection for relocated sections
+    getHQHTML() {
+        return `
+            <div class="hq-container">
+                <h2 style="color: white; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 2px;">Global Headquarters</h2>
+                <div class="hq-grid">
+                    <div class="hq-box">
+                        <h4>Florida | USA</h4>
+                        <p>54 SE 5th Avenue, Suite 300<br>Delray Beach, FL 33483</p>
+                        <p><span class="hq-label">Toll Free</span><a href="tel:+18774230226">+1-877-423-0226</a></p>
+                        <p><span class="hq-label">Phone</span><a href="tel:+15617050350">+1-561-705-0350</a></p>
+                        <p><span class="hq-label">Fax</span><a href="fax:+15613910546">+1-561-391-0546</a></p>
+                        <p><a href="mailto:operations.amer@imigroup.com">operations.amer@imigroup.com</a></p>
+                        <a href="#" class="hq-link">Map & Directions</a>
+                    </div>
+                    <div class="hq-box">
+                        <h4>Belo Horizonte | Brazil</h4>
+                        <p>IMI Brasil Trading Ltda<br>Rua Antônio de Albuquerque, 194/sl. 902<br>Savassi – Belo Horizonte, MG, BRAZIL</p>
+                        <p><span class="hq-label">Phone</span><a href="tel:+5531991828338">+55 (31) 99182-8338</a></p>
+                        <p><a href="mailto:operations.latam@imigroup.com">operations.latam@imigroup.com</a></p>
+                    </div>
+                    <div class="hq-box">
+                        <h4>Dubai | UAE</h4>
+                        <p>IMI Middle East Trading L.L.C.<br>Offices 801 & 802, Tower A, The Offices, One Za’abeel, Za’abeel Palace St, Dubai, U.A.E</p>
+                        <p><span class="hq-label">Phone</span><a href="tel:+97147760100">+971-4-776-0100</a></p>
+                        <p><a href="mailto:operations.asia@imigroup.com">operations.asia@imigroup.com</a></p>
+                        <a href="#" class="hq-link">Map & Directions</a>
+                    </div>
+                    <div class="hq-box">
+                        <h4>Madrid | Spain</h4>
+                        <p>IMI Europe, SLU<br>Calle Velázquez 123. 2º PL, 28006 Madrid, Spain</p>
+                        <p><span class="hq-label">Phone</span><a href="tel:+34915641045">+34-915-64-1045</a></p>
+                        <p><a href="mailto:operations.eur@imigroup.com">operations.eur@imigroup.com</a></p>
+                        <a href="#" class="hq-link">Map & Directions</a>
+                    </div>
+                    <div class="hq-box">
+                        <h4>Shanghai | China</h4>
+                        <p>Shanghai Representative Office, Suite 306B, Skybridge Plaza, Jinzhong Road 968#, Changning, Shanghai, China</p>
+                        <p><span class="hq-label">Phone</span><a href="tel:+8618217739459">+86-182-1773-9459</a></p>
+                        <p><a href="mailto:operations.asia@imigroup.com">operations.asia@imigroup.com</a></p>
+                        <a href="#" class="hq-link">Map & Directions</a>
+                    </div>
+                    <div class="hq-box">
+                        <h4>Singapore</h4>
+                        <p>IMI Trading Singapore Pte Ltd<br>1 George Street, #23-04, Singapore 049145</p>
+                        <p><span class="hq-label">Phone</span><a href="tel:+6563035680">+65-6303-5680</a></p>
+                        <p><span class="hq-label">Fax</span><a href="fax:+6563035681">+65-6303-5681</a></p>
+                        <p><a href="mailto:operations.asia@imigroup.com">operations.asia@imigroup.com</a></p>
+                        <a href="#" class="hq-link">Map & Directions</a>
+                    </div>
+                    <div class="hq-box">
+                        <h4>Mexico City | Mexico</h4>
+                        <p>Avenida Paseo de la Reforma Número 404, Piso 13, Interior 102. Colonia Juárez, Mexico City, 06600</p>
+                        <p><a href="mailto:operations.latam@imigroup.com">operations.latam@imigroup.com</a></p>
+                        <a href="#" class="hq-link">Map & Directions</a>
+                    </div>
+                    <div class="hq-box">
+                        <h4>Bogotá | Colombia</h4>
+                        <p>Calle 97A, #8-10, Oficina 503, Bogotá 110221</p>
+                        <p><a href="mailto:imicol@imigroup.com">imicol@imigroup.com</a></p>
+                        <a href="#" class="hq-link">Map & Directions</a>
+                    </div>
+                    <div class="hq-box">
+                        <h4>Johannesburg | South Africa</h4>
+                        <p>Workshop 17 The Bank, Corner Tyrwhitt Road and 24 Cradock Ave, Johannesburg, 2196</p>
+                        <p><a href="mailto:operations.asia@imigroup.com">operations.asia@imigroup.com</a></p>
+                    </div>
+                    <div class="hq-box">
+                        <h4>Istanbul | Turkey</h4>
+                        <p>Kampanaki Mansion, Köybaşı Cad. No:63, Yeniköy 34464 Sarıyer, Istanbul, Turkey</p>
+                        <p><span class="hq-label">Phone</span><a href="tel:+902122625151">+90 212 262 51 51</a></p>
+                        <p><a href="mailto:operations.eur@imigroup.com">operations.eur@imigroup.com</a></p>
+                        <a href="#" class="hq-link">Map & Directions</a>
+                    </div>
+                    <div class="hq-box">
+                        <h4>London | UK</h4>
+                        <p>International Materials UK Ltd, Office 102, 81 Fulham Road, London SW3 6RD, UK</p>
+                        <p><span class="hq-label">Phone</span><a href="tel:+442038260003">+44 20 3826 0003</a></p>
+                        <p><a href="mailto:operations.eur@imigroup.com">operations.eur@imigroup.com</a></p>
+                        <a href="#" class="hq-link">Map & Directions</a>
+                    </div>
                 </div>
             </div>
+        `;
+    }
 
-            <div class="hard-clip-wrapper" style="height: 600px;">
-                <iframe frameborder="0" scrolling="no" style="width: 100%; height: 100%; border: none;" src="${this.widgetConfig.shipXplorer}"></iframe>
+    getEnvHTML() {
+        return `
+            <div class="env-container">
+                <div class="env-header-line"></div>
+                <h1 class="env-title">Our Environmental<br>Commitment</h1>
+                <ul class="commitment-list">
+                    <li class="commitment-item">
+                        <div class="red-bullet"></div>
+                        <div class="commitment-text">We work toward sourcing our raw materials from producers who engage in responsible mining processes. This includes implementing measures to reduce ecological disruption and enhancing resource efficiency.</div>
+                    </li>
+                    <li class="commitment-item">
+                        <div class="red-bullet"></div>
+                        <div class="commitment-text">By selecting suppliers dedicated to these principles, we aim to support efforts that contribute to more sustainable resource management within the industry.</div>
+                    </li>
+                    <li class="commitment-item">
+                        <div class="red-bullet"></div>
+                        <div class="commitment-text">Our environmental stewardship is not just a present concern but a commitment to future generations. We are attentive to preserving and enhancing the resources and environments we rely on today for those who will come after us.</div>
+                    </li>
+                </ul>
             </div>
+        `;
+    }
 
-            <h3 class="section-header">Our Services</h3>
+    getServicesHTML() {
+        return `
+            <h2 style="color: var(--deep-space); text-transform: uppercase; letter-spacing: 2px;">Our Services</h2>
             <div class="services-grid">
                 <div class="service-box">
                     <h4>Global Bulk Raw Materials Trading</h4>
-                    <p>IMI is one of the leading privately-owned, independent, bulk raw materials trading firms in the world today. With more than 38 years of history, IMI has established a reputation for exceptional service.</p>
+                    <p>IMI is one of the leading privately-owned, independent, bulk raw materials trading firms in the world today. With more than 38 years of history, IMI has established a reputation for exceptional service and high quality product offerings.</p>
                     <button class="read-me-btn">Read Me</button>
                 </div>
                 <div class="service-box">
                     <h4>Sourcing</h4>
-                    <p>IMI holds multi-year contracts and marketing rights with suppliers for many products including natural gypsum, bauxite, cement and clinker.</p>
+                    <p>IMI holds multi-year contracts and marketing rights with suppliers for many products including natural gypsum, bauxite, cement and clinker, iron ore-related products, and solid fuels.</p>
                     <button class="read-me-btn">Read Me</button>
                 </div>
                 <div class="service-box">
                     <h4>Chartering</h4>
-                    <p>IMI has a first class reputation as a reliable expert in ocean vessel chartering and logistics planning through our in-house departments.</p>
+                    <p>Through our in-house Chartering and Traffic operations departments, IMI has a first class reputation as a reliable expert in ocean vessel chartering and logistics planning.</p>
                     <button class="read-me-btn">Read Me</button>
                 </div>
                 <div class="service-box">
                     <h4>Logistics</h4>
-                    <p>IMI manages +50 global stock-and-sell centers and negotiates port leases to support door-to-door deliveries.</p>
+                    <p>IMI manages +50 global stock-and-sell centers and negotiates port leases and offsite stockpiles to support door-to-door deliveries.</p>
                     <button class="read-me-btn">Read Me</button>
                 </div>
                 <div class="service-box">
@@ -118,61 +223,40 @@ class MILogisticsApp {
                     <button class="read-me-btn">Read Me</button>
                 </div>
             </div>
-
-            <h3 class="section-header">Environmental Commitment</h3>
-            <div class="env-container">
-                <div class="env-header-line"></div>
-                <h1 class="env-title">Our Environmental<br>Commitment</h1>
-                <ul class="commitment-list">
-                    <li class="commitment-item">
-                        <div class="red-bullet"></div>
-                        <div class="commitment-text">We work toward sourcing our raw materials from producers who engage in responsible mining processes, reducing ecological disruption.</div>
-                    </li>
-                    <li class="commitment-item">
-                        <div class="red-bullet"></div>
-                        <div class="commitment-text">We select suppliers dedicated to sustainable resource management within the industry.</div>
-                    </li>
-                    <li class="commitment-item">
-                        <div class="red-bullet"></div>
-                        <div class="commitment-text">Our environmental stewardship is a commitment to future generations, preserving the resources we rely on today.</div>
-                    </li>
-                </ul>
-            </div>
-
-            <h3 class="section-header">Global Headquarters</h3>
-            <div class="hq-container">
-                <div class="hq-grid">
-                    <div class="hq-box">
-                        <h4>Florida | USA</h4>
-                        <p>54 SE 5th Avenue, Suite 300<br>Delray Beach, FL 33483</p>
-                        <p><span class="hq-label">Phone</span><a href="tel:+15617050350">+1-561-705-0350</a></p>
-                        <p><a href="mailto:operations.amer@imigroup.com">operations.amer@imigroup.com</a></p>
-                    </div>
-                    <div class="hq-box">
-                        <h4>Dubai | UAE</h4>
-                        <p>Offices 801 & 802, Tower A, One Za’abeel, Dubai, U.A.E</p>
-                        <p><span class="hq-label">Phone</span><a href="tel:+97147760100">+971-4-776-0100</a></p>
-                        <p><a href="mailto:operations.asia@imigroup.com">operations.asia@imigroup.com</a></p>
-                    </div>
-                    <div class="hq-box">
-                        <h4>Madrid | Spain</h4>
-                        <p>Calle Velázquez 123. 2º PL, 28006 Madrid, Spain</p>
-                        <p><span class="hq-label">Phone</span><a href="tel:+34915641045">+34-915-64-1045</a></p>
-                        <p><a href="mailto:operations.eur@imigroup.com">operations.eur@imigroup.com</a></p>
-                    </div>
-                    <div class="hq-box">
-                        <h4>Singapore</h4>
-                        <p>1 George Street, #23-04, Singapore 049145</p>
-                        <p><span class="hq-label">Phone</span><a href="tel:+6563035680">+65-6303-5680</a></p>
-                        <p><a href="mailto:operations.asia@imigroup.com">operations.asia@imigroup.com</a></p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="hard-clip-wrapper" style="height: 850px; margin-top: 50px;">
-                <div class="elfsight-app-${this.widgetConfig.elfsightId}" data-elfsight-app-lazy></div>
-            </div>
         `;
+    }
+
+    showHomePage() {
+        this.updateActiveNav('HOME_PAGE');
+        this.titleText.innerText = "Dashboard Overview";
+        this.hideAllViews();
+        this.homeView.classList.add('active');
+
+        // Initial setup of home content if not already loaded
+        if (!document.getElementById('home-content').innerHTML) {
+            document.getElementById('home-content').innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <h1 style="color: var(--deep-space); margin-bottom: 10px;">Welcome to IMI Logistics</h1>
+                    <p style="color: var(--text-gray);">Select an analysis module from the sidebar to begin.</p>
+                    <div class="welcome-grid">
+                        <div class="stat-box"><small>SYSTEM STATUS</small><h2 style="margin: 5px 0; color: #10B981;">ACTIVE</h2></div>
+                        <div class="stat-box"><small>MODULARS</small><h2 style="margin: 5px 0; color: var(--mi-red);">4 LOADED</h2></div>
+                    </div>
+                </div>`;
+
+            document.getElementById('map-container').innerHTML = `
+                <div class="hard-clip-wrapper" style="height: 800px;">
+                    <iframe frameborder="0" scrolling="no" style="width: 100%; height: 100%; border: none;" src="${this.widgetConfig.shipXplorer}"></iframe>
+                </div>
+                <div class="hard-clip-wrapper" style="height: 850px;">
+                    <div class="elfsight-app-${this.widgetConfig.elfsightId}" data-elfsight-app-lazy></div>
+                </div>`;
+
+            // Inject the relocated sections into the home view
+            document.getElementById('services-section').innerHTML = this.getServicesHTML();
+            document.getElementById('env-section').innerHTML = this.getEnvHTML();
+            document.getElementById('hq-section').innerHTML = this.getHQHTML();
+        }
     }
 
     switchExcelPage(pageId, displayTitle) {
