@@ -178,7 +178,7 @@ class MILogisticsApp {
             </div>
         `;
     }
-
+    
     buildSidebar() {
         this.nav.innerHTML = '';
         this.createNavItem('DASHBOARD HOME', 'HOME_PAGE', () => this.showHomePage());
