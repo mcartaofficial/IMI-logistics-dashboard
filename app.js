@@ -70,86 +70,109 @@ class MILogisticsApp {
         this.hideAllViews();
         this.homeView.classList.add('active');
 
-        if (!document.getElementById('home-content').innerHTML) {
-            document.getElementById('home-content').innerHTML = `
-                <div style="text-align: center; padding: 20px;">
-                    <h1 style="color: var(--deep-space); margin-bottom: 10px;">Welcome to IMI Logistics</h1>
-                    <p style="color: var(--text-gray);">Live monitoring and analysis dashboard.</p>
-                    <div class="welcome-grid">
-                        <div class="stat-box"><small>SYSTEM STATUS</small><h2 style="margin: 5px 0; color: #10B981;">ACTIVE</h2></div>
-                        <div class="stat-box"><small>MODULARS</small><h2 style="margin: 5px 0; color: var(--mi-red);">4 LOADED</h2></div>
+        // Combined content for Dashboard Overview
+        document.getElementById('home-content').innerHTML = `
+            <div style="text-align: center; padding: 20px;">
+                <h1 style="color: var(--deep-space); margin-bottom: 10px;">Welcome to IMI Logistics</h1>
+                <p style="color: var(--text-gray);">Live tracking and analysis system.</p>
+                <div class="welcome-grid">
+                    <div class="stat-box"><small>SYSTEM STATUS</small><h2 style="margin: 5px 0; color: #10B981;">ACTIVE</h2></div>
+                    <div class="stat-box"><small>MODULARS</small><h2 style="margin: 5px 0; color: var(--mi-red);">4 LOADED</h2></div>
+                </div>
+            </div>
+
+            <div class="hard-clip-wrapper" style="height: 600px;">
+                <iframe frameborder="0" scrolling="no" style="width: 100%; height: 100%; border: none;" src="${this.widgetConfig.shipXplorer}"></iframe>
+            </div>
+
+            <h3 class="section-header">Our Services</h3>
+            <div class="services-grid">
+                <div class="service-box">
+                    <h4>Global Bulk Raw Materials Trading</h4>
+                    <p>IMI is one of the leading privately-owned, independent, bulk raw materials trading firms in the world today. With more than 38 years of history, IMI has established a reputation for exceptional service.</p>
+                    <button class="read-me-btn">Read Me</button>
+                </div>
+                <div class="service-box">
+                    <h4>Sourcing</h4>
+                    <p>IMI holds multi-year contracts and marketing rights with suppliers for many products including natural gypsum, bauxite, cement and clinker.</p>
+                    <button class="read-me-btn">Read Me</button>
+                </div>
+                <div class="service-box">
+                    <h4>Chartering</h4>
+                    <p>IMI has a first class reputation as a reliable expert in ocean vessel chartering and logistics planning through our in-house departments.</p>
+                    <button class="read-me-btn">Read Me</button>
+                </div>
+                <div class="service-box">
+                    <h4>Logistics</h4>
+                    <p>IMI manages +50 global stock-and-sell centers and negotiates port leases to support door-to-door deliveries.</p>
+                    <button class="read-me-btn">Read Me</button>
+                </div>
+                <div class="service-box">
+                    <h4>Marketing</h4>
+                    <p>In addition to normal trading activities, IMI has secured exclusive marketing rights for Gypsum in South Spain and Mexico.</p>
+                    <button class="read-me-btn">Read Me</button>
+                </div>
+                <div class="service-box">
+                    <h4>Service and Support</h4>
+                    <p>Technical and trade support capabilities including custom financing solutions for suppliers and customers.</p>
+                    <button class="read-me-btn">Read Me</button>
+                </div>
+            </div>
+
+            <h3 class="section-header">Environmental Commitment</h3>
+            <div class="env-container">
+                <div class="env-header-line"></div>
+                <h1 class="env-title">Our Environmental<br>Commitment</h1>
+                <ul class="commitment-list">
+                    <li class="commitment-item">
+                        <div class="red-bullet"></div>
+                        <div class="commitment-text">We work toward sourcing our raw materials from producers who engage in responsible mining processes, reducing ecological disruption.</div>
+                    </li>
+                    <li class="commitment-item">
+                        <div class="red-bullet"></div>
+                        <div class="commitment-text">We select suppliers dedicated to sustainable resource management within the industry.</div>
+                    </li>
+                    <li class="commitment-item">
+                        <div class="red-bullet"></div>
+                        <div class="commitment-text">Our environmental stewardship is a commitment to future generations, preserving the resources we rely on today.</div>
+                    </li>
+                </ul>
+            </div>
+
+            <h3 class="section-header">Global Headquarters</h3>
+            <div class="hq-container">
+                <div class="hq-grid">
+                    <div class="hq-box">
+                        <h4>Florida | USA</h4>
+                        <p>54 SE 5th Avenue, Suite 300<br>Delray Beach, FL 33483</p>
+                        <p><span class="hq-label">Phone</span><a href="tel:+15617050350">+1-561-705-0350</a></p>
+                        <p><a href="mailto:operations.amer@imigroup.com">operations.amer@imigroup.com</a></p>
+                    </div>
+                    <div class="hq-box">
+                        <h4>Dubai | UAE</h4>
+                        <p>Offices 801 & 802, Tower A, One Za’abeel, Dubai, U.A.E</p>
+                        <p><span class="hq-label">Phone</span><a href="tel:+97147760100">+971-4-776-0100</a></p>
+                        <p><a href="mailto:operations.asia@imigroup.com">operations.asia@imigroup.com</a></p>
+                    </div>
+                    <div class="hq-box">
+                        <h4>Madrid | Spain</h4>
+                        <p>Calle Velázquez 123. 2º PL, 28006 Madrid, Spain</p>
+                        <p><span class="hq-label">Phone</span><a href="tel:+34915641045">+34-915-64-1045</a></p>
+                        <p><a href="mailto:operations.eur@imigroup.com">operations.eur@imigroup.com</a></p>
+                    </div>
+                    <div class="hq-box">
+                        <h4>Singapore</h4>
+                        <p>1 George Street, #23-04, Singapore 049145</p>
+                        <p><span class="hq-label">Phone</span><a href="tel:+6563035680">+65-6303-5680</a></p>
+                        <p><a href="mailto:operations.asia@imigroup.com">operations.asia@imigroup.com</a></p>
                     </div>
                 </div>
+            </div>
 
-                <div class="hard-clip-wrapper" style="height: 600px;">
-                    <iframe frameborder="0" scrolling="no" style="width: 100%; height: 100%; border: none;" src="${this.widgetConfig.shipXplorer}"></iframe>
-                </div>
-                <div class="hard-clip-wrapper" style="height: 600px;">
-                    <div class="elfsight-app-${this.widgetConfig.elfsightId}" data-elfsight-app-lazy></div>
-                </div>
-
-                <div class="home-section">
-                    <h2 style="color: var(--mi-red); text-transform: uppercase; letter-spacing: 2px;">Our Services</h2>
-                    <div class="services-grid">
-                        <div class="service-box">
-                            <h4>Global Bulk Raw Materials Trading</h4>
-                            <p>IMI is one of the leading privately-owned, independent firms with more than 38 years of history.</p>
-                            <button class="read-me-btn">Details</button>
-                        </div>
-                        <div class="service-box">
-                            <h4>Sourcing</h4>
-                            <p>Multi-year contracts for natural gypsum, bauxite, cement, iron ore, and solid fuels.</p>
-                            <button class="read-me-btn">Details</button>
-                        </div>
-                        <div class="service-box">
-                            <h4>Chartering & Logistics</h4>
-                            <p>Expertise in ocean vessel chartering and management of 50+ global stock-and-sell centers.</p>
-                            <button class="read-me-btn">Details</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="home-section">
-                    <div class="env-container">
-                        <div class="env-header-line"></div>
-                        <h1 class="env-title">Environmental Stewardship</h1>
-                        <ul class="commitment-list">
-                            <li class="commitment-item">
-                                <div class="red-bullet"></div>
-                                <div class="commitment-text">Responsible sourcing from producers who engage in sustainable mining processes.</div>
-                            </li>
-                            <li class="commitment-item">
-                                <div class="red-bullet"></div>
-                                <div class="commitment-text">Commitment to future generations by preserving resources and reducing ecological disruption.</div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="home-section" style="margin-bottom: 40px;">
-                    <h2 style="color: var(--mi-red); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px;">Global Headquarters</h2>
-                    <div class="hq-container">
-                        <div class="hq-grid">
-                            <div class="hq-box">
-                                <h4>Florida | USA</h4>
-                                <p>54 SE 5th Avenue, Suite 300<br>Delray Beach, FL 33483</p>
-                                <p><span class="hq-label">Phone</span><a href="tel:+15617050350">+1-561-705-0350</a></p>
-                            </div>
-                            <div class="hq-box">
-                                <h4>Dubai | UAE</h4>
-                                <p>One Za’abeel, Za’abeel Palace St, Dubai, U.A.E</p>
-                                <p><span class="hq-label">Phone</span><a href="tel:+97147760100">+971-4-776-0100</a></p>
-                            </div>
-                            <div class="hq-box">
-                                <h4>London | UK</h4>
-                                <p>Office 102, 81 Fulham Road, London SW3 6RD</p>
-                                <p><span class="hq-label">Phone</span><a href="tel:+442038260003">+44 20 3826 0003</a></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
+            <div class="hard-clip-wrapper" style="height: 850px; margin-top: 50px;">
+                <div class="elfsight-app-${this.widgetConfig.elfsightId}" data-elfsight-app-lazy></div>
+            </div>
+        `;
     }
 
     switchExcelPage(pageId, displayTitle) {
