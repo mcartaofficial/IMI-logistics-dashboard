@@ -37,7 +37,7 @@
         .menu-toggle span { display: block; width: 20px; height: 2px; background: white; }
 
         .view-area { padding: 45px; }
-        .card { background: var(--white); border-radius: 20px; padding: 35px; box-shadow: 0 15px 35px rgba(36, 34, 63, 0.08); border: 1px solid rgba(226, 232, 240, 0.6); min-height: 400px; position: relative; margin-bottom: 40px; }
+        .card { background: var(--white); border-radius: 20px; padding: 35px; box-shadow: 0 15px 35px rgba(36, 34, 63, 0.08); border: 1px solid rgba(226, 232, 240, 0.6); min-height: 400px; position: relative; }
         
         .welcome-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 30px 0; }
         .stat-box { padding: 20px; background: #f8fafc; border-radius: 12px; border-left: 4px solid var(--mi-red); }
@@ -57,8 +57,8 @@
             font-weight: 600;
         }
 
-        /* Section Spacing within Home View */
-        .home-section { margin-top: 60px; padding-top: 40px; border-top: 1px solid #eee; }
+        /* Container for the Dashboard scroll-down sections */
+        .dashboard-section { margin-top: 50px; padding-top: 30px; border-top: 1px solid #edf2f7; }
 
         /* Services Grid Styling */
         .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px; }
@@ -97,7 +97,7 @@
         <div class="nav-list" id="sidebar-nav"></div>
     </aside>
 
-    <main class="content" id="main-scroll-container">
+    <main class="content" id="main-content-scroll">
         <div class="top-bar">
             <div style="display: flex; align-items: center; gap: 15px;">
                 <button class="menu-toggle" id="menu-toggle"><span></span><span></span><span></span></button>
@@ -111,9 +111,9 @@
                 <div id="home-view" class="page-frame">
                     <div id="home-content"></div>
                     <div id="map-container"></div>
-                    <div id="services-section" class="home-section"></div>
-                    <div id="env-section" class="home-section"></div>
-                    <div id="hq-section" class="home-section"></div>
+                    <div id="services-injection" class="dashboard-section"></div>
+                    <div id="env-injection" class="dashboard-section"></div>
+                    <div id="hq-injection" class="dashboard-section"></div>
                 </div>
 
                 <div id="excel-viewport" class="page-frame">
@@ -128,6 +128,8 @@
     </main>
 
     <script src="https://elfsightcdn.com/platform.js" async></script>
+    <div class="elfsight-app-6ba85109-b815-4820-91b7-5719ae4049e2" data-elfsight-app-lazy></div>
+
     <script src="app.js"></script>
 </body>
 </html>
