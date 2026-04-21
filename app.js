@@ -272,7 +272,7 @@ class MILogisticsApp {
                         </div>
                     </div>
                     <div class="img-about-card">
-                        <img src="https://img.icons8.com/wired/64/ffffff/boat-transport.png" class="img-about-icon"/>
+                        <img src="https://img.icons8.com/wired/64/ffffff/cargo-ship.png" class="img-about-icon"/>
                         <div class="img-about-data">
                             <div class="img-about-val">+1000</div>
                             <div class="img-about-label">Shipments</div>
