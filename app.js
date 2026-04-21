@@ -34,13 +34,17 @@ class MILogisticsApp {
 
         this.buildSidebar();
         this.sidebar.classList.add('collapsed');
-        this.renderRelocatedSections();
+        
+        // FIX: Show Home Page first so the section containers exist in the DOM
         this.showHomePage();
+        this.renderRelocatedSections();
     }
 
     renderRelocatedSections() {
-        // Render Hand-Coded Services
         const servicesSection = document.getElementById('services-section');
+        const environmentalSection = document.getElementById('environmental-section');
+        const hqSection = document.getElementById('hq-section');
+
         if (servicesSection) {
             servicesSection.innerHTML = `
                 <h2 style="color: var(--mi-red); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px;">Our Services</h2>
@@ -79,10 +83,8 @@ class MILogisticsApp {
             `;
         }
 
-        // Render Environmental Section
-        const envSection = document.getElementById('environmental-section');
-        if (envSection) {
-            envSection.innerHTML = `
+        if (environmentalSection) {
+            environmentalSection.innerHTML = `
                 <div class="env-container">
                     <div class="env-header-line"></div>
                     <h1 class="env-title">Our Environmental<br>Commitment</h1>
@@ -104,8 +106,6 @@ class MILogisticsApp {
             `;
         }
 
-        // Render HQ Section
-        const hqSection = document.getElementById('hq-section');
         if (hqSection) {
             hqSection.innerHTML = `
                 <h2 style="color: var(--mi-red); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px;">Global Headquarters</h2>
@@ -116,10 +116,77 @@ class MILogisticsApp {
                             <p>54 SE 5th Avenue, Suite 300<br>Delray Beach, FL 33483</p>
                             <p><span class="hq-label">Toll Free</span><a href="tel:+18774230226">+1-877-423-0226</a></p>
                             <p><span class="hq-label">Phone</span><a href="tel:+15617050350">+1-561-705-0350</a></p>
+                            <p><span class="hq-label">Fax</span><a href="fax:+15613910546">+1-561-391-0546</a></p>
                             <p><a href="mailto:operations.amer@imigroup.com">operations.amer@imigroup.com</a></p>
                             <a href="#" class="hq-link">Map & Directions</a>
                         </div>
+                        <div class="hq-box">
+                            <h4>Belo Horizonte | Brazil</h4>
+                            <p>IMI Brasil Trading Ltda<br>Rua Antônio de Albuquerque, 194/sl. 902<br>Savassi – Belo Horizonte, MG, BRAZIL</p>
+                            <p><span class="hq-label">Phone</span><a href="tel:+5531991828338">+55 (31) 99182-8338</a></p>
+                            <p><a href="mailto:operations.latam@imigroup.com">operations.latam@imigroup.com</a></p>
                         </div>
+                        <div class="hq-box">
+                            <h4>Dubai | UAE</h4>
+                            <p>IMI Middle East Trading L.L.C.<br>Offices 801 & 802, Tower A, The Offices, One Za’abeel, Za’abeel Palace St, Dubai, U.A.E</p>
+                            <p><span class="hq-label">Phone</span><a href="tel:+97147760100">+971-4-776-0100</a></p>
+                            <p><a href="mailto:operations.asia@imigroup.com">operations.asia@imigroup.com</a></p>
+                            <a href="#" class="hq-link">Map & Directions</a>
+                        </div>
+                        <div class="hq-box">
+                            <h4>Madrid | Spain</h4>
+                            <p>IMI Europe, SLU<br>Calle Velázquez 123. 2º PL, 28006 Madrid, Spain</p>
+                            <p><span class="hq-label">Phone</span><a href="tel:+34915641045">+34-915-64-1045</a></p>
+                            <p><a href="mailto:operations.eur@imigroup.com">operations.eur@imigroup.com</a></p>
+                            <a href="#" class="hq-link">Map & Directions</a>
+                        </div>
+                        <div class="hq-box">
+                            <h4>Shanghai | China</h4>
+                            <p>Shanghai Representative Office, Suite 306B, Skybridge Plaza, Jinzhong Road 968#, Changning, Shanghai, China</p>
+                            <p><span class="hq-label">Phone</span><a href="tel:+8618217739459">+86-182-1773-9459</a></p>
+                            <p><a href="mailto:operations.asia@imigroup.com">operations.asia@imigroup.com</a></p>
+                            <a href="#" class="hq-link">Map & Directions</a>
+                        </div>
+                        <div class="hq-box">
+                            <h4>Singapore</h4>
+                            <p>IMI Trading Singapore Pte Ltd<br>1 George Street, #23-04, Singapore 049145</p>
+                            <p><span class="hq-label">Phone</span><a href="tel:+6563035680">+65-6303-5680</a></p>
+                            <p><span class="hq-label">Fax</span><a href="fax:+6563035681">+65-6303-5681</a></p>
+                            <p><a href="mailto:operations.asia@imigroup.com">operations.asia@imigroup.com</a></p>
+                            <a href="#" class="hq-link">Map & Directions</a>
+                        </div>
+                        <div class="hq-box">
+                            <h4>Mexico City | Mexico</h4>
+                            <p>Avenida Paseo de la Reforma Número 404, Piso 13, Interior 102. Colonia Juárez, Mexico City, 06600</p>
+                            <p><a href="mailto:operations.latam@imigroup.com">operations.latam@imigroup.com</a></p>
+                            <a href="#" class="hq-link">Map & Directions</a>
+                        </div>
+                        <div class="hq-box">
+                            <h4>Bogotá | Colombia</h4>
+                            <p>Calle 97A, #8-10, Oficina 503, Bogotá 110221</p>
+                            <p><a href="mailto:imicol@imigroup.com">imicol@imigroup.com</a></p>
+                            <a href="#" class="hq-link">Map & Directions</a>
+                        </div>
+                        <div class="hq-box">
+                            <h4>Johannesburg | South Africa</h4>
+                            <p>Workshop 17 The Bank, Corner Tyrwhitt Road and 24 Cradock Ave, Johannesburg, 2196</p>
+                            <p><a href="mailto:operations.asia@imigroup.com">operations.asia@imigroup.com</a></p>
+                        </div>
+                        <div class="hq-box">
+                            <h4>Istanbul | Turkey</h4>
+                            <p>Kampanaki Mansion, Köybaşı Cad. No:63, Yeniköy 34464 Sarıyer, Istanbul, Turkey</p>
+                            <p><span class="hq-label">Phone</span><a href="tel:+902122625151">+90 212 262 51 51</a></p>
+                            <p><a href="mailto:operations.eur@imigroup.com">operations.eur@imigroup.com</a></p>
+                            <a href="#" class="hq-link">Map & Directions</a>
+                        </div>
+                        <div class="hq-box">
+                            <h4>London | UK</h4>
+                            <p>International Materials UK Ltd, Office 102, 81 Fulham Road, London SW3 6RD, UK</p>
+                            <p><span class="hq-label">Phone</span><a href="tel:+442038260003">+44 20 3826 0003</a></p>
+                            <p><a href="mailto:operations.eur@imigroup.com">operations.eur@imigroup.com</a></p>
+                            <a href="#" class="hq-link">Map & Directions</a>
+                        </div>
+                    </div>
                 </div>
             `;
         }
@@ -127,6 +194,7 @@ class MILogisticsApp {
 
     buildSidebar() {
         this.nav.innerHTML = '';
+        
         this.createNavItem('DASHBOARD HOME', 'HOME_PAGE', () => this.showHomePage());
         this.createNavItem('DATA VISUALIZATION', 'DATA_VISUALIZATION', () => this.switchExcelPage('DATA_VISUALIZATION', 'Data Visualization'));
         this.createNavItem('FORECASTING TIME SERIES MODELS', 'ROTTERDAM_EXP_SMOOTH', () => this.switchExcelPage('ROTTERDAM_EXP_SMOOTH', 'Forecasting Time Series Models'));
@@ -174,7 +242,12 @@ class MILogisticsApp {
                 </div>
                 <div class="hard-clip-wrapper" style="height: 850px;">
                     <div class="elfsight-app-${this.widgetConfig.elfsightId}" data-elfsight-app-lazy></div>
-                </div>`;
+                </div>
+                <div id="services-section"></div>
+                <hr class="section-divider">
+                <div id="environmental-section"></div>
+                <hr class="section-divider">
+                <div id="hq-section"></div>`;
         }
     }
 
@@ -195,7 +268,9 @@ class MILogisticsApp {
             newFrame.style.height = "850px";
             newFrame.style.border = "none";
             newFrame.src = this.analysisPages[pageId];
+            
             newFrame.onload = () => { this.loader.style.display = 'none'; };
+            
             this.iframeContainer.appendChild(newFrame);
             this.iframeCache[pageId] = newFrame;
         }
