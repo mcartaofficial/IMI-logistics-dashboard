@@ -39,32 +39,28 @@
         .view-area { padding: 45px; }
         .card { background: var(--white); border-radius: 20px; padding: 35px; box-shadow: 0 15px 35px rgba(36, 34, 63, 0.08); border: 1px solid rgba(226, 232, 240, 0.6); min-height: 400px; position: relative; }
         
-        /* Stats Bar Styling for About Page */
-        .about-stats-container { display: grid; grid-template-columns: repeat(4, 1fr); background: var(--mi-red); color: white; margin: -35px -35px 60px -35px; border-radius: 20px 20px 0 0; overflow: hidden; }
-        .about-stat-item { padding: 40px 20px; text-align: center; border-right: 1px solid rgba(255,255,255,0.2); }
-        .about-stat-item:last-child { border-right: none; }
-        .about-stat-value { font-size: 2rem; font-weight: 800; display: block; margin-bottom: 5px; }
-        .about-stat-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; opacity: 0.9; }
+        /* About Page Specific Design */
+        .about-stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); background: var(--mi-red); margin: -35px -35px 60px -35px; border-radius: 20px 20px 0 0; }
+        .stat-item { padding: 40px 20px; text-align: center; color: white; border-right: 1px solid rgba(255,255,255,0.2); }
+        .stat-item:last-child { border-right: none; }
+        .stat-value { font-size: 2.2rem; font-weight: 800; display: block; margin-bottom: 5px; }
+        .stat-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; opacity: 0.9; }
 
-        /* About Layout Content */
-        .about-content-layout { display: grid; grid-template-columns: 1fr 1.2fr; gap: 60px; align-items: start; padding-top: 20px; }
-        .about-left-heading { font-size: 1.8rem; line-height: 1.3; color: #2D3748; font-weight: 400; border-right: 2px solid var(--mi-red); padding-right: 40px; }
-        .about-left-heading span.highlight { color: var(--mi-red); font-weight: 600; }
-        .about-right-text { color: #4A5568; line-height: 1.8; font-size: 1rem; }
-        .about-right-text p { margin-bottom: 25px; }
+        .about-details-container { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; padding: 20px 0; }
+        .about-left-col { border-right: 3px solid var(--mi-red); padding-right: 40px; }
+        .about-headline { font-size: 1.85rem; line-height: 1.3; color: #333; font-weight: 500; }
+        .about-headline span.highlight { color: var(--mi-red); font-weight: 600; }
+        .about-right-col { color: #4A5568; line-height: 1.7; font-size: 1.05rem; }
+        .about-right-col p { margin-bottom: 25px; }
 
-        /* Other Views */
-        .page-frame { display: none; width: 100%; }
-        .page-frame.active { display: block; }
-        #loading-indicator { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: none; color: var(--text-gray); font-weight: 600; }
-
-        /* Existing Grid Styles */
+        /* Services Grid Styling */
         .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px; margin-bottom: 50px; }
         .service-box { background: #E9ECEF; padding: 30px; border-radius: 4px; display: flex; flex-direction: column; justify-content: space-between; }
         .service-box h4 { margin-top: 0; color: #24223F; font-size: 1rem; letter-spacing: 1px; text-transform: uppercase; font-weight: 900; }
         .service-box p { font-size: 0.85rem; color: #4A5568; line-height: 1.5; margin-bottom: 20px; flex-grow: 1; }
         .read-me-btn { background: var(--mi-red); color: white; border: none; padding: 10px 20px; font-size: 0.75rem; font-weight: 700; cursor: pointer; text-transform: uppercase; width: fit-content; }
 
+        /* Environmental Commitment Styling */
         .env-container { background-color: var(--env-green); color: white; padding: 60px 40px; border-radius: 10px; margin-bottom: 50px; }
         .env-header-line { width: 60px; height: 4px; background-color: var(--mi-red); margin-bottom: 30px; }
         .env-title { font-size: 2rem; font-weight: 400; text-transform: uppercase; margin-bottom: 50px; line-height: 1.2; letter-spacing: 1px; }
@@ -73,6 +69,7 @@
         .red-bullet { min-width: 25px; height: 25px; background-color: var(--mi-red); margin-top: 5px; }
         .commitment-text { font-size: 1.1rem; line-height: 1.6; font-weight: 300; }
 
+        /* Headquarters Grid Styling */
         .hq-container { background-color: var(--deep-space); color: white; padding: 60px 40px; border-radius: 10px; }
         .hq-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 40px; margin-top: 20px; }
         .hq-box { font-size: 0.9rem; line-height: 1.6; }
@@ -86,15 +83,15 @@
         .section-divider { height: 2px; background: var(--off-white); margin: 60px 0; border: none; }
 
         @media (max-width: 1024px) { 
-            .about-content-layout { grid-template-columns: 1fr; gap: 30px; }
-            .about-left-heading { border-right: none; border-bottom: 2px solid var(--mi-red); padding-right: 0; padding-bottom: 20px; }
-            .about-stats-container { grid-template-columns: repeat(2, 1fr); }
             .services-grid { grid-template-columns: repeat(2, 1fr); } 
+            .about-details-container { grid-template-columns: 1fr; gap: 30px; }
+            .about-left-col { border-right: none; border-bottom: 3px solid var(--mi-red); padding-right: 0; padding-bottom: 20px; }
         }
         @media (max-width: 768px) { 
             .services-grid { grid-template-columns: 1fr; } 
             .hq-grid { grid-template-columns: 1fr; } 
-            .about-stats-container { grid-template-columns: 1fr; }
+            .about-stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .stat-item { border-bottom: 1px solid rgba(255,255,255,0.2); }
         }
     </style>
 </head>
