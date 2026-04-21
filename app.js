@@ -1,8 +1,7 @@
 class MILogisticsApp {
     constructor() {
         this.widgetConfig = {
-            shipXplorer: "https://www.shipxplorer.com/?widget=1&z=12&lat=40.46244&lng=-73.88822&portCardRight=true&showLabels=true&showStateFlag=true&showVn=true&showIMO=true&showLabelPhoto=true&showMMSI=true&class=CARGO,PASSENGER,TANKER,HSC,TUG,FISHING,PLEASURE,SAILING,OTHER,UNKNOWN",
-            elfsightId: "d9332a95-3af1-4708-a385-24cef7defd35"
+            shipXplorer: "https://www.shipxplorer.com/?widget=1&z=12&lat=40.46244&lng=-73.88822&portCardRight=true&showLabels=true&showStateFlag=true&showVn=true&showIMO=true&showLabelPhoto=true&showMMSI=true&class=CARGO,PASSENGER,TANKER,HSC,TUG,FISHING,PLEASURE,SAILING,OTHER,UNKNOWN"
         };
 
         this.analysisPages = {
@@ -227,9 +226,6 @@ class MILogisticsApp {
             document.getElementById('map-container').innerHTML = `
                 <div class="hard-clip-wrapper" style="height: 800px;">
                     <iframe frameborder="0" scrolling="no" style="width: 100%; height: 100%; border: none;" src="${this.widgetConfig.shipXplorer}"></iframe>
-                </div>
-                <div class="hard-clip-wrapper" style="height: 850px;">
-                    <div class="elfsight-app-${this.widgetConfig.elfsightId}" data-elfsight-app-lazy></div>
                 </div>`;
         }
     }
