@@ -23,7 +23,6 @@ class MILogisticsApp {
         this.iframeContainer = document.getElementById('iframe-cache-container');
         this.titleText = document.getElementById('current-sheet-title');
         this.loader = document.getElementById('loading-indicator');
-        this.contentScroll = document.getElementById('main-content-scroll');
         
         this.init();
     }
@@ -40,7 +39,6 @@ class MILogisticsApp {
     }
 
     renderRelocatedSections() {
-        // Render Services
         document.getElementById('services-section').innerHTML = `
             <h2 style="color: var(--mi-red); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px;">Our Services</h2>
             <div class="services-grid">
@@ -77,7 +75,6 @@ class MILogisticsApp {
             </div>
         `;
 
-        // Render Environmental Commitment
         document.getElementById('environmental-section').innerHTML = `
             <div class="env-container">
                 <div class="env-header-line"></div>
@@ -99,7 +96,6 @@ class MILogisticsApp {
             </div>
         `;
 
-        // Render Headquarters
         document.getElementById('hq-section').innerHTML = `
             <h2 style="color: var(--mi-red); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px;">Global Headquarters</h2>
             <div class="hq-container">
@@ -197,11 +193,6 @@ class MILogisticsApp {
         this.createNavItem('OUR TEAM', 'TEAM', () => this.showGenericPage('Our Team', 'Meet the experts driving IMI Logistics forward.'));
         this.createNavItem('OUR PRODUCTS', 'PRODUCTS', () => this.showGenericPage('Our Products', 'Advanced tracking and forecasting tools.'));
         this.createNavItem('OUR PARTNERS & AFFILIATES', 'PARTNERS', () => this.showGenericPage('Partners & Affiliates', 'Collaborating with global shipping lanes.'));
-        
-        // Navigation items now scroll within the home view
-        this.createNavItem('OUR ENVIRONMENTAL COMMITMENT', 'ENV_COMMIT', () => this.scrollToSection('environmental-section', 'ENV_COMMIT'));
-        this.createNavItem('OUR SERVICES', 'SERVICES', () => this.scrollToSection('services-section', 'SERVICES'));
-        this.createNavItem('HEADQUARTERS', 'HQ', () => this.scrollToSection('hq-section', 'HQ'));
     }
 
     createNavItem(text, id, callback) {
@@ -214,15 +205,6 @@ class MILogisticsApp {
         };
         btn.setAttribute('data-id', id);
         this.nav.appendChild(btn);
-    }
-
-    scrollToSection(sectionId, navId) {
-        this.showHomePage();
-        this.updateActiveNav(navId);
-        const element = document.getElementById(sectionId);
-        if (element) {
-            element.scrollIntoView({ behavior: 'smooth' });
-        }
     }
 
     showHomePage() {
