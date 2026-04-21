@@ -23,7 +23,6 @@ class MILogisticsApp {
         this.iframeContainer = document.getElementById('iframe-cache-container');
         this.titleText = document.getElementById('current-sheet-title');
         this.loader = document.getElementById('loading-indicator');
-        this.scrollContainer = document.getElementById('main-scroll-container');
         
         this.init();
     }
@@ -52,10 +51,10 @@ class MILogisticsApp {
         this.createNavItem('OUR PRODUCTS', 'PRODUCTS', () => this.showGenericPage('Our Products', 'Advanced tracking and forecasting tools.'));
         this.createNavItem('OUR PARTNERS & AFFILIATES', 'PARTNERS', () => this.showGenericPage('Partners & Affiliates', 'Collaborating with global shipping lanes.'));
         
-        // Relocated sections navigation now scrolls to internal sections
-        this.createNavItem('OUR ENVIRONMENTAL COMMITMENT', 'ENV_COMMIT', () => this.scrollToSection('env-section', 'ENV_COMMIT'));
-        this.createNavItem('OUR SERVICES', 'SERVICES', () => this.scrollToSection('services-section', 'SERVICES'));
-        this.createNavItem('HEADQUARTERS', 'HQ', () => this.scrollToSection('hq-section', 'HQ'));
+        // Navigation links now scroll to their respective locations within the Home View
+        this.createNavItem('OUR ENVIRONMENTAL COMMITMENT', 'ENV_COMMIT', () => this.scrollToSection('env-anchor', 'ENV_COMMIT'));
+        this.createNavItem('OUR SERVICES', 'SERVICES', () => this.scrollToSection('services-anchor', 'SERVICES'));
+        this.createNavItem('HEADQUARTERS', 'HQ', () => this.scrollToSection('hq-anchor', 'HQ'));
     }
 
     createNavItem(text, id, callback) {
@@ -70,20 +69,75 @@ class MILogisticsApp {
         this.nav.appendChild(btn);
     }
 
-    scrollToSection(sectionId, navId) {
-        this.showHomePage(); // Ensure we are on home view
+    scrollToSection(anchorId, navId) {
+        this.showHomePage();
         this.updateActiveNav(navId);
-        const element = document.getElementById(sectionId);
-        if (element) {
-            element.scrollIntoView({ behavior: 'smooth' });
-        }
+        document.getElementById(anchorId).scrollIntoView({ behavior: 'smooth' });
     }
 
-    // Data injection for relocated sections
-    getHQHTML() {
+    // --- Content Restoration Methods ---
+
+    renderServices() {
+        return `
+            <div class="services-grid">
+                <div class="service-box">
+                    <h4>Global Bulk Raw Materials Trading</h4>
+                    <p>IMI is one of the leading privately-owned, independent, bulk raw materials trading firms in the world today. With more than 38 years of history, IMI has established a reputation for exceptional service and high quality product offerings.</p>
+                    <button class="read-me-btn">Read Me</button>
+                </div>
+                <div class="service-box">
+                    <h4>Sourcing</h4>
+                    <p>IMI holds multi-year contracts and marketing rights with suppliers for many products including natural gypsum, bauxite, cement and clinker, iron ore-related products, and solid fuels.</p>
+                    <button class="read-me-btn">Read Me</button>
+                </div>
+                <div class="service-box">
+                    <h4>Chartering</h4>
+                    <p>Through our in-house Chartering and Traffic operations departments, IMI has a first class reputation as a reliable expert in ocean vessel chartering and logistics planning.</p>
+                    <button class="read-me-btn">Read Me</button>
+                </div>
+                <div class="service-box">
+                    <h4>Logistics</h4>
+                    <p>IMI manages +50 global stock-and-sell centers and negotiates port leases and offsite stockpiles to support door-to-door deliveries.</p>
+                    <button class="read-me-btn">Read Me</button>
+                </div>
+                <div class="service-box">
+                    <h4>Marketing</h4>
+                    <p>In addition to normal trading activities, IMI has secured exclusive marketing rights for Gypsum in South Spain and Mexico.</p>
+                    <button class="read-me-btn">Read Me</button>
+                </div>
+                <div class="service-box">
+                    <h4>Service and Support</h4>
+                    <p>Technical and trade support capabilities including custom financing solutions for suppliers and customers.</p>
+                    <button class="read-me-btn">Read Me</button>
+                </div>
+            </div>`;
+    }
+
+    renderEnvironmental() {
+        return `
+            <div class="env-container">
+                <div class="env-header-line"></div>
+                <h1 class="env-title">Our Environmental<br>Commitment</h1>
+                <ul class="commitment-list">
+                    <li class="commitment-item">
+                        <div class="red-bullet"></div>
+                        <div class="commitment-text">We work toward sourcing our raw materials from producers who engage in responsible mining processes. This includes implementing measures to reduce ecological disruption and enhancing resource efficiency.</div>
+                    </li>
+                    <li class="commitment-item">
+                        <div class="red-bullet"></div>
+                        <div class="commitment-text">By selecting suppliers dedicated to these principles, we aim to support efforts that contribute to more sustainable resource management within the industry.</div>
+                    </li>
+                    <li class="commitment-item">
+                        <div class="red-bullet"></div>
+                        <div class="commitment-text">Our environmental stewardship is not just a present concern but a commitment to future generations. We are attentive to preserving and enhancing the resources and environments we rely on today for those who will come after us.</div>
+                    </li>
+                </ul>
+            </div>`;
+    }
+
+    renderHeadquarters() {
         return `
             <div class="hq-container">
-                <h2 style="color: white; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 2px;">Global Headquarters</h2>
                 <div class="hq-grid">
                     <div class="hq-box">
                         <h4>Florida | USA</h4>
@@ -161,69 +215,7 @@ class MILogisticsApp {
                         <a href="#" class="hq-link">Map & Directions</a>
                     </div>
                 </div>
-            </div>
-        `;
-    }
-
-    getEnvHTML() {
-        return `
-            <div class="env-container">
-                <div class="env-header-line"></div>
-                <h1 class="env-title">Our Environmental<br>Commitment</h1>
-                <ul class="commitment-list">
-                    <li class="commitment-item">
-                        <div class="red-bullet"></div>
-                        <div class="commitment-text">We work toward sourcing our raw materials from producers who engage in responsible mining processes. This includes implementing measures to reduce ecological disruption and enhancing resource efficiency.</div>
-                    </li>
-                    <li class="commitment-item">
-                        <div class="red-bullet"></div>
-                        <div class="commitment-text">By selecting suppliers dedicated to these principles, we aim to support efforts that contribute to more sustainable resource management within the industry.</div>
-                    </li>
-                    <li class="commitment-item">
-                        <div class="red-bullet"></div>
-                        <div class="commitment-text">Our environmental stewardship is not just a present concern but a commitment to future generations. We are attentive to preserving and enhancing the resources and environments we rely on today for those who will come after us.</div>
-                    </li>
-                </ul>
-            </div>
-        `;
-    }
-
-    getServicesHTML() {
-        return `
-            <h2 style="color: var(--deep-space); text-transform: uppercase; letter-spacing: 2px;">Our Services</h2>
-            <div class="services-grid">
-                <div class="service-box">
-                    <h4>Global Bulk Raw Materials Trading</h4>
-                    <p>IMI is one of the leading privately-owned, independent, bulk raw materials trading firms in the world today. With more than 38 years of history, IMI has established a reputation for exceptional service and high quality product offerings.</p>
-                    <button class="read-me-btn">Read Me</button>
-                </div>
-                <div class="service-box">
-                    <h4>Sourcing</h4>
-                    <p>IMI holds multi-year contracts and marketing rights with suppliers for many products including natural gypsum, bauxite, cement and clinker, iron ore-related products, and solid fuels.</p>
-                    <button class="read-me-btn">Read Me</button>
-                </div>
-                <div class="service-box">
-                    <h4>Chartering</h4>
-                    <p>Through our in-house Chartering and Traffic operations departments, IMI has a first class reputation as a reliable expert in ocean vessel chartering and logistics planning.</p>
-                    <button class="read-me-btn">Read Me</button>
-                </div>
-                <div class="service-box">
-                    <h4>Logistics</h4>
-                    <p>IMI manages +50 global stock-and-sell centers and negotiates port leases and offsite stockpiles to support door-to-door deliveries.</p>
-                    <button class="read-me-btn">Read Me</button>
-                </div>
-                <div class="service-box">
-                    <h4>Marketing</h4>
-                    <p>In addition to normal trading activities, IMI has secured exclusive marketing rights for Gypsum in South Spain and Mexico.</p>
-                    <button class="read-me-btn">Read Me</button>
-                </div>
-                <div class="service-box">
-                    <h4>Service and Support</h4>
-                    <p>Technical and trade support capabilities including custom financing solutions for suppliers and customers.</p>
-                    <button class="read-me-btn">Read Me</button>
-                </div>
-            </div>
-        `;
+            </div>`;
     }
 
     showHomePage() {
@@ -232,8 +224,8 @@ class MILogisticsApp {
         this.hideAllViews();
         this.homeView.classList.add('active');
 
-        // Initial setup of home content if not already loaded
         if (!document.getElementById('home-content').innerHTML) {
+            // Main Dashboard Intro
             document.getElementById('home-content').innerHTML = `
                 <div style="text-align: center; padding: 20px;">
                     <h1 style="color: var(--deep-space); margin-bottom: 10px;">Welcome to IMI Logistics</h1>
@@ -244,6 +236,7 @@ class MILogisticsApp {
                     </div>
                 </div>`;
 
+            // Maps & Widgets
             document.getElementById('map-container').innerHTML = `
                 <div class="hard-clip-wrapper" style="height: 800px;">
                     <iframe frameborder="0" scrolling="no" style="width: 100%; height: 100%; border: none;" src="${this.widgetConfig.shipXplorer}"></iframe>
@@ -252,10 +245,10 @@ class MILogisticsApp {
                     <div class="elfsight-app-${this.widgetConfig.elfsightId}" data-elfsight-app-lazy></div>
                 </div>`;
 
-            // Inject the relocated sections into the home view
-            document.getElementById('services-section').innerHTML = this.getServicesHTML();
-            document.getElementById('env-section').innerHTML = this.getEnvHTML();
-            document.getElementById('hq-section').innerHTML = this.getHQHTML();
+            // Data-Rich Relocated Sections
+            document.getElementById('services-anchor').innerHTML = this.renderServices();
+            document.getElementById('env-anchor').innerHTML = this.renderEnvironmental();
+            document.getElementById('hq-anchor').innerHTML = this.renderHeadquarters();
         }
     }
 
