@@ -188,7 +188,7 @@ class MILogisticsApp {
         this.createNavItem('BRENT CRUDE OIL', 'BRENT_CRUDE_OIL', () => this.switchExcelPage('BRENT_CRUDE_OIL', 'Brent Crude Oil Stat Sign'));
         this.createNavItem('ROTTERDAM STAT', 'ROTTERDAM_STAT', () => this.switchExcelPage('ROTTERDAM_STAT', 'Rotterdam Stat Sign'));
 
-        this.createNavItem('ABOUT PAGE', 'ABOUT', () => this.showGenericPage('About IMI Logistics', 'International Maritime Industries (IMI) is a leader in global freight and logistics management.'));
+        this.createNavItem('ABOUT PAGE', 'ABOUT', () => this.showGenericPage('About IMI Logistics', ''));
         this.createNavItem('OUR TEAM', 'TEAM', () => this.showGenericPage('Our Team', 'Meet the experts driving IMI Logistics forward.'));
         this.createNavItem('OUR PRODUCTS', 'PRODUCTS', () => this.showGenericPage('Our Products', 'Advanced tracking and forecasting tools.'));
         this.createNavItem('OUR PARTNERS & AFFILIATES', 'PARTNERS', () => this.showGenericPage('Partners & Affiliates', 'Collaborating with global shipping lanes.'));
@@ -260,38 +260,47 @@ class MILogisticsApp {
         this.titleText.innerText = title;
         this.hideAllViews();
         this.genericView.classList.add('active');
-        
-        // Reconstructed "About IMI Logistics" UI
-        if (title === 'About IMI Logistics') {
+
+        if(title === 'About IMI Logistics') {
             this.genericContent.innerHTML = `
-                <div class="about-stats-grid">
-                    <div class="about-stat-card">
-                        <div class="about-stat-value">45M MT</div>
-                        <div class="about-stat-label">Total Volume</div>
+                <div class="img-about-header">
+                    <div class="img-about-card">
+                        <img src="https://img.icons8.com/wired/64/ffffff/box.png" class="img-about-icon"/>
+                        <div class="img-about-data">
+                            <div class="img-about-val">45M MT</div>
+                            <div class="img-about-label">Total Volume</div>
+                        </div>
                     </div>
-                    <div class="about-stat-card">
-                        <div class="about-stat-value">+1000</div>
-                        <div class="about-stat-label">Shipments</div>
+                    <div class="img-about-card">
+                        <img src="https://img.icons8.com/wired/64/ffffff/boat-transport.png" class="img-about-icon"/>
+                        <div class="img-about-data">
+                            <div class="img-about-val">+1000</div>
+                            <div class="img-about-label">Shipments</div>
+                        </div>
                     </div>
-                    <div class="about-stat-card">
-                        <div class="about-stat-value">+$4 Billion</div>
-                        <div class="about-stat-label">Turnover</div>
+                    <div class="img-about-card">
+                        <img src="https://img.icons8.com/wired/64/ffffff/bar-chart--v1.png" class="img-about-icon"/>
+                        <div class="img-about-data">
+                            <div class="img-about-val">+$4 Billion</div>
+                            <div class="img-about-label">Turnover</div>
+                        </div>
                     </div>
-                    <div class="about-stat-card">
-                        <div class="about-stat-value">+170</div>
-                        <div class="about-stat-label">Global Employees</div>
+                    <div class="img-about-card">
+                        <img src="https://img.icons8.com/wired/64/ffffff/globe.png" class="img-about-icon"/>
+                        <div class="img-about-data">
+                            <div class="img-about-val">+170</div>
+                            <div class="img-about-label">Global Employees</div>
+                        </div>
                     </div>
                 </div>
                 
-                <div class="about-content-split">
-                    <div class="about-highlight-box">
-                        <h2 class="about-highlight-text">
-                            Providing value-added solutions to the global 
-                            <span class="red-text">cement, steel, wallboard</span> 
-                            and <span class="red-text">energy</span> industries for over 38 years.
+                <div class="img-about-content">
+                    <div class="img-about-highlight">
+                        <h2 class="img-about-headline">
+                            Providing value-added solutions to the global <strong class="red-text">cement, steel, wallboard</strong> and <strong class="red-text">energy</strong> industries for over 38 years.
                         </h2>
                     </div>
-                    <div class="about-body-text">
+                    <div class="img-about-text">
                         <p>Since 1987, the worldwide cement, wallboard, and steel industries have come to depend on IMI to deliver unparalleled expertise to meet their raw material needs. Our commitment to service excellence has allowed us to build a large portfolio of reliable, first-class suppliers, ship operators, and customers.</p>
                         <p>Today, IMI sources or ships to over 80 countries worldwide. Along with our partners and affiliates, we deliver over 38 million tons of bulk materials annually, providing creative and economical real-time solutions to any logistical challenge our customers may face. Our products include natural gypsum, bauxite, iron ore and iron fines, cement, clinker, coal, petcoke, slag, and copper concentrates.</p>
                     </div>
