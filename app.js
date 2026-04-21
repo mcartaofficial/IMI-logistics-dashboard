@@ -219,10 +219,17 @@ class MILogisticsApp {
                         <div class="stat-box"><small>MODULARS</small><h2 style="margin: 5px 0; color: var(--mi-red);">4 LOADED</h2></div>
                     </div>
                 </div>`;
+            
+            // Primary Map
             document.getElementById('map-container').innerHTML = `
                 <div class="hard-clip-wrapper" style="height: 800px;">
                     <iframe frameborder="0" scrolling="no" style="width: 100%; height: 100%; border: none;" src="${this.widgetConfig.shipXplorer}"></iframe>
                 </div>`;
+
+            // New Store Locator Widget
+            document.getElementById('store-locator-container').innerHTML = `
+                <div class="elfsight-app-d9332a95-3af1-4708-a385-24cef7defd35" data-elfsight-app-lazy></div>
+            `;
         }
     }
 
