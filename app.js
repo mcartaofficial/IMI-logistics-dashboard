@@ -19,10 +19,28 @@ class MILogisticsApp {
         this.homeView = document.getElementById('home-view');
         this.excelViewport = document.getElementById('excel-viewport');
         this.genericView = document.getElementById('generic-view');
+        this.calcView = document.getElementById('calc-view');
         this.genericContent = document.getElementById('generic-content');
         this.iframeContainer = document.getElementById('iframe-cache-container');
         this.titleText = document.getElementById('current-sheet-title');
         this.loader = document.getElementById('loading-indicator');
+
+        // Calculator State & Data
+        this.calcState = {
+            dataset: 'ROTTERDAM',
+            model: 'EXP',
+            historicalDemand: [
+                536.41, 534.63, 556.89, 584.66, 497.92, 426.3, 451.65, 488.47, 496.92, 515.23,
+                507.9, 480.37, 489.87, 455.56, 466.38, 468.61, 475.2, 514.59, 506.18, 421.17,
+                258.1, 219.19, 224.75, 278.07, 303.18, 307.13, 287.34, 292.26, 318.22, 363.89,
+                395.3, 456.16, 473.48, 458.26, 469.4, 504.8, 516.53, 480.91, 509.55, 565.47,
+                540.59, 519.19, 597.94, 658.24, 791.43, 740.39, 779.33, 828.05, 720.66, 653.77,
+                596.76, 611.71, 551.73, 502.95, 538.9, 534.68, 513.55, 533.38, 488.14, 502.49,
+                529.45, 571.26, 590.73, 571.16, 540.55, 520.05, 534.32, 548.25, 573.57, 592.48,
+                542.73, 542.56, 547.67, 521.61, 486.39, 513.47, 490.34, 505.13, 524.98, 502.67,
+                468.58, 437.2, 438.87, 481.87, 468.5, 457.09
+            ]
+        };
         
         this.init();
     }
@@ -34,6 +52,21 @@ class MILogisticsApp {
 
         this.buildSidebar();
         this.sidebar.classList.add('collapsed');
+
+        // Calculator Event Listeners
+        const dsSelect = document.getElementById('calc-dataset');
+        const moSelect = document.getElementById('calc-model');
+        if (dsSelect && moSelect) {
+            dsSelect.addEventListener('change', (e) => {
+                this.calcState.dataset = e.target.value;
+                this.renderCalcInterface();
+            });
+            moSelect.addEventListener('change', (e) => {
+                this.calcState.model = e.target.value;
+                this.renderCalcInterface();
+            });
+        }
+
         this.showHomePage();
     }
 
@@ -41,6 +74,7 @@ class MILogisticsApp {
         this.nav.innerHTML = '';
         
         this.createNavItem('DASHBOARD HOME', 'HOME_PAGE', () => this.showHomePage());
+        this.createNavItem('FORECASTING CALCULATOR', 'CALC', () => this.showCalculator());
         this.createNavItem('DATA VISUALIZATION', 'DATA_VISUALIZATION', () => this.switchExcelPage('DATA_VISUALIZATION', 'Data Visualization'));
         this.createNavItem('FORECASTING TIME SERIES MODELS', 'ROTTERDAM_EXP_SMOOTH', () => this.switchExcelPage('ROTTERDAM_EXP_SMOOTH', 'Forecasting Time Series Models'));
         this.createNavItem('BRENT CRUDE OIL', 'BRENT_CRUDE_OIL', () => this.switchExcelPage('BRENT_CRUDE_OIL', 'Brent Crude Oil Stat Sign'));
@@ -66,6 +100,159 @@ class MILogisticsApp {
         btn.setAttribute('data-id', id);
         this.nav.appendChild(btn);
     }
+
+    /* --- CALCULATOR METHODS --- */
+
+    showCalculator() {
+        this.updateActiveNav('CALC');
+        this.titleText.innerText = "Forecasting Models Calculator";
+        this.hideAllViews();
+        this.calcView.classList.add('active');
+        this.renderCalcInterface();
+    }
+
+    renderCalcInterface() {
+        const interfaceEl = document.getElementById('calc-interface');
+        const resultsEl = document.getElementById('calc-results');
+        const ds = this.calcState.dataset;
+        const mo = this.calcState.model;
+
+        let rangeText = ds === 'ROTTERDAM' ? "Range: 77.48 → 584.72" : "Range: 15.98 → 123.58";
+        if (mo === 'HOLT' && ds === 'ROTTERDAM') rangeText = "Range: 334.60 → 584.72";
+        if (mo === 'ARIMA' && ds === 'ROTTERDAM') rangeText = "Range: 219.20 → 584.72";
+
+        let html = `<div class="calc-section">
+            <h4 style="margin-top:0; color:var(--mi-red); text-transform:uppercase; font-size:0.8rem;">Required Inputs</h4>
+            <div class="calc-hint">${rangeText}</div>
+            <div class="calc-grid">
+                <div class="calc-item">
+                    <label>New Demand Input (D_t)</label>
+                    <input type="number" step="0.01" class="calc-input" id="inp-d" placeholder="0.00">
+                </div>`;
+
+        if (mo === 'EXP') {
+            html += `<div class="calc-item">
+                <label>Prev Forecast (F_prev)</label>
+                <input type="number" step="0.01" class="calc-input" id="inp-f-prev" placeholder="0.00">
+            </div>`;
+        } else if (mo === 'HOLT') {
+            html += `<div class="calc-item">
+                <label>Prev Level (L_prev)</label>
+                <input type="number" step="0.01" class="calc-input" id="inp-l-prev" placeholder="0.00">
+            </div>
+            <div class="calc-item">
+                <label>Prev Trend (T_prev)</label>
+                <input type="number" step="0.01" class="calc-input" id="inp-t-prev" placeholder="0.00">
+            </div>`;
+        } else if (mo === 'ARIMA') {
+            html += `<div class="calc-item">
+                <label>Prev Demand (D_t-1)</label>
+                <input type="number" step="0.01" class="calc-input" id="inp-d-prev" placeholder="0.00">
+            </div>
+            <div class="calc-item">
+                <label>Seasonal Demand (D_t-s)</label>
+                <input type="number" step="0.01" class="calc-input" id="inp-d-s" placeholder="0.00">
+            </div>`;
+        }
+
+        html += `</div></div>`;
+        interfaceEl.innerHTML = html;
+        resultsEl.innerHTML = '';
+
+        interfaceEl.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', () => this.processCalculation());
+        });
+    }
+
+    processCalculation() {
+        const ds = this.calcState.dataset;
+        const mo = this.calcState.model;
+        const resultsEl = document.getElementById('calc-results');
+
+        const d = parseFloat(document.getElementById('inp-d')?.value);
+        if (isNaN(d)) { resultsEl.innerHTML = ''; return; }
+
+        let results = {};
+        if (mo === 'EXP') {
+            const fPrev = parseFloat(document.getElementById('inp-f-prev')?.value);
+            if (isNaN(fPrev)) return;
+            results = this.calculateExponential(d, fPrev, ds);
+        } else if (mo === 'HOLT') {
+            const lPrev = parseFloat(document.getElementById('inp-l-prev')?.value);
+            const tPrev = parseFloat(document.getElementById('inp-t-prev')?.value);
+            if (isNaN(lPrev) || isNaN(tPrev)) return;
+            results = this.calculateHolt(d, lPrev, tPrev, ds);
+        } else if (mo === 'ARIMA') {
+            const dPrev = parseFloat(document.getElementById('inp-d-prev')?.value);
+            const dS = parseFloat(document.getElementById('inp-d-s')?.value);
+            if (isNaN(dPrev) || isNaN(dS)) return;
+            results = this.calculateARIMA(d, dPrev, dS);
+        }
+
+        this.renderResults(results);
+    }
+
+    calculateExponential(d, fPrev, ds) {
+        const alpha = ds === 'ROTTERDAM' ? 0.511 : 0.5;
+        const forecast = (alpha * d) + ((1 - alpha) * fPrev);
+        const absErr = Math.abs(d - forecast);
+        const sqErr = Math.pow(d - forecast, 2);
+        
+        // Calculate average using the back-loaded demand list + new entry
+        const history = [...this.calcState.historicalDemand, d];
+        const avgDemand = history.reduce((a, b) => a + b, 0) / history.length;
+
+        return {
+            "Forecast (F)": forecast.toFixed(2),
+            "Absolute Error": absErr.toFixed(2),
+            "Squared Error": sqErr.toFixed(2),
+            "Alpha": alpha,
+            "History Avg Demand": avgDemand.toFixed(2),
+            "Dataset MAE": ds === 'ROTTERDAM' ? 52.88 : 5.48
+        };
+    }
+
+    calculateHolt(d, lPrev, tPrev, ds) {
+        const alpha = ds === 'ROTTERDAM' ? 0.038 : 0.1;
+        const beta = ds === 'ROTTERDAM' ? 0.001 : 0.05;
+        
+        const level = (alpha * d) + ((1 - alpha) * (lPrev + tPrev));
+        const trend = (beta * (level - lPrev)) + ((1 - beta) * tPrev);
+        const forecast = level + trend;
+        const error = d - forecast;
+
+        return {
+            "Level (L)": level.toFixed(2),
+            "Trend (T)": trend.toFixed(2),
+            "Forecast (F)": forecast.toFixed(2),
+            "Error (D-F)": error.toFixed(2),
+            "Alpha": alpha,
+            "Beta": beta
+        };
+    }
+
+    calculateARIMA(d, dPrev, dS) {
+        return {
+            "First Difference": (d - dPrev).toFixed(2),
+            "Seasonal Difference": (d - dS).toFixed(2),
+            "Status": "Differencing Applied"
+        };
+    }
+
+    renderResults(data) {
+        let html = `<div class="calc-section" style="border-top-color: var(--deep-space)">
+            <h4 style="margin-top:0; color:var(--deep-space); text-transform:uppercase; font-size:0.8rem;">Calculated Outputs</h4>
+            <div class="calc-grid">`;
+        
+        for (const [key, val] of Object.entries(data)) {
+            html += `<div class="calc-item"><label>${key}</label><div class="val">${val}</div></div>`;
+        }
+
+        html += `</div></div>`;
+        document.getElementById('calc-results').innerHTML = html;
+    }
+
+    /* --- END CALCULATOR METHODS --- */
 
     showHeadquartersPage() {
         this.updateActiveNav('HQ');
@@ -237,7 +424,7 @@ class MILogisticsApp {
                     <p style="color: var(--text-gray);">Select an analysis module from the sidebar to begin.</p>
                     <div class="welcome-grid">
                         <div class="stat-box"><small>SYSTEM STATUS</small><h2 style="margin: 5px 0; color: #10B981;">ACTIVE</h2></div>
-                        <div class="stat-box"><small>MODULARS</small><h2 style="margin: 5px 0; color: var(--mi-red);">4 LOADED</h2></div>
+                        <div class="stat-box"><small>MODULARS</small><h2 style="margin: 5px 0; color: var(--mi-red);">5 LOADED</h2></div>
                     </div>
                 </div>`;
 
@@ -288,6 +475,7 @@ class MILogisticsApp {
         this.homeView.classList.remove('active');
         this.excelViewport.classList.remove('active');
         this.genericView.classList.remove('active');
+        this.calcView.classList.remove('active');
     }
 
     getNavIdByTitle(title) {
