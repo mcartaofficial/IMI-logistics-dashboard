@@ -188,7 +188,7 @@ class MILogisticsApp {
         this.createNavItem('BRENT CRUDE OIL', 'BRENT_CRUDE_OIL', () => this.switchExcelPage('BRENT_CRUDE_OIL', 'Brent Crude Oil Stat Sign'));
         this.createNavItem('ROTTERDAM STAT', 'ROTTERDAM_STAT', () => this.switchExcelPage('ROTTERDAM_STAT', 'Rotterdam Stat Sign'));
 
-        this.createNavItem('ABOUT PAGE', 'ABOUT', () => this.showGenericPage('About IMI Logistics', ''));
+        this.createNavItem('ABOUT PAGE', 'ABOUT', () => this.showGenericPage('About IMI Logistics', 'International Maritime Industries (IMI) is a leader in global freight and logistics management.'));
         this.createNavItem('OUR TEAM', 'TEAM', () => this.showGenericPage('Our Team', 'Meet the experts driving IMI Logistics forward.'));
         this.createNavItem('OUR PRODUCTS', 'PRODUCTS', () => this.showGenericPage('Our Products', 'Advanced tracking and forecasting tools.'));
         this.createNavItem('OUR PARTNERS & AFFILIATES', 'PARTNERS', () => this.showGenericPage('Partners & Affiliates', 'Collaborating with global shipping lanes.'));
@@ -261,23 +261,42 @@ class MILogisticsApp {
         this.hideAllViews();
         this.genericView.classList.add('active');
         
+        // Reconstructed "About IMI Logistics" UI
         if (title === 'About IMI Logistics') {
             this.genericContent.innerHTML = `
-                <div class="metrics-row">
-                    <div class="metric-item"><span class="metric-value">45M MT</span><span class="metric-label">Total Volume</span></div>
-                    <div class="metric-item"><span class="metric-value">+1000</span><span class="metric-label">Shipments</span></div>
-                    <div class="metric-item"><span class="metric-value">+$4 Billion</span><span class="metric-label">Turnover</span></div>
-                    <div class="metric-item"><span class="metric-value">+170</span><span class="metric-label">Global Employees</span></div>
-                </div>
-                <div class="about-content-grid">
-                    <div class="about-tagline">
-                        Providing value-added solutions to the global <span>cement, steel, wallboard</span> and <span>energy</span> industries for over 38 years.
+                <div class="about-stats-grid">
+                    <div class="about-stat-card">
+                        <div class="about-stat-value">45M MT</div>
+                        <div class="about-stat-label">Total Volume</div>
                     </div>
-                    <div class="about-description">
+                    <div class="about-stat-card">
+                        <div class="about-stat-value">+1000</div>
+                        <div class="about-stat-label">Shipments</div>
+                    </div>
+                    <div class="about-stat-card">
+                        <div class="about-stat-value">+$4 Billion</div>
+                        <div class="about-stat-label">Turnover</div>
+                    </div>
+                    <div class="about-stat-card">
+                        <div class="about-stat-value">+170</div>
+                        <div class="about-stat-label">Global Employees</div>
+                    </div>
+                </div>
+                
+                <div class="about-content-split">
+                    <div class="about-highlight-box">
+                        <h2 class="about-highlight-text">
+                            Providing value-added solutions to the global 
+                            <span class="red-text">cement, steel, wallboard</span> 
+                            and <span class="red-text">energy</span> industries for over 38 years.
+                        </h2>
+                    </div>
+                    <div class="about-body-text">
                         <p>Since 1987, the worldwide cement, wallboard, and steel industries have come to depend on IMI to deliver unparalleled expertise to meet their raw material needs. Our commitment to service excellence has allowed us to build a large portfolio of reliable, first-class suppliers, ship operators, and customers.</p>
                         <p>Today, IMI sources or ships to over 80 countries worldwide. Along with our partners and affiliates, we deliver over 38 million tons of bulk materials annually, providing creative and economical real-time solutions to any logistical challenge our customers may face. Our products include natural gypsum, bauxite, iron ore and iron fines, cement, clinker, coal, petcoke, slag, and copper concentrates.</p>
                     </div>
-                </div>`;
+                </div>
+            `;
         } else {
             this.genericContent.innerHTML = `<h2 style="color: var(--mi-red); border-bottom: 2px solid var(--off-white); padding-bottom: 10px;">${title}</h2><p style="color: var(--deep-space); line-height: 1.6;">${description}</p>`;
         }
