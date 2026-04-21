@@ -38,7 +38,7 @@ class MILogisticsApp {
     }
 
     renderRelocatedSections() {
-        // ... (This section remains unchanged as requested)
+        // Services, Environmental, and HQ sections remain unchanged as requested
         document.getElementById('services-section').innerHTML = `
             <h2 style="color: var(--mi-red); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px;">Our Services</h2>
             <div class="services-grid">
@@ -49,12 +49,27 @@ class MILogisticsApp {
                 </div>
                 <div class="service-box">
                     <h4>Sourcing</h4>
-                    <p>IMI holds multi-year contracts and marketing rights with suppliers for many products including natural gypsum from Oman, Spain and Mexico; bauxite from Australia and Turkey.</p>
+                    <p>IMI holds multi-year contracts and marketing rights with suppliers for many products including natural gypsum from Oman, Spain and Mexico.</p>
                     <button class="read-me-btn">Read Me</button>
                 </div>
                 <div class="service-box">
                     <h4>Chartering</h4>
                     <p>Through our in-house Chartering and Traffic operations departments, IMI has a first class reputation as a reliable expert in ocean vessel chartering.</p>
+                    <button class="read-me-btn">Read Me</button>
+                </div>
+                <div class="service-box">
+                    <h4>Logistics</h4>
+                    <p>IMI manages +50 global stock-and-sell centers for coal, gypsum, bauxite, slag, iron ore products and clinker.</p>
+                    <button class="read-me-btn">Read Me</button>
+                </div>
+                <div class="service-box">
+                    <h4>Marketing</h4>
+                    <p>In addition to its normal trading activities, IMI has secured exclusive marketing rights for Gypsum in South Spain.</p>
+                    <button class="read-me-btn">Read Me</button>
+                </div>
+                <div class="service-box">
+                    <h4>Service and Support</h4>
+                    <p>IMI’s technical and trade support capabilities are unmatched in the industry and the “high-touch” approach ensures accurate delivery.</p>
                     <button class="read-me-btn">Read Me</button>
                 </div>
             </div>
@@ -75,9 +90,7 @@ class MILogisticsApp {
 
         document.getElementById('hq-section').innerHTML = `
             <h2 style="color: var(--mi-red); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px;">Global Headquarters</h2>
-            <div class="hq-container"><div class="hq-grid">
-                <div class="hq-box"><h4>Florida | USA</h4><p>54 SE 5th Avenue, Suite 300<br>Delray Beach, FL 33483</p></div>
-            </div></div>
+            <div class="hq-container"><div class="hq-grid"><div class="hq-box"><h4>Florida | USA</h4><p>54 SE 5th Avenue, Suite 300<br>Delray Beach, FL 33483</p></div></div></div>
         `;
     }
 
@@ -89,17 +102,66 @@ class MILogisticsApp {
         this.createNavItem('BRENT CRUDE OIL', 'BRENT_CRUDE_OIL', () => this.switchExcelPage('BRENT_CRUDE_OIL', 'Brent Crude Oil Stat Sign'));
         this.createNavItem('ROTTERDAM STAT', 'ROTTERDAM_STAT', () => this.switchExcelPage('ROTTERDAM_STAT', 'Rotterdam Stat Sign'));
 
-        this.createNavItem('ABOUT PAGE', 'ABOUT', () => this.showGenericPage('About IMI Logistics', ''));
+        // Updated About Page Call
+        this.createNavItem('ABOUT PAGE', 'ABOUT', () => this.showAboutPage());
+        
         this.createNavItem('OUR TEAM', 'TEAM', () => this.showGenericPage('Our Team', 'Meet the experts driving IMI Logistics forward.'));
         this.createNavItem('OUR PRODUCTS', 'PRODUCTS', () => this.showGenericPage('Our Products', 'Advanced tracking and forecasting tools.'));
         this.createNavItem('OUR PARTNERS & AFFILIATES', 'PARTNERS', () => this.showGenericPage('Partners & Affiliates', 'Collaborating with global shipping lanes.'));
+    }
+
+    showAboutPage() {
+        this.updateActiveNav('ABOUT');
+        this.titleText.innerText = 'About IMI Logistics';
+        this.hideAllViews();
+        this.genericView.classList.add('active');
+
+        this.genericContent.innerHTML = `
+            <div class="about-stats-grid">
+                <div class="stat-item">
+                    <span class="stat-value">45M MT</span>
+                    <span class="stat-label">Total Volume</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">+1000</span>
+                    <span class="stat-label">Shipments</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">+$4 BILLION</span>
+                    <span class="stat-label">Turnover</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">+170</span>
+                    <span class="stat-label">Global Employees</span>
+                </div>
+            </div>
+            
+            <div class="about-details-container">
+                <div class="about-left-col">
+                    <h2 class="about-headline">
+                        Providing value-added solutions to the global 
+                        <span class="highlight">cement</span>, 
+                        <span class="highlight">steel</span>, 
+                        <span class="highlight">wallboard</span> and 
+                        <span class="highlight">energy</span> industries for over 38 years.
+                    </h2>
+                </div>
+                <div class="about-right-col">
+                    <p>Since 1987, the worldwide cement, wallboard, and steel industries have come to depend on IMI to deliver unparalleled expertise to meet their raw material needs. Our commitment to service excellence has allowed us to build a large portfolio of reliable, first-class suppliers, ship operators, and customers.</p>
+                    <p>Today, IMI sources or ships to over 80 countries worldwide. Along with our partners and affiliates, we deliver over 38 million tons of bulk materials annually, providing creative and economical real-time solutions to any logistical challenge our customers may face. Our products include natural gypsum, bauxite, iron ore and iron fines, cement, clinker, coal, petcoke, slag, and copper concentrates.</p>
+                </div>
+            </div>
+        `;
     }
 
     createNavItem(text, id, callback) {
         const btn = document.createElement('button');
         btn.className = 'nav-item';
         btn.textContent = text;
-        btn.onclick = () => { callback(); this.sidebar.classList.add('collapsed'); };
+        btn.onclick = () => {
+            callback();
+            this.sidebar.classList.add('collapsed');
+        };
         btn.setAttribute('data-id', id);
         this.nav.appendChild(btn);
     }
@@ -110,8 +172,18 @@ class MILogisticsApp {
         this.hideAllViews();
         this.homeView.classList.add('active');
         if (!document.getElementById('home-content').innerHTML) {
-            document.getElementById('home-content').innerHTML = `<div style="text-align: center; padding: 20px;"><h1>Welcome to IMI Logistics</h1></div>`;
-            document.getElementById('map-container').innerHTML = `<div class="hard-clip-wrapper" style="height: 800px;"><iframe frameborder="0" src="${this.widgetConfig.shipXplorer}" style="width: 100%; height: 100%; border: none;"></iframe></div>`;
+            document.getElementById('home-content').innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <h1 style="color: var(--deep-space); margin-bottom: 10px;">Welcome to IMI Logistics</h1>
+                    <div class="welcome-grid">
+                        <div class="stat-box"><small>SYSTEM STATUS</small><h2 style="margin: 5px 0; color: #10B981;">ACTIVE</h2></div>
+                        <div class="stat-box"><small>MODULARS</small><h2 style="margin: 5px 0; color: var(--mi-red);">4 LOADED</h2></div>
+                    </div>
+                </div>`;
+            document.getElementById('map-container').innerHTML = `
+                <div class="hard-clip-wrapper" style="height: 800px;">
+                    <iframe frameborder="0" scrolling="no" style="width: 100%; height: 100%; border: none;" src="${this.widgetConfig.shipXplorer}"></iframe>
+                </div>`;
         }
     }
 
@@ -126,7 +198,9 @@ class MILogisticsApp {
         } else {
             this.loader.style.display = 'block';
             const newFrame = document.createElement('iframe');
-            newFrame.style.width = "100%"; newFrame.style.height = "850px"; newFrame.style.border = "none";
+            newFrame.style.width = "100%";
+            newFrame.style.height = "850px";
+            newFrame.style.border = "none";
             newFrame.src = this.analysisPages[pageId];
             newFrame.onload = () => { this.loader.style.display = 'none'; };
             this.iframeContainer.appendChild(newFrame);
@@ -135,45 +209,11 @@ class MILogisticsApp {
     }
 
     showGenericPage(title, description) {
-        const navId = this.getNavIdByTitle(title);
-        this.updateActiveNav(navId);
+        this.updateActiveNav(this.getNavIdByTitle(title));
         this.titleText.innerText = title;
         this.hideAllViews();
         this.genericView.classList.add('active');
-
-        if (navId === 'ABOUT') {
-            this.genericContent.innerHTML = `
-                <div class="about-stats-container">
-                    <div class="about-stat-item">
-                        <span class="about-stat-value">45M MT</span>
-                        <span class="about-stat-label">Total Volume</span>
-                    </div>
-                    <div class="about-stat-item">
-                        <span class="about-stat-value">+1000</span>
-                        <span class="about-stat-label">Shipments</span>
-                    </div>
-                    <div class="about-stat-item">
-                        <span class="about-stat-value">+$4 BILLION</span>
-                        <span class="about-stat-label">Turnover</span>
-                    </div>
-                    <div class="about-stat-item">
-                        <span class="about-stat-value">+170</span>
-                        <span class="about-stat-label">Global Employees</span>
-                    </div>
-                </div>
-                <div class="about-content-layout">
-                    <div class="about-left-heading">
-                        Providing value-added solutions to the global <span class="highlight">cement, steel, wallboard</span> and <span class="highlight">energy</span> industries for over 38 years.
-                    </div>
-                    <div class="about-right-text">
-                        <p>Since 1987, the worldwide cement, wallboard, and steel industries have come to depend on IMI to deliver unparalleled expertise to meet their raw material needs. Our commitment to service excellence has allowed us to build a large portfolio of reliable, first-class suppliers, ship operators, and customers.</p>
-                        <p>Today, IMI sources or ships to over 80 countries worldwide. Along with our partners and affiliates, we deliver over 38 million tons of bulk materials annually, providing creative and economical real-time solutions to any logistical challenge our customers may face. Our products include natural gypsum, bauxite, iron ore and iron fines, cement, clinker, coal, petcoke, slag, and copper concentrates.</p>
-                    </div>
-                </div>
-            `;
-        } else {
-            this.genericContent.innerHTML = `<h2 style="color: var(--mi-red); border-bottom: 2px solid var(--off-white); padding-bottom: 10px;">${title}</h2><p style="color: var(--deep-space); line-height: 1.6;">${description}</p>`;
-        }
+        this.genericContent.innerHTML = `<h2 style="color: var(--mi-red); border-bottom: 2px solid var(--off-white); padding-bottom: 10px;">${title}</h2><p style="color: var(--deep-space); line-height: 1.6;">${description}</p>`;
     }
 
     hideAllViews() {
@@ -183,7 +223,7 @@ class MILogisticsApp {
     }
 
     getNavIdByTitle(title) {
-        const mapping = { 'About IMI Logistics': 'ABOUT', 'Our Team': 'TEAM', 'Our Products': 'PRODUCTS', 'Partners & Affiliates': 'PARTNERS' };
+        const mapping = { 'Our Team': 'TEAM', 'Our Products': 'PRODUCTS', 'Partners & Affiliates': 'PARTNERS' };
         return mapping[title] || '';
     }
 
