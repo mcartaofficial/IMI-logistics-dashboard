@@ -11,6 +11,48 @@ class MILogisticsApp {
             "ROTTERDAM_STAT": "https://fau-my.sharepoint.com/personal/nmadrazo2024_fau_edu/_layouts/15/Doc.aspx?sourcedoc={fc00bff8-29ee-4a6c-b472-ef0fd72dfd47}&action=embedview&AllowTyping=True&ActiveCell='Rotterdam%20Stat.%20Sign.'!A1&wdDownloadButton=True&wdInConfigurator=True"
         };
 
+        this.aboutContentHtml = `
+            <div class="img-about-header">
+                <div class="img-about-card">
+                    <div class="img-about-icon"><img src="https://unpkg.com/feather-icons/dist/icons/package.svg" alt="Volume"/></div>
+                    <div class="img-about-data">
+                        <div class="img-about-val">45M MT</div>
+                        <div class="img-about-label">Total Volume</div>
+                    </div>
+                </div>
+                <div class="img-about-card">
+                    <div class="img-about-icon"><img src="https://unpkg.com/feather-icons/dist/icons/anchor.svg" alt="Shipments"/></div>
+                    <div class="img-about-data">
+                        <div class="img-about-val">+1000</div>
+                        <div class="img-about-label">Shipments</div>
+                    </div>
+                </div>
+                <div class="img-about-card">
+                    <div class="img-about-icon"><img src="https://unpkg.com/feather-icons/dist/icons/trending-up.svg" alt="Turnover"/></div>
+                    <div class="img-about-data">
+                        <div class="img-about-val">+$4 Billion</div>
+                        <div class="img-about-label">Turnover</div>
+                    </div>
+                </div>
+                <div class="img-about-card">
+                    <div class="img-about-icon"><img src="https://unpkg.com/feather-icons/dist/icons/users.svg" alt="Employees"/></div>
+                    <div class="img-about-data">
+                        <div class="img-about-val">+170</div>
+                        <div class="img-about-label">Global Employees</div>
+                    </div>
+                </div>
+            </div>
+            <div class="img-about-content">
+                <div class="img-about-highlight">
+                    <h2 class="img-about-headline">Providing value-added solutions to the global <strong class="red-text">cement, steel, wallboard</strong> and <strong class="red-text">energy</strong> industries for over 38 years.</h2>
+                </div>
+                <div class="img-about-text">
+                    <p>Since 1987, the worldwide cement, wallboard, and steel industries have come to depend on IMI to deliver unparalleled expertise to meet their raw material needs. Our commitment to service excellence has allowed us to build a large portfolio of reliable, first-class suppliers, ship operators, and customers.</p>
+                    <p>Today, IMI sources or ships to over 80 countries worldwide. Along with our partners and affiliates, we deliver over 38 million tons of bulk materials annually, providing creative and economical real-time solutions to any logistical challenge our customers may face. Our products include natural gypsum, bauxite, iron ore and iron fines, cement, clinker, coal, petcoke, slag, and copper concentrates.</p>
+                </div>
+            </div>
+        `;
+
         this.iframeCache = {};
         this.nav = document.getElementById('sidebar-nav');
         this.sidebar = document.getElementById('sidebar');
@@ -205,66 +247,22 @@ class MILogisticsApp {
         this.nav.appendChild(btn);
     }
 
-    getAboutHTML() {
-        return `
-            <div class="img-about-header">
-                <div class="img-about-card">
-                    <div class="img-about-icon"><img src="https://unpkg.com/feather-icons/dist/icons/package.svg" alt="Volume"/></div>
-                    <div class="img-about-data">
-                        <div class="img-about-val">45M MT</div>
-                        <div class="img-about-label">Total Volume</div>
-                    </div>
-                </div>
-                <div class="img-about-card">
-                    <div class="img-about-icon"><img src="https://unpkg.com/feather-icons/dist/icons/anchor.svg" alt="Shipments"/></div>
-                    <div class="img-about-data">
-                        <div class="img-about-val">+1000</div>
-                        <div class="img-about-label">Shipments</div>
-                    </div>
-                </div>
-                <div class="img-about-card">
-                    <div class="img-about-icon"><img src="https://unpkg.com/feather-icons/dist/icons/trending-up.svg" alt="Turnover"/></div>
-                    <div class="img-about-data">
-                        <div class="img-about-val">+$4 Billion</div>
-                        <div class="img-about-label">Turnover</div>
-                    </div>
-                </div>
-                <div class="img-about-card">
-                    <div class="img-about-icon"><img src="https://unpkg.com/feather-icons/dist/icons/users.svg" alt="Employees"/></div>
-                    <div class="img-about-data">
-                        <div class="img-about-val">+170</div>
-                        <div class="img-about-label">Global Employees</div>
-                    </div>
-                </div>
-            </div>
-            <div class="img-about-content">
-                <div class="img-about-highlight">
-                    <h2 class="img-about-headline">Providing value-added solutions to the global <strong class="red-text">cement, steel, wallboard</strong> and <strong class="red-text">energy</strong> industries for over 38 years.</h2>
-                </div>
-                <div class="img-about-text">
-                    <p>Since 1987, the worldwide cement, wallboard, and steel industries have come to depend on IMI to deliver unparalleled expertise to meet their raw material needs. Our commitment to service excellence has allowed us to build a large portfolio of reliable, first-class suppliers, ship operators, and customers.</p>
-                    <p>Today, IMI sources or ships to over 80 countries worldwide. Along with our partners and affiliates, we deliver over 38 million tons of bulk materials annually, providing creative and economical real-time solutions to any logistical challenge our customers may face.</p>
-                </div>
-            </div>`;
-    }
-
     showHomePage() {
         this.updateActiveNav('HOME_PAGE');
         this.titleText.innerText = "Dashboard Overview";
         this.hideAllViews();
         this.homeView.classList.add('active');
-        
         if (!document.getElementById('home-content').innerHTML) {
             document.getElementById('home-content').innerHTML = `
-                <div style="text-align: center; padding: 20px;">
-                    <h1 style="color: var(--deep-space); margin-bottom: 10px;">Welcome to IMI Logistics</h1>
-                    <div class="welcome-grid">
-                        <div class="stat-box"><small>SYSTEM STATUS</small><h2 style="margin: 5px 0; color: #10B981;">ACTIVE</h2></div>
+                <div style="padding: 20px;">
+                    ${this.aboutContentHtml}
+                    <div style="text-align: center; margin-top: 40px; padding: 20px; background: #fff; border-radius: 15px; border: 1px solid #eee;">
+                        <h1 style="color: var(--deep-space); margin-bottom: 10px;">Welcome to IMI Logistics</h1>
+                        <div class="welcome-grid">
+                            <div class="stat-box"><small>SYSTEM STATUS</small><h2 style="margin: 5px 0; color: #10B981;">ACTIVE</h2></div>
+                        </div>
                     </div>
                 </div>`;
-            
-            // Inject About section content at the top
-            document.getElementById('about-section-home').innerHTML = this.getAboutHTML();
             
             // Primary Map
             document.getElementById('map-container').innerHTML = `
@@ -272,7 +270,7 @@ class MILogisticsApp {
                     <iframe frameborder="0" scrolling="no" style="width: 100%; height: 100%; border: none;" src="${this.widgetConfig.shipXplorer}"></iframe>
                 </div>`;
 
-            // Store Locator Widget
+            // New Store Locator Widget
             document.getElementById('store-locator-container').innerHTML = `
                 <div class="elfsight-app-d9332a95-3af1-4708-a385-24cef7defd35" data-elfsight-app-lazy></div>
             `;
@@ -307,7 +305,7 @@ class MILogisticsApp {
         this.genericView.classList.add('active');
 
         if(title === 'About IMI Logistics') {
-            this.genericContent.innerHTML = this.getAboutHTML();
+            this.genericContent.innerHTML = this.aboutContentHtml;
         } else {
             this.genericContent.innerHTML = `<h2 style="color: var(--mi-red); border-bottom: 2px solid var(--off-white); padding-bottom: 10px;">${title}</h2><p style="color: var(--deep-space); line-height: 1.6;">${description}</p>`;
         }
