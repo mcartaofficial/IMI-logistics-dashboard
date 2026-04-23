@@ -255,13 +255,14 @@ class MILogisticsApp {
         if (!document.getElementById('home-content').innerHTML) {
             document.getElementById('home-content').innerHTML = `
                 <div style="padding: 20px;">
-                    <div style="text-align: center; margin-bottom: 40px; padding: 20px; background: #fff; border-radius: 15px; border: 1px solid #eee;">
-                        <h1 style="color: var(--deep-space); margin-bottom: 10px;">Welcome to IMI Logistics</h1>
-                        <div class="welcome-grid">
-                            <div class="stat-box"><small>SYSTEM STATUS</small><h2 style="margin: 5px 0; color: #10B981;">ACTIVE</h2></div>
+                    <div style="margin-bottom: 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--off-white); padding-bottom: 20px;">
+                        <h1 style="color: var(--deep-space); margin: 0; font-size: 2.2rem; font-weight: 800;">Welcome to IMI Logistics</h1>
+                        <div class="stat-box" style="margin: 0; min-width: 180px;">
+                            <small style="letter-spacing: 1px;">SYSTEM STATUS</small>
+                            <h2 style="margin: 5px 0; color: #10B981; font-weight: 900;">ACTIVE</h2>
                         </div>
                     </div>
-                    
+
                     ${this.aboutContentHtml}
                 </div>`;
             
