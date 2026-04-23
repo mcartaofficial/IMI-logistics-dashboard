@@ -255,13 +255,14 @@ class MILogisticsApp {
         if (!document.getElementById('home-content').innerHTML) {
             document.getElementById('home-content').innerHTML = `
                 <div style="padding: 20px;">
-                    ${this.aboutContentHtml}
-                    <div style="text-align: center; margin-top: 40px; padding: 20px; background: #fff; border-radius: 15px; border: 1px solid #eee;">
+                    <div style="text-align: center; margin-bottom: 40px; padding: 20px; background: #fff; border-radius: 15px; border: 1px solid #eee;">
                         <h1 style="color: var(--deep-space); margin-bottom: 10px;">Welcome to IMI Logistics</h1>
                         <div class="welcome-grid">
                             <div class="stat-box"><small>SYSTEM STATUS</small><h2 style="margin: 5px 0; color: #10B981;">ACTIVE</h2></div>
                         </div>
                     </div>
+                    
+                    ${this.aboutContentHtml}
                 </div>`;
             
             // Primary Map
