@@ -229,9 +229,9 @@ class MILogisticsApp {
     buildSidebar() {
         this.nav.innerHTML = '';
         this.createNavItem('DASHBOARD HOME', 'HOME_PAGE', () => this.showHomePage());
-        this.createNavItem('DATA VISUALIZATION', 'DATA_VISUALIZATION', () => this.switchExcelPage('DATA_VISUALIZATION', 'Data Visualization'));
-        this.createNavItem('ROTTERDAM EXPONENTIAL SMOOTHING', 'ROTTERDAM_EXP_SMOOTH', () => this.switchExcelPage('ROTTERDAM_EXP_SMOOTH', 'Rotterdam Exponential Smoothing'));
-        this.createNavItem('ROTTERDAM TRENDED EXPONENTIAL SMOOTHING', 'ROTTERDAM_TRENDED_SMOOTH', () => this.switchExcelPage('ROTTERDAM_TRENDED_SMOOTH', 'Rotterdam Trended Exponential Smoothing'));
+        this.createNavItem('DATA VISUALIZATION', 'DATA_VISUALIZATION', () => this.switchExcelPage('DATA_VISUALIZATION', 'DATA_VISUALIZATION'));
+        this.createNavItem('ROTTERDAM EXPONENTIAL SMOOTHING', 'ROTTERDAM_EXPONENTIAL_SMOOTH', () => this.switchExcelPage('ROTTERDAM_EXPONENTIAL_SMOOTH', 'ROTTERDAM_EXPONENTIAL_SMOOTH'));
+        this.createNavItem('ROTTERDAM TRENDED EXPONENTIAL SMOOTHING', 'ROTTERDAM TRENDED EXPONENTIAL SMOOTHING', () => this.switchExcelPage('ROTTERDAM TRENDED EXPONENTIAL SMOOTHING', 'ROTTERDAM TRENDED EXPONENTIAL SMOOTHING'));
         this.createNavItem('ROTTERDAM ARIMA', 'ROTTERDAM ARIMA', () => this.switchExcelPage('ROTTERDAM ARIMA', 'ROTTERDAM ARIMA'));
         this.createNavItem('BRENT EXPONENTIAL SMOOTHING', 'BRENT EXPONENTIAL SMOOTHING', () => this.switchExcelPage('BRENT EXPONENTIAL SMOOTHING', 'BRENT EXPONENTIAL SMOOTHING'));
         this.createNavItem('BRENT TRENDED_SMOOTH', 'BRENT TRENDED_SMOOTH', () => this.switchExcelPage('BRENT TRENDED_SMOOTH', 'BRENT TRENDED_SMOOTH'));
