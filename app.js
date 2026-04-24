@@ -272,6 +272,8 @@ class MILogisticsApp {
                 </div>`;
             
             document.getElementById('map-container').innerHTML = `
+                <script src="https://widgets.embeddable.co/sdk/latest/embeddable.js" defer></script>
+                <div class="embeddable-eicHZF6jsR"></div>
                 <div class="hard-clip-wrapper" style="height: 800px;">
                     <iframe frameborder="0" scrolling="no" style="width: 100%; height: 100%; border: none;" src="${this.widgetConfig.shipXplorer}"></iframe>
                 </div>`;
