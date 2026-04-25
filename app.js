@@ -70,6 +70,12 @@ class MILogisticsApp {
         this.titleText = document.getElementById('current-sheet-title');
         this.loader = document.getElementById('loading-indicator');
         
+        // Active file state per view
+        this.viewFileState = {
+            excel: null,
+            generic: null
+        };
+
         this.init();
     }
 
@@ -322,6 +328,9 @@ class MILogisticsApp {
             this.iframeContainer.appendChild(newFrame);
             this.iframeCache[pageId] = newFrame;
         }
+        
+        // Ensure uploader is present
+        this.renderUploader('excel-upload-container', 'excel');
     }
 
     showGenericPage(title, description) {
@@ -335,6 +344,108 @@ class MILogisticsApp {
         } else {
             this.genericContent.innerHTML = `<h2 style="color: var(--mi-red); border-bottom: 2px solid var(--off-white); padding-bottom: 10px;">${title}</h2><p style="color: var(--deep-space); line-height: 1.6;">${description}</p>`;
         }
+        
+        // Ensure uploader is present
+        this.renderUploader('generic-upload-container', 'generic');
+    }
+
+    // --- Uploader Functionality ---
+
+    renderUploader(containerId, viewKey) {
+        const container = document.getElementById(containerId);
+        if (container.innerHTML !== "") return; // Prevent double rendering
+
+        container.innerHTML = `
+            <div class="upload-section">
+                <div id="dropzone-${viewKey}" class="dropzone">
+                    <span class="dropzone-icon">📁</span>
+                    <p><strong>Drag & Drop</strong> files here or click to browse</p>
+                    <p style="font-size: 0.75rem; opacity: 0.7;">Supports PDF, DOCX, XLSX, CSV</p>
+                    <input type="file" id="fileInput-${viewKey}" style="display: none;" accept=".pdf,.docx,.xlsx,.csv">
+                </div>
+                <div id="viewer-${viewKey}" class="viewer-container" style="display: none;">
+                    <div class="viewer-header">
+                        <span id="fileName-${viewKey}">Document Preview</span>
+                        <button class="remove-file" onclick="app.removeFile('${viewKey}')">Remove</button>
+                    </div>
+                    <div id="viewerContent-${viewKey}" class="viewer-content"></div>
+                </div>
+            </div>
+        `;
+
+        this.initDropzone(viewKey);
+    }
+
+    initDropzone(viewKey) {
+        const zone = document.getElementById(`dropzone-${viewKey}`);
+        const input = document.getElementById(`fileInput-${viewKey}`);
+
+        zone.onclick = () => input.click();
+
+        zone.ondragover = (e) => { e.preventDefault(); zone.classList.add('dragover'); };
+        zone.ondragleave = () => zone.classList.remove('dragover');
+        zone.ondrop = (e) => {
+            e.preventDefault();
+            zone.classList.remove('dragover');
+            if (e.dataTransfer.files.length) this.handleFile(e.dataTransfer.files[0], viewKey);
+        };
+
+        input.onchange = (e) => {
+            if (e.target.files.length) this.handleFile(e.target.files[0], viewKey);
+        };
+    }
+
+    async handleFile(file, viewKey) {
+        const viewer = document.getElementById(`viewer-${viewKey}`);
+        const nameLabel = document.getElementById(`fileName-${viewKey}`);
+        const contentArea = document.getElementById(`viewerContent-${viewKey}`);
+        
+        nameLabel.textContent = file.name;
+        contentArea.innerHTML = "Processing...";
+        viewer.style.display = "block";
+
+        const extension = file.name.split('.').pop().toLowerCase();
+
+        try {
+            if (extension === 'pdf') {
+                const url = URL.createObjectURL(file);
+                contentArea.innerHTML = `<iframe src="${url}" class="pdf-viewer"></iframe>`;
+            } 
+            else if (extension === 'docx') {
+                const arrayBuffer = await file.arrayBuffer();
+                const result = await mammoth.convertToHtml({ arrayBuffer });
+                contentArea.innerHTML = `<div class="docx-viewer">${result.value}</div>`;
+            } 
+            else if (extension === 'xlsx' || extension === 'csv') {
+                const arrayBuffer = await file.arrayBuffer();
+                const workbook = XLSX.read(arrayBuffer);
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                
+                contentArea.innerHTML = `<div id="grid-${viewKey}"></div>`;
+                new gridjs.Grid({
+                    columns: data[0],
+                    data: data.slice(1),
+                    pagination: { limit: 10 },
+                    sort: true,
+                    resizable: true,
+                    search: true
+                }).render(document.getElementById(`grid-${viewKey}`));
+            } 
+            else {
+                alert("Unsupported file format.");
+                this.removeFile(viewKey);
+            }
+        } catch (err) {
+            contentArea.innerHTML = `<p style="color: var(--mi-red)">Error loading file: ${err.message}</p>`;
+        }
+    }
+
+    removeFile(viewKey) {
+        document.getElementById(`viewer-${viewKey}`).style.display = "none";
+        document.getElementById(`viewerContent-${viewKey}`).innerHTML = "";
+        document.getElementById(`fileInput-${viewKey}`).value = "";
     }
 
     hideAllViews() {
@@ -354,4 +465,5 @@ class MILogisticsApp {
         if (activeBtn) activeBtn.classList.add('active');
     }
 }
-new MILogisticsApp();
+// Initialize to global variable for easier onclick handling
+const app = new MILogisticsApp();
