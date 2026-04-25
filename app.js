@@ -252,13 +252,39 @@ class MILogisticsApp {
         this.nav.appendChild(btn);
     }
 
+    injectEmbeddableWidget(container) {
+        // Prevent double injection
+        if (document.getElementById('embeddable-script-loader')) return;
+
+        const widgetWrapper = document.createElement('div');
+        widgetWrapper.style.marginBottom = "20px";
+        
+        const widgetDiv = document.createElement('div');
+        widgetDiv.className = "embeddable-eicHZF6jsR";
+        widgetDiv.setAttribute('data-version', 'dev');
+        widgetDiv.setAttribute('data-ignore-cache', 'true');
+        widgetDiv.setAttribute('data-loader', 'false');
+        widgetDiv.setAttribute('data-lazy-load', 'false');
+
+        const script = document.createElement('script');
+        script.id = 'embeddable-script-loader';
+        script.src = "https://widgets.embeddable.co/sdk/latest/embeddable.js";
+        script.defer = true;
+
+        widgetWrapper.appendChild(widgetDiv);
+        container.prepend(widgetWrapper);
+        document.head.appendChild(script);
+    }
+
     showHomePage() {
         this.updateActiveNav('HOME_PAGE');
         this.titleText.innerText = "Dashboard Overview";
         this.hideAllViews();
         this.homeView.classList.add('active');
-        if (!document.getElementById('home-content').innerHTML) {
-            document.getElementById('home-content').innerHTML = `
+        
+        const homeContent = document.getElementById('home-content');
+        if (!homeContent.innerHTML) {
+            homeContent.innerHTML = `
                 <div style="padding: 20px;">
                     <div style="margin-bottom: 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--off-white); padding-bottom: 20px;">
                         <h1 style="color: var(--deep-space); margin: 0; font-size: 2.2rem; font-weight: 800;">Welcome to IMI Logistics</h1>
@@ -267,19 +293,17 @@ class MILogisticsApp {
                             <h2 style="margin: 5px 0; color: #10B981; font-weight: 900;">ACTIVE</h2>
                         </div>
                     </div>
-
                     ${this.aboutContentHtml}
                 </div>`;
             
-            // Integrated Embeddable Widget at the top of the map-container
-            document.getElementById('map-container').innerHTML = `
-                <div style="margin-bottom: 20px;">
-                    <script src="https://widgets.embeddable.co/sdk/latest/embeddable.js" defer></script>
-                    <div class="embeddable-eicHZF6jsR" data-version="dev" data-ignore-cache="true" data-loader="false" data-lazy-load="false"></div>
-                </div>
+            const mapContainer = document.getElementById('map-container');
+            mapContainer.innerHTML = `
                 <div class="hard-clip-wrapper" style="height: 800px;">
                     <iframe frameborder="0" scrolling="no" style="width: 100%; height: 100%; border: none;" src="${this.widgetConfig.shipXplorer}"></iframe>
                 </div>`;
+
+            // Core Logic: Inject the widget at the top of the map container
+            this.injectEmbeddableWidget(mapContainer);
 
             document.getElementById('store-locator-container').innerHTML = `
                 <div class="elfsight-app-d9332a95-3af1-4708-a385-24cef7defd35" data-elfsight-app-lazy></div>
