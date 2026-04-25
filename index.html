@@ -42,7 +42,7 @@
         
         .hard-clip-wrapper { border-radius: 15px; border: 1px solid #eee; overflow: hidden; background: #fff; margin-bottom: 25px; }
         
-        /* FORECASTING WIDGET STYLES - PRESERVED */
+        /* FORECASTING WIDGET STYLES */
         .widget-clipper {
             width: 100%;
             height: auto; 
@@ -52,7 +52,6 @@
             margin-bottom: 30px;
             background: #fff;
         }
-
         .widget-clipper > #widget-mount-point {
             margin-bottom: -35px; 
             display: block;
@@ -67,9 +66,8 @@
             margin-top: 25px;
             border-radius: 15px;
         }
-
         .secondary-map-trim > div {
-            margin-bottom: -35px; /* Controlled 20px trim only for this widget */
+            margin-bottom: -35px; 
             display: block;
         }
 
@@ -124,50 +122,45 @@
 
         .section-divider { height: 2px; background: var(--off-white); margin: 60px 0; border: none; }
 
-        /* Uploader Components Styling */
-        .upload-section { margin-top: 40px; padding-top: 40px; border-top: 2px dashed #e2e8f0; width: 100%; }
+        /* NEW: Multi-File Uploader & Full-Size Viewer Styling */
+        .upload-section { margin-top: 50px; padding-top: 30px; border-top: 3px solid var(--off-white); }
         .dropzone {
             border: 2px dashed #cbd5e0;
             border-radius: 12px;
-            padding: 40px;
+            padding: 50px;
             text-align: center;
             background: #f8fafc;
             transition: all 0.3s ease;
             cursor: pointer;
             color: var(--text-gray);
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
-        .dropzone.dragover {
-            background: #edf2f7;
-            border-color: var(--mi-red);
-            color: var(--deep-space);
-        }
-        .dropzone-icon { font-size: 2rem; margin-bottom: 10px; display: block; }
+        .dropzone.dragover { background: #edf2f7; border-color: var(--mi-red); color: var(--deep-space); }
+        .dropzone-icon { font-size: 2.5rem; margin-bottom: 15px; display: block; }
         
-        /* MULTI-FILE DISPLAY CONTAINER */
+        .file-gallery { display: flex; flex-direction: column; gap: 30px; margin-top: 20px; }
         .viewer-container { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 40px; 
-            width: 100%; 
-            margin-top: 30px;
-        }
-        
-        .viewer-item {
-            background: white;
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
-            overflow: hidden;
+            background: white; 
+            border-radius: 12px; 
+            border: 1px solid #e2e8f0; 
+            overflow: hidden; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
             width: 100%;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
-
-        .viewer-header { background: #f1f5f9; padding: 12px 20px; font-weight: 700; font-size: 0.85rem; color: var(--deep-space); border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
-        .viewer-content { padding: 20px; max-height: 700px; overflow-y: auto; }
-        .pdf-viewer { width: 100%; height: 650px; border: none; }
-        .docx-viewer { line-height: 1.6; color: #2d3748; }
-        .docx-viewer h1, .docx-viewer h2 { color: var(--deep-space); }
-        .remove-file { background: var(--mi-red); color: white; border: none; border-radius: 4px; padding: 4px 10px; cursor: pointer; font-size: 0.7rem; }
+        .viewer-header { 
+            background: #f1f5f9; 
+            padding: 15px 25px; 
+            font-weight: 700; 
+            color: var(--deep-space); 
+            border-bottom: 1px solid #e2e8f0; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+        .viewer-content { padding: 0; width: 100%; min-height: 800px; overflow: visible; }
+        .pdf-viewer { width: 100%; height: 900px; border: none; display: block; }
+        .docx-viewer { padding: 50px; line-height: 1.8; color: #2d3748; max-width: 1000px; margin: 0 auto; }
+        .remove-file { background: var(--mi-red); color: white; border: none; border-radius: 6px; padding: 6px 15px; cursor: pointer; font-size: 0.75rem; font-weight: 600; }
 
         @media (max-width: 1024px) { 
             .services-grid { grid-template-columns: repeat(2, 1fr); } 
@@ -200,15 +193,9 @@
                 
                 <div id="home-view" class="page-frame active">
                     <div id="home-content"></div>
-                    
-                    <div class="widget-clipper">
-                        <div id="widget-mount-point"></div>
-                    </div>
-
+                    <div class="widget-clipper"><div id="widget-mount-point"></div></div>
                     <div id="map-container"></div>
-
                     <div id="store-locator-container" class="secondary-map-trim"></div>
-                    
                     <div id="relocated-sections">
                         <div id="services-section"></div>
                         <hr class="section-divider">
@@ -234,10 +221,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.21/mammoth.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gridjs/dist/gridjs.umd.js"></script>
-    
     <script src="https://elfsightcdn.com/platform.js" async></script>
     <div class="elfsight-app-6ba85109-b815-4820-91b7-5719ae4049e2" data-elfsight-app-lazy></div>
-    
     <script src="app.js"></script>
 </body>
 </html>
