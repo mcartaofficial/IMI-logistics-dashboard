@@ -41,29 +41,28 @@
         
         .hard-clip-wrapper { border-radius: 15px; border: 1px solid #eee; overflow: hidden; background: #fff; margin-bottom: 25px; }
         
-        /* UNCHANGED: Forecasting Widget Styles */
+        /* FORECASTING WIDGET (STRICTLY PRESERVED) */
         .widget-clipper {
             width: 100%;
-            height: auto; 
-            overflow: hidden; 
+            height: auto;
+            overflow: hidden;
             position: relative;
             border-radius: 12px;
             margin-bottom: 30px;
             background: #fff;
         }
-
         .widget-clipper > #widget-mount-point {
-            margin-bottom: -35px; 
+            margin-bottom: -25px;
             display: block;
         }
 
-        /* NEW: Isolated spacing for the second map widget only */
-        #store-locator-container.isolated-map-wrapper {
-            width: 100%;
-            height: auto;
+        /* ISOLATED ELFSIGHT MAP SPACING FIX */
+        .store-locator-wrapper {
             margin-top: 25px;
-            padding-bottom: 25px; /* Intentional 25px space at the bottom */
-            overflow: visible; /* Prevent clipping */
+            padding-bottom: 30px; /* Controlled 30px space at the bottom */
+            overflow: visible;     /* Ensure no technical clipping occurs */
+            display: block;
+            width: 100%;
         }
 
         .page-frame { display: none; width: 100%; }
@@ -154,8 +153,8 @@
                     </div>
 
                     <div id="map-container"></div>
-
-                    <div id="store-locator-container" class="isolated-map-wrapper"></div>
+                    
+                    <div id="store-locator-container" class="store-locator-wrapper"></div>
                     
                     <div id="relocated-sections">
                         <div id="services-section"></div>
