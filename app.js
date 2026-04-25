@@ -70,10 +70,8 @@ class MILogisticsApp {
         this.titleText = document.getElementById('current-sheet-title');
         this.loader = document.getElementById('loading-indicator');
         
-        this.uploadedFiles = {
-            excel: [],
-            generic: []
-        };
+        // Track up to 10 files per view
+        this.viewFiles = { excel: [], generic: [] };
 
         this.init();
     }
@@ -197,7 +195,7 @@ class MILogisticsApp {
                     </div>
                     <div class="hq-box">
                         <h4>Mexico City | Mexico</h4>
-                        <p>Avenida Paseo de la Reformas Número 404, Piso 13, Interior 102. Colonia Juárez, Mexico City, 06600</p>
+                        <p>Avenida Paseo de la Reforma Número 404, Piso 13, Interior 102. Colonia Juárez, Mexico City, 06600</p>
                         <p><a href="mailto:operations.latam@imigroup.com">operations.latam@imigroup.com</a></p>
                         <a href="#" class="hq-link">Map & Directions</a>
                     </div>
@@ -327,8 +325,7 @@ class MILogisticsApp {
             this.iframeContainer.appendChild(newFrame);
             this.iframeCache[pageId] = newFrame;
         }
-        
-        this.renderUploader('excel-upload-container', 'excel');
+        this.renderMultiUploader('excel-upload-container', 'excel');
     }
 
     showGenericPage(title, description) {
@@ -342,11 +339,12 @@ class MILogisticsApp {
         } else {
             this.genericContent.innerHTML = `<h2 style="color: var(--mi-red); border-bottom: 2px solid var(--off-white); padding-bottom: 10px;">${title}</h2><p style="color: var(--deep-space); line-height: 1.6;">${description}</p>`;
         }
-        
-        this.renderUploader('generic-upload-container', 'generic');
+        this.renderMultiUploader('generic-upload-container', 'generic');
     }
 
-    renderUploader(containerId, viewKey) {
+    // --- Enhanced Multi-File Uploader Logic ---
+
+    renderMultiUploader(containerId, viewKey) {
         const container = document.getElementById(containerId);
         if (container.innerHTML !== "") return;
 
@@ -354,77 +352,80 @@ class MILogisticsApp {
             <div class="upload-section">
                 <div id="dropzone-${viewKey}" class="dropzone">
                     <span class="dropzone-icon">📁</span>
-                    <p><strong>Drag & Drop</strong> files here or click to browse</p>
-                    <p style="font-size: 0.75rem; opacity: 0.7;">Supports PDF, DOCX, XLSX, CSV</p>
+                    <p><strong>Drag & Drop</strong> up to 10 files or click to browse</p>
+                    <p style="font-size: 0.75rem; opacity: 0.7;">PDF, DOCX, XLSX, CSV</p>
                     <input type="file" id="fileInput-${viewKey}" style="display: none;" accept=".pdf,.docx,.xlsx,.csv" multiple>
                 </div>
-                <div id="viewer-${viewKey}" class="viewer-container"></div>
+                <div id="viewer-list-${viewKey}" class="viewer-list"></div>
             </div>
         `;
-
         this.initDropzone(viewKey);
     }
 
     initDropzone(viewKey) {
         const zone = document.getElementById(`dropzone-${viewKey}`);
         const input = document.getElementById(`fileInput-${viewKey}`);
-
         zone.onclick = () => input.click();
         zone.ondragover = (e) => { e.preventDefault(); zone.classList.add('dragover'); };
         zone.ondragleave = () => zone.classList.remove('dragover');
         zone.ondrop = (e) => {
             e.preventDefault();
             zone.classList.remove('dragover');
-            if (e.dataTransfer.files.length) {
-                Array.from(e.dataTransfer.files).forEach(file => this.handleFile(file, viewKey));
-            }
+            this.handleFiles(e.dataTransfer.files, viewKey);
         };
-
-        input.onchange = (e) => {
-            if (e.target.files.length) {
-                Array.from(e.target.files).forEach(file => this.handleFile(file, viewKey));
-            }
-        };
+        input.onchange = (e) => this.handleFiles(e.target.files, viewKey);
     }
 
-    async handleFile(file, viewKey) {
-        const fileId = 'file-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
-        const viewerContainer = document.getElementById(`viewer-${viewKey}`);
-        
-        const fileItem = document.createElement('div');
-        fileItem.className = 'viewer-item';
-        fileItem.id = fileId;
-        fileItem.innerHTML = `
+    async handleFiles(files, viewKey) {
+        const fileList = Array.from(files);
+        // Constraint: Maximum 10 files
+        const remainingSlots = 10 - this.viewFiles[viewKey].length;
+        const filesToProcess = fileList.slice(0, remainingSlots);
+
+        if (fileList.length > remainingSlots) {
+            alert(`Limit reached. Only up to 10 files can be displayed at once.`);
+        }
+
+        for (const file of filesToProcess) {
+            const fileId = Date.now() + Math.random().toString(36).substr(2, 9);
+            this.viewFiles[viewKey].push({ id: fileId, file });
+            await this.renderFileItem(file, fileId, viewKey);
+        }
+    }
+
+    async renderFileItem(file, fileId, viewKey) {
+        const list = document.getElementById(`viewer-list-${viewKey}`);
+        const item = document.createElement('div');
+        item.className = 'viewer-item';
+        item.id = `item-${fileId}`;
+        item.innerHTML = `
             <div class="viewer-header">
                 <span>${file.name}</span>
-                <button class="remove-file" onclick="app.removeFile('${fileId}', '${viewKey}')">Remove</button>
+                <button class="remove-file" onclick="app.removeSpecificFile('${fileId}', '${viewKey}')">Remove</button>
             </div>
-            <div class="viewer-content">Processing...</div>
+            <div id="content-${fileId}" class="viewer-content">Processing...</div>
         `;
-        
-        viewerContainer.appendChild(fileItem);
-        const contentArea = fileItem.querySelector('.viewer-content');
+        list.appendChild(item);
+
+        const contentArea = document.getElementById(`content-${fileId}`);
         const extension = file.name.split('.').pop().toLowerCase();
 
         try {
             if (extension === 'pdf') {
                 const url = URL.createObjectURL(file);
                 contentArea.innerHTML = `<iframe src="${url}" class="pdf-viewer"></iframe>`;
-            } 
-            else if (extension === 'docx') {
+            } else if (extension === 'docx') {
                 const arrayBuffer = await file.arrayBuffer();
                 const result = await mammoth.convertToHtml({ arrayBuffer });
                 contentArea.innerHTML = `<div class="docx-viewer">${result.value}</div>`;
-            } 
-            else if (extension === 'xlsx' || extension === 'csv') {
+            } else if (extension === 'xlsx' || extension === 'csv') {
                 const arrayBuffer = await file.arrayBuffer();
                 const workbook = XLSX.read(arrayBuffer);
                 const firstSheetName = workbook.SheetNames[0];
                 const worksheet = workbook.Sheets[firstSheetName];
                 const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
                 
-                const gridId = 'grid-' + fileId;
-                contentArea.innerHTML = `<div id="${gridId}"></div>`;
+                contentArea.innerHTML = `<div id="grid-${fileId}"></div>`;
                 new gridjs.Grid({
                     columns: data[0],
                     data: data.slice(1),
@@ -432,19 +433,17 @@ class MILogisticsApp {
                     sort: true,
                     resizable: true,
                     search: true
-                }).render(document.getElementById(gridId));
-            } 
-            else {
-                contentArea.innerHTML = `<p style="color: var(--mi-red)">Unsupported file format.</p>`;
+                }).render(document.getElementById(`grid-${fileId}`));
             }
         } catch (err) {
-            contentArea.innerHTML = `<p style="color: var(--mi-red)">Error loading file: ${err.message}</p>`;
+            contentArea.innerHTML = `<p style="color: var(--mi-red)">Error: ${err.message}</p>`;
         }
     }
 
-    removeFile(fileId, viewKey) {
-        const item = document.getElementById(fileId);
+    removeSpecificFile(fileId, viewKey) {
+        const item = document.getElementById(`item-${fileId}`);
         if (item) item.remove();
+        this.viewFiles[viewKey] = this.viewFiles[viewKey].filter(f => f.id !== fileId);
     }
 
     hideAllViews() {
