@@ -270,19 +270,12 @@ class MILogisticsApp {
 
                     ${this.aboutContentHtml}
                 </div>`;
-
-            // Inject Embeddable SDK Script to Document Head
-            if (!document.querySelector('script[src*="embeddable.js"]')) {
-                const sdk = document.createElement('script');
-                sdk.src = "https://widgets.embeddable.co/sdk/latest/embeddable.js";
-                sdk.defer = true;
-                document.head.appendChild(sdk);
-            }
             
+            // Inserted Embeddable SDK and Widget at the top of the map container
             document.getElementById('map-container').innerHTML = `
+                <script src="https://widgets.embeddable.co/sdk/latest/embeddable.js" defer></script>
                 <div class="embeddable-eicHZF6jsR" data-version="dev" data-ignore-cache="true" data-loader="false" data-lazy-load="false"></div>
-                
-                <div class="hard-clip-wrapper" style="height: 800px; margin-top: 25px;">
+                <div class="hard-clip-wrapper" style="height: 800px; margin-top: 20px;">
                     <iframe frameborder="0" scrolling="no" style="width: 100%; height: 100%; border: none;" src="${this.widgetConfig.shipXplorer}"></iframe>
                 </div>`;
 
