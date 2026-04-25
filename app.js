@@ -17,41 +17,41 @@ class MILogisticsApp {
         };
 
         this.aboutContentHtml = `
-            <div class=\"img-about-header\">
-                <div class=\"img-about-card\">
-                    <div class=\"img-about-icon\"><img src=\"https://unpkg.com/feather-icons/dist/icons/package.svg\" alt=\"Volume\"/></div>
-                    <div class=\"img-about-data\">
-                        <div class=\"img-about-val\">45M MT</div>
-                        <div class=\"img-about-label\">Total Volume</div>
+            <div class="img-about-header">
+                <div class="img-about-card">
+                    <div class="img-about-icon"><img src="https://unpkg.com/feather-icons/dist/icons/package.svg" alt="Volume"/></div>
+                    <div class="img-about-data">
+                        <div class="img-about-val">45M MT</div>
+                        <div class="img-about-label">Total Volume</div>
                     </div>
                 </div>
-                <div class=\"img-about-card\">
-                    <div class=\"img-about-icon\"><img src=\"https://unpkg.com/feather-icons/dist/icons/anchor.svg\" alt=\"Shipments\"/></div>
-                    <div class=\"img-about-data\">
-                        <div class=\"img-about-val\">+1000</div>
-                        <div class=\"img-about-label\">Shipments</div>
+                <div class="img-about-card">
+                    <div class="img-about-icon"><img src="https://unpkg.com/feather-icons/dist/icons/anchor.svg" alt="Shipments"/></div>
+                    <div class="img-about-data">
+                        <div class="img-about-val">+1000</div>
+                        <div class="img-about-label">Shipments</div>
                     </div>
                 </div>
-                <div class=\"img-about-card\">
-                    <div class=\"img-about-icon\"><img src=\"https://unpkg.com/feather-icons/dist/icons/trending-up.svg\" alt=\"Turnover\"/></div>
-                    <div class=\"img-about-data\">
-                        <div class=\"img-about-val\">+$4 Billion</div>
-                        <div class=\"img-about-label\">Turnover</div>
+                <div class="img-about-card">
+                    <div class="img-about-icon"><img src="https://unpkg.com/feather-icons/dist/icons/trending-up.svg" alt="Turnover"/></div>
+                    <div class="img-about-data">
+                        <div class="img-about-val">+$4 Billion</div>
+                        <div class="img-about-label">Turnover</div>
                     </div>
                 </div>
-                <div class=\"img-about-card\">
-                    <div class=\"img-about-icon\"><img src=\"https://unpkg.com/feather-icons/dist/icons/users.svg\" alt=\"Employees\"/></div>
-                    <div class=\"img-about-data\">
-                        <div class=\"img-about-val\">+170</div>
-                        <div class=\"img-about-label\">Global Employees</div>
+                <div class="img-about-card">
+                    <div class="img-about-icon"><img src="https://unpkg.com/feather-icons/dist/icons/users.svg" alt="Employees"/></div>
+                    <div class="img-about-data">
+                        <div class="img-about-val">+170</div>
+                        <div class="img-about-label">Global Employees</div>
                     </div>
                 </div>
             </div>
-            <div class=\"img-about-content\">
-                <div class=\"img-about-highlight\">
-                    <h2 class=\"img-about-headline\">Providing value-added solutions to the global <strong class=\"red-text\">cement, steel, wallboard</strong> and <strong class=\"red-text\">energy</strong> industries for over 38 years.</h2>
+            <div class="img-about-content">
+                <div class="img-about-highlight">
+                    <h2 class="img-about-headline">Providing value-added solutions to the global <strong class="red-text">cement, steel, wallboard</strong> and <strong class="red-text">energy</strong> industries for over 38 years.</h2>
                 </div>
-                <div class=\"img-about-text\">
+                <div class="img-about-text">
                     <p>Since 1987, the worldwide cement, wallboard, and steel industries have come to depend on IMI to deliver unparalleled expertise to meet their raw material needs. Our commitment to service excellence has allowed us to build a large portfolio of reliable, first-class suppliers, ship operators, and customers.</p>
                     <p>Today, IMI sources or ships to over 80 countries worldwide. Along with our partners and affiliates, we deliver over 38 million tons of bulk materials annually, providing creative and economical real-time solutions to any logistical challenge our customers may face. Our products include natural gypsum, bauxite, iron ore and iron fines, cement, clinker, coal, petcoke, slag, and copper concentrates.</p>
                 </div>
@@ -86,140 +86,140 @@ class MILogisticsApp {
 
     renderRelocatedSections() {
         document.getElementById('services-section').innerHTML = `
-            <h2 style=\"color: var(--mi-red); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px;\">Our Services</h2>
-            <div class=\"services-grid\">
-                <div class=\"service-box\">
+            <h2 style="color: var(--mi-red); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px;">Our Services</h2>
+            <div class="services-grid">
+                <div class="service-box">
                     <h4>Global Bulk Raw Materials Trading</h4>
                     <p>IMI is one of the leading privately-owned, independent, bulk raw materials trading firms in the world today. With more than 38 years of history, IMI has established a reputation for exceptional service and high quality product offerings.</p>
-                    <button class=\"read-me-btn\">Read Me</button>
+                    <button class="read-me-btn">Read Me</button>
                 </div>
-                <div class=\"service-box\">
+                <div class="service-box">
                     <h4>Sourcing</h4>
                     <p>IMI holds multi-year contracts and marketing rights with suppliers for many products including natural gypsum from Oman, Spain and Mexico; bauxite from Australia and Turkey; cement and clinker from Europe, Latin America and Asia; iron ore-related products from Trinidad, USA, Egypt, Persian Gulf and South America; and solid fuels from South America, USA, South Africa and Asia.</p>
-                    <button class=\"read-me-btn\">Read Me</button>
+                    <button class="read-me-btn">Read Me</button>
                 </div>
-                <div class=\"service-box\">
+                <div class="service-box">
                     <h4>Chartering</h4>
                     <p>Through our in-house Chartering and Traffic operations departments, IMI has a first class reputation as a reliable expert in ocean vessel chartering, import/export operations, ship loading and discharge operations, and logistics planning and management.</p>
-                    <button class=\"read-me-btn\">Read Me</button>
+                    <button class="read-me-btn">Read Me</button>
                 </div>
-                <div class=\"service-box\">
+                <div class="service-box">
                     <h4>Logistics</h4>
                     <p>IMI manages +50 global stock-and-sell centers for coal, gypsum, bauxite, slag, iron ore products and clinker. IMI negotiates and manages port leases and offsite stockpiles to support door-to-door deliveries.</p>
-                    <button class=\"read-me-btn\">Read Me</button>
+                    <button class="read-me-btn">Read Me</button>
                 </div>
-                <div class=\"service-box\">
+                <div class="service-box">
                     <h4>Marketing</h4>
                     <p>In addition to its normal trading activities, IMI has secured exclusive marketing rights for Gypsum in South Spain from Saint-Gobain and Gypsum in Mexico from COMSA.</p>
-                    <button class=\"read-me-btn\">Read Me</button>
+                    <button class="read-me-btn">Read Me</button>
                 </div>
-                <div class=\"service-box\">
+                <div class="service-box">
                     <h4>Service and Support</h4>
                     <p>IMI’s technical and trade support capabilities are unmatched in the industry and the “high-touch” approach ensures accurate, on-time delivery of product.</p>
-                    <button class=\"read-me-btn\">Read Me</button>
+                    <button class="read-me-btn">Read Me</button>
                 </div>
             </div>
         `;
 
         document.getElementById('environmental-section').innerHTML = `
-            <div class=\"env-container\">
-                <div class=\"env-header-line\"></div>
-                <h1 class=\"env-title\">Our Environmental<br>Commitment</h1>
-                <ul class=\"commitment-list\">
-                    <li class=\"commitment-item\">
-                        <div class=\"red-bullet\"></div>
-                        <div class=\"commitment-text\">We work toward sourcing our raw materials from producers who engage in responsible mining processes. This includes implementing measures to reduce ecological disruption and enhancing resource efficiency.</div>
+            <div class="env-container">
+                <div class="env-header-line"></div>
+                <h1 class="env-title">Our Environmental<br>Commitment</h1>
+                <ul class="commitment-list">
+                    <li class="commitment-item">
+                        <div class="red-bullet"></div>
+                        <div class="commitment-text">We work toward sourcing our raw materials from producers who engage in responsible mining processes. This includes implementing measures to reduce ecological disruption and enhancing resource efficiency.</div>
                     </li>
-                    <li class=\"commitment-item\">
-                        <div class=\"red-bullet\"></div>
-                        <div class=\"commitment-text\">By selecting suppliers dedicated to these principles, we aim to support efforts that contribute to more sustainable resource management within the industry.</div>
+                    <li class="commitment-item">
+                        <div class="red-bullet"></div>
+                        <div class="commitment-text">By selecting suppliers dedicated to these principles, we aim to support efforts that contribute to more sustainable resource management within the industry.</div>
                     </li>
-                    <li class=\"commitment-item\">
-                        <div class=\"red-bullet\"></div>
-                        <div class=\"commitment-text\">Our environmental stewardship is not just a present concern but a commitment to future generations.</div>
+                    <li class="commitment-item">
+                        <div class="red-bullet"></div>
+                        <div class="commitment-text">Our environmental stewardship is not just a present concern but a commitment to future generations.</div>
                     </li>
                 </ul>
             </div>
         `;
 
         document.getElementById('hq-section').innerHTML = `
-            <h2 style=\"color: var(--mi-red); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px;\">Global Headquarters</h2>
-            <div class=\"hq-container\">
-                <div class=\"hq-grid\">
-                    <div class=\"hq-box\">
+            <h2 style="color: var(--mi-red); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px;">Global Headquarters</h2>
+            <div class="hq-container">
+                <div class="hq-grid">
+                    <div class="hq-box">
                         <h4>Florida | USA</h4>
                         <p>54 SE 5th Avenue, Suite 300<br>Delray Beach, FL 33483</p>
-                        <p><span class=\"hq-label\">Toll Free</span><a href=\"tel:+18774230226\">+1-877-423-0226</a></p>
-                        <p><span class=\"hq-label\">Phone</span><a href=\"tel:+15617050350\">+1-561-705-0350</a></p>
-                        <p><span class=\"hq-label\">Fax</span><a href=\"fax:+15613910546\">+1-561-391-0546</a></p>
-                        <p><a href=\"mailto:operations.amer@imigroup.com\">operations.amer@imigroup.com</a></p>
-                        <a href=\"#\" class=\"hq-link\">Map & Directions</a>
+                        <p><span class="hq-label">Toll Free</span><a href="tel:+18774230226">+1-877-423-0226</a></p>
+                        <p><span class="hq-label">Phone</span><a href="tel:+15617050350">+1-561-705-0350</a></p>
+                        <p><span class="hq-label">Fax</span><a href="fax:+15613910546">+1-561-391-0546</a></p>
+                        <p><a href="mailto:operations.amer@imigroup.com">operations.amer@imigroup.com</a></p>
+                        <a href="#" class="hq-link">Map & Directions</a>
                     </div>
-                    <div class=\"hq-box\">
+                    <div class="hq-box">
                         <h4>Belo Horizonte | Brazil</h4>
                         <p>IMI Brasil Trading Ltda<br>Rua Antônio de Albuquerque, 194/sl. 902<br>Savassi – Belo Horizonte, MG, BRAZIL</p>
-                        <p><span class=\"hq-label\">Phone</span><a href=\"tel:+5531991828338\">+55 (31) 99182-8338</a></p>
-                        <p><a href=\"mailto:operations.latam@imigroup.com\">operations.latam@imigroup.com</a></p>
+                        <p><span class="hq-label">Phone</span><a href="tel:+5531991828338">+55 (31) 99182-8338</a></p>
+                        <p><a href="mailto:operations.latam@imigroup.com">operations.latam@imigroup.com</a></p>
                     </div>
-                    <div class=\"hq-box\">
+                    <div class="hq-box">
                         <h4>Dubai | UAE</h4>
                         <p>IMI Middle East Trading L.L.C.<br>Offices 801 & 802, Tower A, The Offices, One Za’abeel, Za’abeel Palace St, Dubai, U.A.E</p>
-                        <p><span class=\"hq-label\">Phone</span><a href=\"tel:+97147760100\">+971-4-776-0100</a></p>
-                        <p><a href=\"mailto:operations.asia@imigroup.com\">operations.asia@imigroup.com</a></p>
-                        <a href=\"#\" class=\"hq-link\">Map & Directions</a>
+                        <p><span class="hq-label">Phone</span><a href="tel:+97147760100">+971-4-776-0100</a></p>
+                        <p><a href="mailto:operations.asia@imigroup.com">operations.asia@imigroup.com</a></p>
+                        <a href="#" class="hq-link">Map & Directions</a>
                     </div>
-                    <div class=\"hq-box\">
+                    <div class="hq-box">
                         <h4>Madrid | Spain</h4>
                         <p>IMI Europe, SLU<br>Calle Velázquez 123. 2º PL, 28006 Madrid, Spain</p>
-                        <p><span class=\"hq-label\">Phone</span><a href=\"tel:+34915641045\">+34-915-64-1045</a></p>
-                        <p><a href=\"mailto:operations.eur@imigroup.com\">operations.eur@imigroup.com</a></p>
-                        <a href=\"#\" class=\"hq-link\">Map & Directions</a>
+                        <p><span class="hq-label">Phone</span><a href="tel:+34915641045">+34-915-64-1045</a></p>
+                        <p><a href="mailto:operations.eur@imigroup.com">operations.eur@imigroup.com</a></p>
+                        <a href="#" class="hq-link">Map & Directions</a>
                     </div>
-                    <div class=\"hq-box\">
+                    <div class="hq-box">
                         <h4>Shanghai | China</h4>
                         <p>Shanghai Representative Office, Suite 306B, Skybridge Plaza, Jinzhong Road 968#, Changning, Shanghai, China</p>
-                        <p><span class=\"hq-label\">Phone</span><a href=\"tel:+8618217739459\">+86-182-1773-9459</a></p>
-                        <p><a href=\"mailto:operations.asia@imigroup.com\">operations.asia@imigroup.com</a></p>
-                        <a href=\"#\" class=\"hq-link\">Map & Directions</a>
+                        <p><span class="hq-label">Phone</span><a href="tel:+8618217739459">+86-182-1773-9459</a></p>
+                        <p><a href="mailto:operations.asia@imigroup.com">operations.asia@imigroup.com</a></p>
+                        <a href="#" class="hq-link">Map & Directions</a>
                     </div>
-                    <div class=\"hq-box\">
+                    <div class="hq-box">
                         <h4>Singapore</h4>
                         <p>IMI Trading Singapore Pte Ltd<br>1 George Street, #23-04, Singapore 049145</p>
-                        <p><span class=\"hq-label\">Phone</span><a href=\"tel:+6563035680\">+65-6303-5680</a></p>
-                        <p><span class=\"hq-label\">Fax</span><a href=\"fax:+6563035681\">+65-6303-5681</a></p>
-                        <p><a href=\"mailto:operations.asia@imigroup.com\">operations.asia@imigroup.com</a></p>
-                        <a href=\"#\" class=\"hq-link\">Map & Directions</a>
+                        <p><span class="hq-label">Phone</span><a href="tel:+6563035680">+65-6303-5680</a></p>
+                        <p><span class="hq-label">Fax</span><a href="fax:+6563035681">+65-6303-5681</a></p>
+                        <p><a href="mailto:operations.asia@imigroup.com">operations.asia@imigroup.com</a></p>
+                        <a href="#" class="hq-link">Map & Directions</a>
                     </div>
-                    <div class=\"hq-box\">
+                    <div class="hq-box">
                         <h4>Mexico City | Mexico</h4>
                         <p>Avenida Paseo de la Reforma Número 404, Piso 13, Interior 102. Colonia Juárez, Mexico City, 06600</p>
-                        <p><a href=\"mailto:operations.latam@imigroup.com\">operations.latam@imigroup.com</a></p>
-                        <a href=\"#\" class=\"hq-link\">Map & Directions</a>
+                        <p><a href="mailto:operations.latam@imigroup.com">operations.latam@imigroup.com</a></p>
+                        <a href="#" class="hq-link">Map & Directions</a>
                     </div>
-                    <div class=\"hq-box\">
+                    <div class="hq-box">
                         <h4>Bogotá | Colombia</h4>
                         <p>Calle 97A, #8-10, Oficina 503, Bogotá 110221</p>
-                        <p><a href=\"mailto:imicol@imigroup.com\">imicol@imigroup.com</a></p>
-                        <a href=\"#\" class=\"hq-link\">Map & Directions</a>
+                        <p><a href="mailto:imicol@imigroup.com">imicol@imigroup.com</a></p>
+                        <a href="#" class="hq-link">Map & Directions</a>
                     </div>
-                    <div class=\"hq-box\">
+                    <div class="hq-box">
                         <h4>Johannesburg | South Africa</h4>
                         <p>Workshop 17 The Bank, Corner Tyrwhitt Road and 24 Cradock Ave, Johannesburg, 2196</p>
-                        <p><a href=\"mailto:operations.asia@imigroup.com\">operations.asia@imigroup.com</a></p>
+                        <p><a href="mailto:operations.asia@imigroup.com">operations.asia@imigroup.com</a></p>
                     </div>
-                    <div class=\"hq-box\">
+                    <div class="hq-box">
                         <h4>Istanbul | Turkey</h4>
                         <p>Kampanaki Mansion, Köybaşı Cad. No:63, Yeniköy 34464 Sarıyer, Istanbul, Turkey</p>
-                        <p><span class=\"hq-label\">Phone</span><a href=\"tel:+902122625151\">+90 212 262 51 51</a></p>
-                        <p><a href=\"mailto:operations.eur@imigroup.com\">operations.eur@imigroup.com</a></p>
-                        <a href=\"#\" class=\"hq-link\">Map & Directions</a>
+                        <p><span class="hq-label">Phone</span><a href="tel:+902122625151">+90 212 262 51 51</a></p>
+                        <p><a href="mailto:operations.eur@imigroup.com">operations.eur@imigroup.com</a></p>
+                        <a href="#" class="hq-link">Map & Directions</a>
                     </div>
-                    <div class=\"hq-box\">
+                    <div class="hq-box">
                         <h4>London | UK</h4>
                         <p>International Materials UK Ltd, Office 102, 81 Fulham Road, London SW3 6RD, UK</p>
-                        <p><span class=\"hq-label\">Phone</span><a href=\"tel:+442038260003\">+44 20 3826 0003</a></p>
-                        <p><a href=\"mailto:operations.eur@imigroup.com\">operations.eur@imigroup.com</a></p>
-                        <a href=\"#\" class=\"hq-link\">Map & Directions</a>
+                        <p><span class="hq-label">Phone</span><a href="tel:+442038260003">+44 20 3826 0003</a></p>
+                        <p><a href="mailto:operations.eur@imigroup.com">operations.eur@imigroup.com</a></p>
+                        <a href="#" class="hq-link">Map & Directions</a>
                     </div>
                 </div>
             </div>
@@ -257,14 +257,14 @@ class MILogisticsApp {
         if (!container || container.children.length > 0) return;
 
         const widgetDiv = document.createElement('div');
-        widgetDiv.className = \"embeddable-eicHZF6jsR\";
+        widgetDiv.className = "embeddable-eicHZF6jsR";
         widgetDiv.setAttribute('data-version', 'dev');
         widgetDiv.setAttribute('data-ignore-cache', 'true');
         widgetDiv.setAttribute('data-loader', 'false');
         widgetDiv.setAttribute('data-lazy-load', 'false');
 
         const script = document.createElement('script');
-        script.src = \"https://widgets.embeddable.co/sdk/latest/embeddable.js\";
+        script.src = "https://widgets.embeddable.co/sdk/latest/embeddable.js";
         script.async = true;
 
         container.appendChild(widgetDiv);
@@ -273,17 +273,17 @@ class MILogisticsApp {
 
     showHomePage() {
         this.updateActiveNav('HOME_PAGE');
-        this.titleText.innerText = \"Dashboard Overview\";
+        this.titleText.innerText = "Dashboard Overview";
         this.hideAllViews();
         this.homeView.classList.add('active');
         if (!document.getElementById('home-content').innerHTML) {
             document.getElementById('home-content').innerHTML = `
-                <div style=\"padding: 20px;\">
-                    <div style=\"margin-bottom: 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--off-white); padding-bottom: 20px;\">
-                        <h1 style=\"color: var(--deep-space); margin: 0; font-size: 2.2rem; font-weight: 800;\">Welcome to IMI Logistics</h1>
-                        <div class=\"stat-box\" style=\"margin: 0; min-width: 180px;\">
-                            <small style=\"letter-spacing: 1px;\">SYSTEM STATUS</small>
-                            <h2 style=\"margin: 5px 0; color: #10B981; font-weight: 900;\">ACTIVE</h2>
+                <div style="padding: 20px;">
+                    <div style="margin-bottom: 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--off-white); padding-bottom: 20px;">
+                        <h1 style="color: var(--deep-space); margin: 0; font-size: 2.2rem; font-weight: 800;">Welcome to IMI Logistics</h1>
+                        <div class="stat-box" style="margin: 0; min-width: 180px;">
+                            <small style="letter-spacing: 1px;">SYSTEM STATUS</small>
+                            <h2 style="margin: 5px 0; color: #10B981; font-weight: 900;">ACTIVE</h2>
                         </div>
                     </div>
 
@@ -291,14 +291,14 @@ class MILogisticsApp {
                 </div>`;
             
             document.getElementById('map-container').innerHTML = `
-                <div class=\"hard-clip-wrapper\" style=\"height: 800px;\">
-                    <iframe frameborder=\"0\" scrolling=\"no\" style=\"width: 100%; height: 100%; border: none;\" src=\"${this.widgetConfig.shipXplorer}\"></iframe>
+                <div class="hard-clip-wrapper" style="height: 800px;">
+                    <iframe frameborder="0" scrolling="no" style="width: 100%; height: 100%; border: none;" src="${this.widgetConfig.shipXplorer}"></iframe>
                 </div>`;
 
             this.renderEmbeddableWidget();
 
             document.getElementById('store-locator-container').innerHTML = `
-                <div class=\"elfsight-app-d9332a95-3af1-4708-a385-24cef7defd35\" data-elfsight-app-lazy></div>
+                <div class="elfsight-app-d9332a95-3af1-4708-a385-24cef7defd35" data-elfsight-app-lazy></div>
             `;
         }
     }
@@ -314,9 +314,9 @@ class MILogisticsApp {
         } else {
             this.loader.style.display = 'block';
             const newFrame = document.createElement('iframe');
-            newFrame.style.width = \"100%\";
-            newFrame.style.height = \"850px\";
-            newFrame.style.border = \"none\";
+            newFrame.style.width = "100%";
+            newFrame.style.height = "850px";
+            newFrame.style.border = "none";
             newFrame.src = this.analysisPages[pageId];
             newFrame.onload = () => { this.loader.style.display = 'none'; };
             this.iframeContainer.appendChild(newFrame);
@@ -333,7 +333,7 @@ class MILogisticsApp {
         if(title === 'About IMI Logistics') {
             this.genericContent.innerHTML = this.aboutContentHtml;
         } else {
-            this.genericContent.innerHTML = `<h2 style=\"color: var(--mi-red); border-bottom: 2px solid var(--off-white); padding-bottom: 10px;\">${title}</h2><p style=\"color: var(--deep-space); line-height: 1.6;\">${description}</p>`;
+            this.genericContent.innerHTML = `<h2 style="color: var(--mi-red); border-bottom: 2px solid var(--off-white); padding-bottom: 10px;">${title}</h2><p style="color: var(--deep-space); line-height: 1.6;">${description}</p>`;
         }
     }
 
@@ -350,7 +350,7 @@ class MILogisticsApp {
 
     updateActiveNav(id) {
         document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-        const activeBtn = document.querySelector(`[data-id=\"${id}\"]`);
+        const activeBtn = document.querySelector(`[data-id="${id}"]`);
         if (activeBtn) activeBtn.classList.add('active');
     }
 }
