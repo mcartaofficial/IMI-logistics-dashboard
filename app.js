@@ -99,7 +99,7 @@ class MILogisticsApp {
         // Initialize an object to track how many files are uploaded to each view
         this.viewFiles = { excel: [], generic: [] };
 
-        // ADDED: Store processed data for downloads
+        // ADDED: Root state for files (Source of Truth)
         this.processedData = {};
 
         // Run the initialization function to set up the app
@@ -539,7 +539,6 @@ class MILogisticsApp {
         // Set the ID so we can find this item later to remove it
         item.id = `item-${fileId}`;
         // Set the HTML structure for the file header and content area
-        // ADDED: Download Button in Header
         item.innerHTML = `
             <div class="viewer-header">
                 <span>${file.name}</span>
@@ -561,63 +560,87 @@ class MILogisticsApp {
         try {
             // Logic for PDF files
             if (extension === 'pdf') {
-                // Create a temporary web link to the file on the user's computer
                 const url = URL.createObjectURL(file);
                 this.processedData[fileId] = { type: 'pdf', data: url, name: file.name };
-                // Display the PDF inside an iframe
                 contentArea.innerHTML = `<iframe src="${url}" class="pdf-viewer"></iframe>`;
             // Logic for Microsoft Word files
             } else if (extension === 'docx') {
-                // Read the file's raw binary data
                 const arrayBuffer = await file.arrayBuffer();
-                // Use a special library (mammoth) to turn Word data into HTML
                 const result = await mammoth.convertToHtml({ arrayBuffer });
                 this.processedData[fileId] = { type: 'docx', data: result.value, name: file.name };
-                // Display the converted text on the screen
-                contentArea.innerHTML = `<div class="docx-viewer">${result.value}</div>`;
+                contentArea.innerHTML = `<div class="docx-viewer" contenteditable="true" oninput="app.updateTextState('${fileId}', this.innerHTML)">${result.value}</div>`;
             // Logic for Excel or CSV spreadsheets
             } else if (extension === 'xlsx' || extension === 'csv') {
-                // Read the file's raw binary data
                 const arrayBuffer = await file.arrayBuffer();
-                // Use a library (XLSX) to read the spreadsheet data
                 const workbook = XLSX.read(arrayBuffer);
-                // Get the name of the very first sheet in the file
                 const firstSheetName = workbook.SheetNames[0];
-                // Get all the data from that first sheet
                 const worksheet = workbook.Sheets[firstSheetName];
-                // Convert the spreadsheet rows into a list of data the computer can read
+                
+                // FIXED: Do NOT use .slice() or limits. Read entire sheet.
                 const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
                 
-                // Store data for download
-                this.processedData[fileId] = { type: 'excel', data: data, name: file.name };
+                // BINDING: Save full data to state
+                this.processedData[fileId] = { 
+                    type: 'excel', 
+                    data: data, 
+                    name: file.name,
+                    headers: data[0]
+                };
 
-                // Create a placeholder for a data table with enhanced container
+                // Create a scrollable container
                 contentArea.innerHTML = `<div id="grid-${fileId}" class="excel-grid-container"></div>`;
                 
-                // Use the Grid.js library to build a pretty, searchable table
+                // ADDITIVE: Define the editable column structure
+                const editableColumns = this.processedData[fileId].headers.map((colName, colIndex) => {
+                    return {
+                        name: colName,
+                        formatter: (cell, row) => {
+                            // Convert row cell to editable input bound to state
+                            const rowIdx = row.cells[row.cells.length - 1].data; // We'll hide row index in last cell
+                            return gridjs.html(`<input class="cell-input" value="${cell || ''}" oninput="app.updateCellState('${fileId}', ${rowIdx}, ${colIndex}, this.value)">`);
+                        }
+                    };
+                });
+
+                // Map data rows and include the original row index for state tracking
+                const gridData = data.slice(1).map((row, idx) => [...row, idx]);
+
+                // Render with Grid.js but NO pagination + Forced expansion
                 new gridjs.Grid({
-                    columns: data[0],
-                    data: data.slice(1),
-                    pagination: false, // FIXED: Remove pagination to show ALL data
-                    fixedHeader: true, // FIXED: Sticky headers
-                    height: '700px',   // Set height for vertical scroll
-                    sort: true,
+                    columns: [...editableColumns, { name: 'ID', hidden: true }],
+                    data: gridData,
+                    pagination: false, 
+                    fixedHeader: true,
                     resizable: true,
-                    search: true,
+                    sort: false, // Sorting disabled to maintain row index alignment
                     style: {
-                        table: {
-                            'white-space': 'nowrap' // Prevents text wrap in cells
+                        container: {
+                            'min-width': 'max-content' // Forces horizontal expansion
                         }
                     }
                 }).render(document.getElementById(`grid-${fileId}`)); 
             } // End of file type checks
         } catch (err) {
-            // If anything goes wrong during processing, show an error message in red
             contentArea.innerHTML = `<p style="color: var(--mi-red)">Error: ${err.message}</p>`;
         } // End of try-catch block
     } // End of renderFileItem function
 
-    // ADDED: Function to download the file (potentially edited or just viewed)
+    // ADDED: State Binding Logic for Excel Cells
+    updateCellState(fileId, rowIdx, colIdx, newValue) {
+        if (this.processedData[fileId]) {
+            // Data is [headerRow, row1, row2...] so rowIdx 0 is actually index 1
+            this.processedData[fileId].data[rowIdx + 1][colIdx] = newValue;
+        }
+    }
+
+    // ADDED: State Binding Logic for Word Content
+    updateTextState(fileId, newHtml) {
+        if (this.processedData[fileId]) {
+            this.processedData[fileId].data = newHtml;
+        }
+    }
+
+    // ADDED: Download Logic (Generates files from the MODIFIED state)
     downloadFile(fileId) {
         const item = this.processedData[fileId];
         if (!item) return;
@@ -626,17 +649,17 @@ class MILogisticsApp {
         let filename = item.name;
 
         if (item.type === 'excel') {
-            // Generate CSV from data
+            // Create workbook from the current state (this.processedData[fileId].data)
             const ws = XLSX.utils.aoa_to_sheet(item.data);
-            const csv = XLSX.utils.sheet_to_csv(ws);
-            blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            if (!filename.endsWith('.csv')) filename += '.csv';
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "ModifiedSheet");
+            const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+            blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            if (!filename.endsWith('.xlsx')) filename = filename.split('.')[0] + '.xlsx';
         } else if (item.type === 'docx') {
-            // Export edited text
-            blob = new Blob([item.data], { type: 'text/plain;charset=utf-8;' });
-            filename = filename.replace('.docx', '.txt');
+            blob = new Blob([item.data], { type: 'text/html;charset=utf-8;' });
+            filename = filename.replace('.docx', '.html');
         } else if (item.type === 'pdf') {
-            // Original PDF download
             const link = document.createElement('a');
             link.href = item.data;
             link.download = item.name;
@@ -653,40 +676,29 @@ class MILogisticsApp {
 
     // Function to delete a file preview from the screen
     removeSpecificFile(fileId, viewKey) {
-        // Find the file's HTML element on the screen
         const item = document.getElementById(`item-${fileId}`);
-        // If it exists, delete it from the page
         if (item) item.remove();
-        // Update our internal list to remove the file data as well
         this.viewFiles[viewKey] = this.viewFiles[viewKey].filter(f => f.id !== fileId);
         delete this.processedData[fileId];
     } // End of removeSpecificFile function
 
     // Function to hide all main view sections of the dashboard
     hideAllViews() {
-        // Hide the home screen
         this.homeView.classList.remove('active');
-        // Hide the spreadsheet viewer
         this.excelViewport.classList.remove('active');
-        // Hide the general text viewer
         this.genericView.classList.remove('active');
     } // End of hideAllViews function
 
     // Helper function to find a navigation ID based on a page title
     getNavIdByTitle(title) {
-        // An empty mapping object (could be filled if needed)
         const mapping = {};
-        // Return the mapped ID or an empty string if not found
         return mapping[title] || '';
     } // End of getNavIdByTitle function
 
     // Function to highlight the currently selected button in the sidebar
     updateActiveNav(id) {
-        // Remove the "active" look from every single button in the menu
         document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-        // Find the specific button that matches the current page ID
         const activeBtn = document.querySelector(`[data-id="${id}"]`);
-        // If that button exists, give it the "active" highlighted style
         if (activeBtn) activeBtn.classList.add('active');
     } // End of updateActiveNav function
 } // End of MILogisticsApp class definition
