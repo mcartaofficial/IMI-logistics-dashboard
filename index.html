@@ -41,19 +41,26 @@
         
         .hard-clip-wrapper { border-radius: 15px; border: 1px solid #eee; overflow: hidden; background: #fff; margin-bottom: 25px; }
         
-        /* IMPROVED WIDGET WRAPPER: Dynamic height with controlled trim */
+        /* CONSISTENT WIDGET CLIPPING STRATEGY */
         .widget-clipper {
             width: 100%;
-            height: auto; /* Allow content to dictate height */
-            overflow: hidden; /* Mask the overflow */
+            height: auto;
+            overflow: hidden;
             position: relative;
             border-radius: 12px;
             margin-bottom: 30px;
             background: #fff;
         }
 
-        .widget-clipper > #widget-mount-point {
-            margin-bottom: -35px; /* Pull the bottom up to hide branding */
+        /* Top Widget Trim */
+        #widget-mount-point {
+            margin-bottom: -35px; 
+            display: block;
+        }
+
+        /* Elfsight Bottom Widget Trim */
+        #store-locator-container {
+            margin-bottom: -35px; /* Adjust this value to hide more/less of the Elfsight badge */
             display: block;
         }
 
@@ -145,7 +152,10 @@
                     </div>
 
                     <div id="map-container"></div>
-                    <div id="store-locator-container" style="margin-top: 25px;"></div>
+
+                    <div class="widget-clipper" style="margin-top: 25px;">
+                        <div id="store-locator-container"></div>
+                    </div>
                     
                     <div id="relocated-sections">
                         <div id="services-section"></div>
@@ -168,8 +178,6 @@
     </main>
 
     <script src="https://elfsightcdn.com/platform.js" async></script>
-    <div class="elfsight-app-6ba85109-b815-4820-91b7-5719ae4049e2" data-elfsight-app-lazy></div>
-    
     <script src="app.js"></script>
 </body>
 </html>
