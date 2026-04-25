@@ -41,7 +41,7 @@
         
         .hard-clip-wrapper { border-radius: 15px; border: 1px solid #eee; overflow: hidden; background: #fff; margin-bottom: 25px; }
         
-        /* FORECASTING WIDGET STYLES - PROTECTED */
+        /* UNCHANGED: Forecasting Widget Styles */
         .widget-clipper {
             width: 100%;
             height: auto; 
@@ -57,19 +57,13 @@
             display: block;
         }
 
-        /* SECOND MAP (STORE LOCATOR) ISOLATED FIX */
-        .secondary-map-trim {
+        /* NEW: Isolated spacing for the second map widget only */
+        #store-locator-container.isolated-map-wrapper {
             width: 100%;
-            height: auto; 
-            overflow: hidden; 
-            position: relative;
+            height: auto;
             margin-top: 25px;
-            border-radius: 15px;
-        }
-
-        .secondary-map-trim > div {
-            margin-bottom: -25px; /* UPDATED TO EXACTLY 25PX TRIM */
-            display: block;
+            padding-bottom: 25px; /* Intentional 25px space at the bottom */
+            overflow: visible; /* Prevent clipping */
         }
 
         .page-frame { display: none; width: 100%; }
@@ -161,7 +155,7 @@
 
                     <div id="map-container"></div>
 
-                    <div id="store-locator-container" class="secondary-map-trim"></div>
+                    <div id="store-locator-container" class="isolated-map-wrapper"></div>
                     
                     <div id="relocated-sections">
                         <div id="services-section"></div>
