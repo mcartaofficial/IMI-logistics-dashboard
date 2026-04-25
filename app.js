@@ -297,7 +297,7 @@ class MILogisticsApp {
 
             this.renderEmbeddableWidget();
 
-            // Store locator injected into consistent clipper wrapper
+            // ISOLATED INJECTION INTO THE NEW WRAPPER
             document.getElementById('store-locator-container').innerHTML = `
                 <div class="elfsight-app-d9332a95-3af1-4708-a385-24cef7defd35" data-elfsight-app-lazy></div>
             `;
