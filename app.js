@@ -297,6 +297,7 @@ class MILogisticsApp {
 
             this.renderEmbeddableWidget();
 
+            // Injecting Elfsight widget inside the new container
             document.getElementById('store-locator-container').innerHTML = `
                 <div class="elfsight-app-d9332a95-3af1-4708-a385-24cef7defd35" data-elfsight-app-lazy></div>
             `;
