@@ -41,7 +41,7 @@
         
         .hard-clip-wrapper { border-radius: 15px; border: 1px solid #eee; overflow: hidden; background: #fff; margin-bottom: 25px; }
         
-        /* CONSISTENT WIDGET WRAPPERS: Dynamic height for both maps */
+        /* FORECASTING WIDGET STYLES - PRESERVED */
         .widget-clipper {
             width: 100%;
             height: auto; 
@@ -52,16 +52,24 @@
             background: #fff;
         }
 
-        /* Negative margins to handle branding without hard clipping UI */
         .widget-clipper > #widget-mount-point {
             margin-bottom: -35px; 
             display: block;
         }
 
-        #store-locator-container {
-            margin-bottom: -20px; /* Slight trim for Elfsight branding */
-            display: block;
+        /* SECOND MAP (STORE LOCATOR) ISOLATED FIX */
+        .secondary-map-trim {
             width: 100%;
+            height: auto; 
+            overflow: hidden; 
+            position: relative;
+            margin-top: 25px;
+            border-radius: 15px;
+        }
+
+        .secondary-map-trim > div {
+            margin-bottom: -20px; /* Controlled 20px trim only for this widget */
+            display: block;
         }
 
         .page-frame { display: none; width: 100%; }
@@ -152,10 +160,8 @@
                     </div>
 
                     <div id="map-container"></div>
-                    
-                    <div class="widget-clipper">
-                        <div id="store-locator-container"></div>
-                    </div>
+
+                    <div id="store-locator-container" class="secondary-map-trim"></div>
                     
                     <div id="relocated-sections">
                         <div id="services-section"></div>
