@@ -41,10 +41,10 @@
         
         .hard-clip-wrapper { border-radius: 15px; border: 1px solid #eee; overflow: hidden; background: #fff; margin-bottom: 25px; }
         
-        /* Widget Resizing and Branding Mask */
+        /* Revised Widget Resizing and Precision Clipping */
         .widget-clipper {
-            width: 100%;
-            height: 800px; /* Increased Vertical Space */
+            width: 100%; /* Utilizing full container horizontal space */
+            height: 840px; /* Outer height adjusted to only clip ~20px */
             overflow: hidden;
             position: relative;
             border-radius: 12px;
@@ -52,7 +52,7 @@
         }
 
         .widget-clipper > .embeddable-eicHZF6jsR {
-            height: 860px !important; /* Slightly taller than container to push branding out */
+            height: 860px !important; /* Internal height remains consistent */
             width: 100%;
             transform: translateY(0);
         }
@@ -118,7 +118,7 @@
             .hq-grid { grid-template-columns: 1fr; } 
             .img-about-header { grid-template-columns: 1fr; gap: 30px; } 
             .widget-clipper { height: 600px; }
-            .widget-clipper > .embeddable-eicHZF6jsR { height: 650px !important; }
+            .widget-clipper > .embeddable-eicHZF6jsR { height: 620px !important; }
         }
     </style>
 </head>
