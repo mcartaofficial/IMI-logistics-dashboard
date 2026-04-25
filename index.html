@@ -41,20 +41,20 @@
         
         .hard-clip-wrapper { border-radius: 15px; border: 1px solid #eee; overflow: hidden; background: #fff; margin-bottom: 25px; }
         
-        /* Revised Widget Resizing and Precision Clipping */
+        /* IMPROVED WIDGET WRAPPER: Dynamic height with controlled trim */
         .widget-clipper {
-            width: 100%; /* Utilizing full container horizontal space */
-            height: 840px; /* Outer height adjusted to only clip ~20px */
-            overflow: hidden;
+            width: 100%;
+            height: auto; /* Allow content to dictate height */
+            overflow: hidden; /* Mask the overflow */
             position: relative;
             border-radius: 12px;
             margin-bottom: 30px;
+            background: #fff;
         }
 
-        .widget-clipper > .embeddable-eicHZF6jsR {
-            height: 860px !important; /* Internal height remains consistent */
-            width: 100%;
-            transform: translateY(0);
+        .widget-clipper > #widget-mount-point {
+            margin-bottom: -25px; /* Pull the bottom up to hide branding */
+            display: block;
         }
 
         .page-frame { display: none; width: 100%; }
@@ -117,8 +117,6 @@
             .services-grid { grid-template-columns: 1fr; } 
             .hq-grid { grid-template-columns: 1fr; } 
             .img-about-header { grid-template-columns: 1fr; gap: 30px; } 
-            .widget-clipper { height: 600px; }
-            .widget-clipper > .embeddable-eicHZF6jsR { height: 620px !important; }
         }
     </style>
 </head>
