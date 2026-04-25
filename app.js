@@ -186,7 +186,7 @@ class MILogisticsApp {
                         <h4>Singapore</h4>
                         <p>IMI Trading Singapore Pte Ltd<br>1 George Street, #23-04, Singapore 049145</p>
                         <p><span class="hq-label">Phone</span><a href="tel:+6563035680">+65-6303-5680</a></p>
-                        <p><span class="hq-label">Fax</span><a href="fax:+6563035681">+65-6303-5681</a></p>
+                        <span class="hq-label">Fax</span><a href="fax:+6563035681">+65-6303-5681</a></p>
                         <p><a href="mailto:operations.asia@imigroup.com">operations.asia@imigroup.com</a></p>
                         <a href="#" class="hq-link">Map & Directions</a>
                     </div>
@@ -297,7 +297,6 @@ class MILogisticsApp {
 
             this.renderEmbeddableWidget();
 
-            // ISOLATED INJECTION INTO THE NEW WRAPPER
             document.getElementById('store-locator-container').innerHTML = `
                 <div class="elfsight-app-d9332a95-3af1-4708-a385-24cef7defd35" data-elfsight-app-lazy></div>
             `;
