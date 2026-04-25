@@ -39,29 +39,24 @@
         .view-area { padding: 45px; }
         .card { background: var(--white); border-radius: 20px; padding: 35px; box-shadow: 0 15px 35px rgba(36, 34, 63, 0.08); border: 1px solid rgba(226, 232, 240, 0.6); min-height: 400px; position: relative; }
         
-        .hard-clip-wrapper { border-radius: 15px; border: 1px solid #eee; overflow: hidden; background: #fff; margin-bottom: 25px; }
+        .hard-clip-wrapper { border-radius: 15px; border: 1px solid #eee; overflow: hidden; background: #fff; margin-bottom: 25px; width: 100%; }
         
-        /* CONSISTENT WIDGET CLIPPING STRATEGY */
+        /* CONSISTENT DYNAMIC WIDGET WRAPPER */
         .widget-clipper {
             width: 100%;
-            height: auto;
-            overflow: hidden;
+            height: auto; 
+            overflow: hidden; 
             position: relative;
             border-radius: 12px;
-            margin-bottom: 30px;
+            margin-bottom: 35px;
             background: #fff;
+            border: 1px solid #eee;
         }
 
-        /* Top Widget Trim */
-        #widget-mount-point {
-            margin-bottom: -35px; 
+        .widget-clipper > .widget-mount {
+            margin-bottom: -20px; /* Slight trim to hide branding labels */
             display: block;
-        }
-
-        /* Elfsight Bottom Widget Trim */
-        #store-locator-container {
-            margin-bottom: -35px; /* Adjust this value to hide more/less of the Elfsight badge */
-            display: block;
+            width: 100%;
         }
 
         .page-frame { display: none; width: 100%; }
@@ -148,13 +143,13 @@
                     <div id="home-content"></div>
                     
                     <div class="widget-clipper">
-                        <div id="widget-mount-point"></div>
+                        <div id="widget-mount-point" class="widget-mount"></div>
                     </div>
 
                     <div id="map-container"></div>
-
-                    <div class="widget-clipper" style="margin-top: 25px;">
-                        <div id="store-locator-container"></div>
+                    
+                    <div class="widget-clipper">
+                        <div id="store-locator-container" class="widget-mount"></div>
                     </div>
                     
                     <div id="relocated-sections">
@@ -178,6 +173,8 @@
     </main>
 
     <script src="https://elfsightcdn.com/platform.js" async></script>
+    <div class="elfsight-app-6ba85109-b815-4820-91b7-5719ae4049e2" data-elfsight-app-lazy></div>
+    
     <script src="app.js"></script>
 </body>
 </html>
