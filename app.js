@@ -70,6 +70,11 @@ class MILogisticsApp {
         this.titleText = document.getElementById('current-sheet-title');
         this.loader = document.getElementById('loading-indicator');
         
+        this.uploadedFiles = {
+            excel: [],
+            generic: []
+        };
+
         this.init();
     }
 
@@ -192,7 +197,7 @@ class MILogisticsApp {
                     </div>
                     <div class="hq-box">
                         <h4>Mexico City | Mexico</h4>
-                        <p>Avenida Paseo de la Reforma Número 404, Piso 13, Interior 102. Colonia Juárez, Mexico City, 06600</p>
+                        <p>Avenida Paseo de la Reformas Número 404, Piso 13, Interior 102. Colonia Juárez, Mexico City, 06600</p>
                         <p><a href="mailto:operations.latam@imigroup.com">operations.latam@imigroup.com</a></p>
                         <a href="#" class="hq-link">Map & Directions</a>
                     </div>
@@ -322,7 +327,8 @@ class MILogisticsApp {
             this.iframeContainer.appendChild(newFrame);
             this.iframeCache[pageId] = newFrame;
         }
-        this.ensureMultiUploader('excel-multi-uploader');
+        
+        this.renderUploader('excel-upload-container', 'excel');
     }
 
     showGenericPage(title, description) {
@@ -336,33 +342,32 @@ class MILogisticsApp {
         } else {
             this.genericContent.innerHTML = `<h2 style="color: var(--mi-red); border-bottom: 2px solid var(--off-white); padding-bottom: 10px;">${title}</h2><p style="color: var(--deep-space); line-height: 1.6;">${description}</p>`;
         }
-        this.ensureMultiUploader('generic-multi-uploader');
+        
+        this.renderUploader('generic-upload-container', 'generic');
     }
 
-    // --- High-Density Multi-File Uploader Logic ---
-
-    ensureMultiUploader(containerId) {
+    renderUploader(containerId, viewKey) {
         const container = document.getElementById(containerId);
         if (container.innerHTML !== "") return;
 
         container.innerHTML = `
-            <div class="multi-file-section">
-                <div id="dz-${containerId}" class="dropzone">
-                    <span class="dropzone-icon">📥</span>
-                    <p><strong>Add Files to Workplace</strong></p>
-                    <p style="font-size: 0.75rem; opacity: 0.6;">PDF, DOCX, XLSX, CSV are supported. Files will appear below.</p>
-                    <input type="file" id="inp-${containerId}" multiple style="display: none;" accept=".pdf,.docx,.xlsx,.csv">
+            <div class="upload-section">
+                <div id="dropzone-${viewKey}" class="dropzone">
+                    <span class="dropzone-icon">📁</span>
+                    <p><strong>Drag & Drop</strong> files here or click to browse</p>
+                    <p style="font-size: 0.75rem; opacity: 0.7;">Supports PDF, DOCX, XLSX, CSV</p>
+                    <input type="file" id="fileInput-${viewKey}" style="display: none;" accept=".pdf,.docx,.xlsx,.csv" multiple>
                 </div>
-                <div id="grid-${containerId}" class="file-grid"></div>
+                <div id="viewer-${viewKey}" class="viewer-container"></div>
             </div>
         `;
 
-        this.initMultiDropzone(containerId);
+        this.initDropzone(viewKey);
     }
 
-    initMultiDropzone(containerId) {
-        const zone = document.getElementById(`dz-${containerId}`);
-        const input = document.getElementById(`inp-${containerId}`);
+    initDropzone(viewKey) {
+        const zone = document.getElementById(`dropzone-${viewKey}`);
+        const input = document.getElementById(`fileInput-${viewKey}`);
 
         zone.onclick = () => input.click();
         zone.ondragover = (e) => { e.preventDefault(); zone.classList.add('dragover'); };
@@ -370,65 +375,76 @@ class MILogisticsApp {
         zone.ondrop = (e) => {
             e.preventDefault();
             zone.classList.remove('dragover');
-            this.handleFileList(e.dataTransfer.files, containerId);
+            if (e.dataTransfer.files.length) {
+                Array.from(e.dataTransfer.files).forEach(file => this.handleFile(file, viewKey));
+            }
         };
-        input.onchange = (e) => this.handleFileList(e.target.files, containerId);
+
+        input.onchange = (e) => {
+            if (e.target.files.length) {
+                Array.from(e.target.files).forEach(file => this.handleFile(file, viewKey));
+            }
+        };
     }
 
-    handleFileList(files, containerId) {
-        Array.from(files).forEach(file => this.renderFilePanel(file, containerId));
-    }
-
-    async renderFilePanel(file, containerId) {
-        const grid = document.getElementById(`grid-${containerId}`);
-        const panelId = 'panel-' + Math.random().toString(36).substr(2, 9);
-        const bodyId = 'body-' + panelId;
-
-        const panel = document.createElement('div');
-        panel.className = 'file-card';
-        panel.id = panelId;
-        panel.innerHTML = `
-            <div class="file-card-header">
+    async handleFile(file, viewKey) {
+        const fileId = 'file-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+        const viewerContainer = document.getElementById(`viewer-${viewKey}`);
+        
+        const fileItem = document.createElement('div');
+        fileItem.className = 'viewer-item';
+        fileItem.id = fileId;
+        fileItem.innerHTML = `
+            <div class="viewer-header">
                 <span>${file.name}</span>
-                <button class="btn-remove" onclick="document.getElementById('${panelId}').remove()">Remove</button>
+                <button class="remove-file" onclick="app.removeFile('${fileId}', '${viewKey}')">Remove</button>
             </div>
-            <div class="file-card-body" id="${bodyId}">Processing...</div>
+            <div class="viewer-content">Processing...</div>
         `;
-        grid.prepend(panel);
-
-        const ext = file.name.split('.').pop().toLowerCase();
-        const body = document.getElementById(bodyId);
+        
+        viewerContainer.appendChild(fileItem);
+        const contentArea = fileItem.querySelector('.viewer-content');
+        const extension = file.name.split('.').pop().toLowerCase();
 
         try {
-            if (ext === 'pdf') {
+            if (extension === 'pdf') {
                 const url = URL.createObjectURL(file);
-                body.innerHTML = `<iframe src="${url}" class="pdf-frame"></iframe>`;
+                contentArea.innerHTML = `<iframe src="${url}" class="pdf-viewer"></iframe>`;
             } 
-            else if (ext === 'docx') {
-                const buffer = await file.arrayBuffer();
-                const res = await mammoth.convertToHtml({ arrayBuffer: buffer });
-                body.innerHTML = `<div class="docx-content">${res.value}</div>`;
+            else if (extension === 'docx') {
+                const arrayBuffer = await file.arrayBuffer();
+                const result = await mammoth.convertToHtml({ arrayBuffer });
+                contentArea.innerHTML = `<div class="docx-viewer">${result.value}</div>`;
             } 
-            else if (ext === 'xlsx' || ext === 'csv') {
-                const buffer = await file.arrayBuffer();
-                const wb = XLSX.read(buffer);
-                const data = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1 });
-                body.innerHTML = ""; // Clear loader
+            else if (extension === 'xlsx' || extension === 'csv') {
+                const arrayBuffer = await file.arrayBuffer();
+                const workbook = XLSX.read(arrayBuffer);
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                
+                const gridId = 'grid-' + fileId;
+                contentArea.innerHTML = `<div id="${gridId}"></div>`;
                 new gridjs.Grid({
                     columns: data[0],
                     data: data.slice(1),
                     pagination: { limit: 10 },
                     sort: true,
-                    search: true,
-                    fixedHeader: true,
-                    height: '500px'
-                }).render(body);
-            } else {
-                body.innerHTML = "Format not supported.";
+                    resizable: true,
+                    search: true
+                }).render(document.getElementById(gridId));
+            } 
+            else {
+                contentArea.innerHTML = `<p style="color: var(--mi-red)">Unsupported file format.</p>`;
             }
-        } catch (e) {
-            body.innerHTML = `<span style="color:red">Error: ${e.message}</span>`;
+        } catch (err) {
+            contentArea.innerHTML = `<p style="color: var(--mi-red)">Error loading file: ${err.message}</p>`;
         }
+    }
+
+    removeFile(fileId, viewKey) {
+        const item = document.getElementById(fileId);
+        if (item) item.remove();
     }
 
     hideAllViews() {
