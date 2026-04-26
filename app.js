@@ -192,78 +192,78 @@ class MILogisticsApp {
                 <div class="hq-grid">
                     <div class="hq-box" style="color: #FFFFFF; margin-bottom: 20px;">
                         <h4>Florida | USA</h4>
-                        <p>54 SE 5th Avenue, Suite 300<br>Delray Beach, FL 33483</p>
-                        <p><span class="hq-label">Toll Free</span><a href="tel:+18774230226">+1-877-423-0226</a></p>
-                        <p><span class="hq-label">Phone</span><a href="tel:+15617050350">+1-561-705-0350</a></p>
-                        <p><span class="hq-label">Fax</span><a href="fax:+15613910546">+1-561-391-0546</a></p>
-                        <p><a href="mailto:operations.amer@imigroup.com">operations.amer@imigroup.com</a></p>
-                        <a href="#" class="hq-link">Map & Directions</a>
+                        <p style="color: #FFFFFF;">54 SE 5th Avenue, Suite 300<br>Delray Beach, FL 33483</p>
+                        <p style="color: #FFFFFF;"><span class="hq-label">Toll Free</span><a href="tel:+18774230226" style="color: #FFFFFF;">+1-877-423-0226</a></p>
+                        <p style="color: #FFFFFF;"><span class="hq-label">Phone</span><a href="tel:+15617050350" style="color: #FFFFFF;">+1-561-705-0350</a></p>
+                        <p style="color: #FFFFFF;"><span class="hq-label">Fax</span><a href="fax:+15613910546" style="color: #FFFFFF;">+1-561-391-0546</a></p>
+                        <p style="color: #FFFFFF;"><a href="mailto:operations.amer@imigroup.com" style="color: #FFFFFF;">operations.amer@imigroup.com</a></p>
+                        <a href="#" class="hq-link" style="color: #FFFFFF;">Map & Directions</a>
                     </div>
                     <div class="hq-box" style="color: #FFFFFF; margin-bottom: 20px;">
                         <h4>Belo Horizonte | Brazil</h4>
-                        <p>IMI Brasil Trading Ltda<br>Rua Antônio de Albuquerque, 194/sl. 902<br>Savassi – Belo Horizonte, MG, BRAZIL</p>
-                        <p><span class="hq-label">Phone</span><a href="tel:+5531991828338">+55 (31) 99182-8338</a></p>
-                        <p><a href="mailto:operations.latam@imigroup.com">operations.latam@imigroup.com</a></p>
+                        <p style="color: #FFFFFF;">IMI Brasil Trading Ltda<br>Rua Antônio de Albuquerque, 194/sl. 902<br>Savassi – Belo Horizonte, MG, BRAZIL</p>
+                        <p style="color: #FFFFFF;"><span class="hq-label">Phone</span><a href="tel:+5531991828338" style="color: #FFFFFF;">+55 (31) 99182-8338</a></p>
+                        <p style="color: #FFFFFF;"><a href="mailto:operations.latam@imigroup.com" style="color: #FFFFFF;">operations.latam@imigroup.com</a></p>
                     </div>
                     <div class="hq-box" style="color: #FFFFFF; margin-bottom: 20px;">
                         <h4>Dubai | UAE</h4>
-                        <p>IMI Middle East Trading L.L.C.<br>Offices 801 & 802, Tower A, The Offices, One Za’abeel, Za’abeel Palace St, Dubai, U.A.E</p>
-                        <p><span class="hq-label">Phone</span><a href="tel:+97147760100">+971-4-776-0100</a></p>
-                        <p><a href="mailto:operations.asia@imigroup.com">operations.asia@imigroup.com</a></p>
-                        <a href="#" class="hq-link">Map & Directions</a>
+                        <p style="color: #FFFFFF;">IMI Middle East Trading L.L.C.<br>Offices 801 & 802, Tower A, The Offices, One Za’abeel, Za’abeel Palace St, Dubai, U.A.E</p>
+                        <p style="color: #FFFFFF;"><span class="hq-label">Phone</span><a href="tel:+97147760100" style="color: #FFFFFF;">+971-4-776-0100</a></p>
+                        <p style="color: #FFFFFF;"><a href="mailto:operations.asia@imigroup.com" style="color: #FFFFFF;">operations.asia@imigroup.com</a></p>
+                        <a href="#" class="hq-link" style="color: #FFFFFF;">Map & Directions</a>
                     </div>
                     <div class="hq-box" style="color: #FFFFFF; margin-bottom: 20px;">
                         <h4>Madrid | Spain</h4>
-                        <p>IMI Europe, SLU<br>Calle Velázquez 123. 2º PL, 28006 Madrid, Spain</p>
-                        <p><span class="hq-label">Phone</span><a href="tel:+34915641045">+34-915-64-1045</a></p>
-                        <p><a href="mailto:operations.eur@imigroup.com">operations.eur@imigroup.com</a></p>
-                        <a href="#" class="hq-link">Map & Directions</a>
+                        <p style="color: #FFFFFF;">IMI Europe, SLU<br>Calle Velázquez 123. 2º PL, 28006 Madrid, Spain</p>
+                        <p style="color: #FFFFFF;"><span class="hq-label">Phone</span><a href="tel:+34915641045" style="color: #FFFFFF;">+34-915-64-1045</a></p>
+                        <p style="color: #FFFFFF;"><a href="mailto:operations.eur@imigroup.com" style="color: #FFFFFF;">operations.eur@imigroup.com</a></p>
+                        <a href="#" class="hq-link" style="color: #FFFFFF;">Map & Directions</a>
                     </div>
                     <div class="hq-box" style="color: #FFFFFF; margin-bottom: 20px;">
                         <h4>Shanghai | China</h4>
-                        <p>Shanghai Representative Office, Suite 306B, Skybridge Plaza, Jinzhong Road 968#, Changning, Shanghai, China</p>
-                        <p><span class="hq-label">Phone</span><a href="tel:+8618217739459">+86-182-1773-9459</a></p>
-                        <p><a href="mailto:operations.asia@imigroup.com">operations.asia@imigroup.com</a></p>
-                        <a href="#" class="hq-link">Map & Directions</a>
+                        <p style="color: #FFFFFF;">Shanghai Representative Office, Suite 306B, Skybridge Plaza, Jinzhong Road 968#, Changning, Shanghai, China</p>
+                        <p style="color: #FFFFFF;"><span class="hq-label">Phone</span><a href="tel:+8618217739459" style="color: #FFFFFF;">+86-182-1773-9459</a></p>
+                        <p style="color: #FFFFFF;"><a href="mailto:operations.asia@imigroup.com" style="color: #FFFFFF;">operations.asia@imigroup.com</a></p>
+                        <a href="#" class="hq-link" style="color: #FFFFFF;">Map & Directions</a>
                     </div>
                     <div class="hq-box" style="color: #FFFFFF; margin-bottom: 20px;">
                         <h4>Singapore</h4>
-                        <p>IMI Trading Singapore Pte Ltd<br>1 George Street, #23-04, Singapore 049145</p>
-                        <p><span class="hq-label">Phone</span><a href="tel:+6563035680">+65-6303-5680</a></p>
-                        <span class="hq-label">Fax</span><a href="fax:+6563035681">+65-6303-5681</a></p>
-                        <p><a href="mailto:operations.asia@imigroup.com">operations.asia@imigroup.com</a></p>
-                        <a href="#" class="hq-link">Map & Directions</a>
+                        <p style="color: #FFFFFF;">IMI Trading Singapore Pte Ltd<br>1 George Street, #23-04, Singapore 049145</p>
+                        <p style="color: #FFFFFF;"><span class="hq-label">Phone</span><a href="tel:+6563035680" style="color: #FFFFFF;">+65-6303-5680</a></p>
+                        <p style="color: #FFFFFF;"><span class="hq-label">Fax</span><a href="fax:+6563035681" style="color: #FFFFFF;">+65-6303-5681</a></p>
+                        <p style="color: #FFFFFF;"><a href="mailto:operations.asia@imigroup.com" style="color: #FFFFFF;">operations.asia@imigroup.com</a></p>
+                        <a href="#" class="hq-link" style="color: #FFFFFF;">Map & Directions</a>
                     </div>
                     <div class="hq-box" style="color: #FFFFFF; margin-bottom: 20px;">
                         <h4>Mexico City | Mexico</h4>
-                        <p>Avenida Paseo de la Reforma Número 404, Piso 13, Interior 102. Colonia Juárez, Mexico City, 06600</p>
-                        <p><a href="mailto:operations.latam@imigroup.com">operations.latam@imigroup.com</a></p>
-                        <a href="#" class="hq-link">Map & Directions</a>
+                        <p style="color: #FFFFFF;">Avenida Paseo de la Reforma Número 404, Piso 13, Interior 102. Colonia Juárez, Mexico City, 06600</p>
+                        <p style="color: #FFFFFF;"><a href="mailto:operations.latam@imigroup.com" style="color: #FFFFFF;">operations.latam@imigroup.com</a></p>
+                        <a href="#" class="hq-link" style="color: #FFFFFF;">Map & Directions</a>
                     </div>
                     <div class="hq-box" style="color: #FFFFFF; margin-bottom: 20px;">
                         <h4>Bogotá | Colombia</h4>
-                        <p>Calle 97A, #8-10, Oficina 503, Bogotá 110221</p>
-                        <p><a href="mailto:imicol@imigroup.com">imicol@imigroup.com</a></p>
-                        <a href="#" class="hq-link">Map & Directions</a>
+                        <p style="color: #FFFFFF;">Calle 97A, #8-10, Oficina 503, Bogotá 110221</p>
+                        <p style="color: #FFFFFF;"><a href="mailto:imicol@imigroup.com" style="color: #FFFFFF;">imicol@imigroup.com</a></p>
+                        <a href="#" class="hq-link" style="color: #FFFFFF;">Map & Directions</a>
                     </div>
                     <div class="hq-box" style="color: #FFFFFF; margin-bottom: 20px;">
                         <h4>Johannesburg | South Africa</h4>
-                        <p>Workshop 17 The Bank, Corner Tyrwhitt Road and 24 Cradock Ave, Johannesburg, 2196</p>
-                        <p><a href="mailto:operations.asia@imigroup.com">operations.asia@imigroup.com</a></p>
+                        <p style="color: #FFFFFF;">Workshop 17 The Bank, Corner Tyrwhitt Road and 24 Cradock Ave, Johannesburg, 2196</p>
+                        <p style="color: #FFFFFF;"><a href="mailto:operations.asia@imigroup.com" style="color: #FFFFFF;">operations.asia@imigroup.com</a></p>
                     </div>
                    <div class="hq-box" style="color: #FFFFFF; margin-bottom: 20px;">
                         <h4>Istanbul | Turkey</h4>
-                        <p>Kampanaki Mansion, Köybaşı Cad. No:63, Yeniköy 34464 Sarıyer, Istanbul, Turkey</p>
-                        <p><span class="hq-label">Phone</span><a href="tel:+902122625151">+90 212 262 51 51</a></p>
-                        <p><a href="mailto:operations.eur@imigroup.com">operations.eur@imigroup.com</a></p>
-                        <a href="#" class="hq-link">Map & Directions</a>
+                        <p style="color: #FFFFFF;">Kampanaki Mansion, Köybaşı Cad. No:63, Yeniköy 34464 Sarıyer, Istanbul, Turkey</p>
+                        <p style="color: #FFFFFF;"><span class="hq-label">Phone</span><a href="tel:+902122625151" style="color: #FFFFFF;">+90 212 262 51 51</a></p>
+                        <p style="color: #FFFFFF;"><a href="mailto:operations.eur@imigroup.com" style="color: #FFFFFF;">operations.eur@imigroup.com</a></p>
+                        <a href="#" class="hq-link" style="color: #FFFFFF;">Map & Directions</a>
                     </div>
                    <div class="hq-box" style="color: #FFFFFF; margin-bottom: 20px;">
                         <h4>London | UK</h4>
-                        <p>International Materials UK Ltd, Office 102, 81 Fulham Road, London SW3 6RD, UK</p>
-                        <p><span class="hq-label">Phone</span><a href="tel:+442038260003">+44 20 3826 0003</a></p>
-                        <p><a href="mailto:operations.eur@imigroup.com">operations.eur@imigroup.com</a></p>
-                        <a href="#" class="hq-link">Map & Directions</a>
+                        <p style="color: #FFFFFF;">International Materials UK Ltd, Office 102, 81 Fulham Road, London SW3 6RD, UK</p>
+                        <p style="color: #FFFFFF;"><span class="hq-label">Phone</span><a href="tel:+442038260003" style="color: #FFFFFF;">+44 20 3826 0003</a></p>
+                        <p style="color: #FFFFFF;"><a href="mailto:operations.eur@imigroup.com" style="color: #FFFFFF;">operations.eur@imigroup.com</a></p>
+                        <a href="#" class="hq-link" style="color: #FFFFFF;">Map & Directions</a>
                     </div>
                 </div>
             </div>
