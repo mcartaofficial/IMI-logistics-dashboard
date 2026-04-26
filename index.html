@@ -195,12 +195,6 @@
 
         /* Layout for the file upload area */
         .upload-section { margin-top: 40px; padding-top: 40px; border-top: 2px dashed #e2e8f0; }
-        /* New: Remote Import Box styles */
-        .remote-import-box { background: #f1f5f9; padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
-        .remote-import-box h4 { margin: 0 0 10px 0; font-size: 0.9rem; color: var(--deep-space); }
-        .remote-input { flex: 1; padding: 10px; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 0.85rem; }
-        .import-btn { background: var(--deep-space); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.8rem; }
-
         /* Visual style for the drag-and-drop box */
         .dropzone {
             border: 2px dashed #cbd5e0;
@@ -222,6 +216,27 @@
         /* Style for the folder icon in the dropzone */
         .dropzone-icon { font-size: 2rem; margin-bottom: 10px; display: block; }
         
+        /* New SharePoint Input Styles */
+        .sharepoint-link-input {
+            width: 70%;
+            padding: 10px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            margin-right: 10px;
+        }
+        .add-sharepoint-btn {
+            background: var(--deep-space);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .add-sharepoint-btn:hover { background: #322f56; }
+
         /* List layout for uploaded file viewers */
         .viewer-list { display: flex; flex-direction: column; gap: 40px; margin-top: 30px; }
         /* Individual container for a file being viewed */
@@ -319,6 +334,7 @@
             .hq-grid { grid-template-columns: 1fr; } 
             .img-about-header { grid-template-columns: 1fr; gap: 30px; } 
             .pdf-viewer-wrapper { height: 800px; }
+            .sharepoint-link-input { width: 100%; margin-bottom: 10px; }
         }
     </style>
 </head>
