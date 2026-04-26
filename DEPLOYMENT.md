@@ -20,7 +20,7 @@ Updates: Subsequent pushes to the main branch will trigger automatic site update
 B. Cloud Hosting with Backend Support (Railway / Render)
 Required for deployments that utilize a Python backend for complex data processing or forecasting.
 
-# Runtime: Python 3.8+ environment.
+Runtime: Python 3.8+ environment.
 
 Railway Pipeline: Connect the GitHub repository; the platform will auto-detect the Python environment and trigger builds on every push.
 
