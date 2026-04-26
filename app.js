@@ -188,7 +188,7 @@ class MILogisticsApp {
         // Insert the "Global Headquarters" contact list into the designated HTML area
         document.getElementById('hq-section').innerHTML = `
             <h2 style="color: var(--mi-red); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px;">Global Headquarters</h2>
-            <div class="hq-container">
+            <div class="hq-container" style="background-color: #24223F; padding: 30px; border-radius: 8px;">
                 <div class="hq-grid">
                     <div class="hq-box">
                         <h4>Florida | USA</h4>
