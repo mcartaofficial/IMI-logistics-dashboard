@@ -99,9 +99,6 @@ class MILogisticsApp {
         // Initialize an object to track how many files are uploaded to each view
         this.viewFiles = { excel: [], generic: [] };
 
-        // ADDITIVE: Full metadata storage
-        this.processedData = {};
-
         // Run the initialization function to set up the app
         this.init();
     } // End of the constructor function
@@ -528,25 +525,6 @@ class MILogisticsApp {
         } // End of loop
     } // End of handleFiles function
 
-    // ADDITIVE: Helper to get raw Excel cell metadata for style preservation
-    getExcelCellData(ws, cellRef) {
-        const cell = ws[cellRef];
-        if (!cell) return { v: '', w: '', s: {} };
-        return {
-            v: cell.v || '', // raw value
-            w: cell.w || cell.v || '', // formatted text (crucial for headers/dates)
-            s: cell.s || {} // full style object
-        };
-    }
-
-    // ADDITIVE: Accurate Excel Color Resolver
-    resolveExcelColor(colorObj) {
-        if (!colorObj) return null;
-        if (colorObj.rgb) return `#${colorObj.rgb.slice(-6)}`;
-        if (colorObj.theme !== undefined) return '#f0f0f0'; // Fallback for theme colors
-        return null;
-    }
-
     // Function to display the content of an uploaded file on the page
     async renderFileItem(file, fileId, viewKey) {
         // Find the list where file previews are shown
@@ -560,11 +538,8 @@ class MILogisticsApp {
         // Set the HTML structure for the file header and content area
         item.innerHTML = `
             <div class="viewer-header">
-                <span id="title-${fileId}">${file.name}</span>
-                <div style="display: flex; gap: 10px; align-items: center;" id="actions-${fileId}">
-                    <button class="download-btn" onclick="app.downloadFile('${fileId}')">Download</button>
-                    <button class="remove-file" onclick="app.removeSpecificFile('${fileId}', '${viewKey}')">Remove</button>
-                </div>
+                <span>${file.name}</span>
+                <button class="remove-file" onclick="app.removeSpecificFile('${fileId}', '${viewKey}')">Remove</button>
             </div>
             <div id="content-${fileId}" class="viewer-content">Processing...</div>
         `; // End of item HTML
@@ -579,202 +554,111 @@ class MILogisticsApp {
         try {
             // Logic for PDF files
             if (extension === 'pdf') {
+                // Create a temporary web link to the file on the user's computer
                 const url = URL.createObjectURL(file);
-                this.processedData[fileId] = { type: 'pdf', data: url, name: file.name };
-                contentArea.innerHTML = `<iframe src="${url}#view=FitH" class="pdf-viewer"></iframe>`;
+                // Display the PDF inside an iframe - WRAPPED IN SCROLL CONTAINER
+                contentArea.innerHTML = `
+                    <div class="pdf-viewer-wrapper">
+                        <iframe src="${url}" class="pdf-viewer"></iframe>
+                    </div>`;
             // Logic for Microsoft Word files
             } else if (extension === 'docx') {
+                // Read the file's raw binary data
                 const arrayBuffer = await file.arrayBuffer();
-                // ADDITIVE: Use Mammoth with structure preservation
-                const options = {
-                    styleMap: [
-                        "p[style-name='Header'] => h1:fresh",
-                        "p[style-name='Heading 1'] => h1:fresh",
-                        "p[style-name='Heading 2'] => h2:fresh",
-                    ]
-                };
-                const result = await mammoth.convertToHtml({ arrayBuffer }, options);
-                this.processedData[fileId] = { type: 'docx', data: result.value, name: file.name };
-                contentArea.innerHTML = `<div class="docx-viewer" contenteditable="true" oninput="app.updateTextState('${fileId}', this.innerHTML)">${result.value}</div>`;
+                // Use a special library (mammoth) to turn Word data into HTML
+                const result = await mammoth.convertToHtml({ arrayBuffer });
+                // Display the converted text on the screen
+                contentArea.innerHTML = `<div class="docx-viewer">${result.value}</div>`;
             // Logic for Excel or CSV spreadsheets
             } else if (extension === 'xlsx' || extension === 'csv') {
+                // Read the file's raw binary data
                 const arrayBuffer = await file.arrayBuffer();
-                // IMPORTANT: cellStyles: true extracts the full metadata required
-                const workbook = XLSX.read(arrayBuffer, { cellStyles: true, cellDates: true, cellNF: true });
+                // Use a library (XLSX) to read the spreadsheet data
+                const workbook = XLSX.read(arrayBuffer, { cellStyles: true, cellNF: true, cellDates: true });
                 
-                // ADDITIVE: Check for charts (Limitations acknowledgment)
-                let chartsFound = false;
-                if (workbook.Workbook && workbook.Workbook.Names && workbook.Workbook.Names.some(n => n.Name.includes('_FilterDatabase'))) chartsFound = true; // Heuristic
-
-                this.processedData[fileId] = { 
-                    type: 'excel', 
-                    workbook: workbook,
-                    name: file.name,
-                    sheets: {},
-                    hasCharts: chartsFound,
-                    currentSheet: workbook.SheetNames[0]
-                };
-
-                // Extract all data from every sheet with full fidelity
-                workbook.SheetNames.forEach(sheetName => {
-                    const ws = workbook.Sheets[sheetName];
-                    const range = XLSX.utils.decode_range(ws['!ref'] || 'A1:Z100');
-                    const fullMatrix = [];
-
-                    for (let R = range.s.r; R <= range.e.r; ++R) {
-                        const row = [];
-                        for (let C = range.s.c; C <= range.e.c; ++C) {
-                            const cellRef = XLSX.utils.encode_cell({c:C, r:R});
-                            row.push(this.getExcelCellData(ws, cellRef));
-                        }
-                        fullMatrix.push(row);
-                    }
-
-                    this.processedData[fileId].sheets[sheetName] = {
-                        matrix: fullMatrix,
-                        headers: fullMatrix[0] || []
-                    };
-                });
-
-                // UI: Sheet switcher
-                if (workbook.SheetNames.length > 1) {
-                    const select = document.createElement('select');
-                    select.className = 'sheet-selector';
-                    workbook.SheetNames.forEach(name => {
-                        const opt = document.createElement('option');
-                        opt.value = name; opt.textContent = name;
-                        select.appendChild(opt);
-                    });
-                    select.onchange = (e) => this.switchActiveSheet(fileId, e.target.value);
-                    document.getElementById(`actions-${fileId}`).prepend(select);
+                // --- SPREADSHEET RENDERER (TRUE COORDS) ---
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                
+                // Detect Charts/Drawings (Basic detection)
+                let chartMsg = "";
+                if(worksheet['!drawings'] || worksheet['!chart']) {
+                    chartMsg = `<div class="chart-notification">📊 Chart detected in this sheet</div>`;
                 }
 
-                this.renderExcelGrid(fileId, this.processedData[fileId].currentSheet);
-            } 
+                const range = XLSX.utils.decode_range(worksheet['!ref']);
+                let html = `${chartMsg}<div class="excel-table-container"><table class="excel-table"><thead><tr><th class="row-label"></th>`;
+                
+                // Render Column Labels (A, B, C...)
+                for(let C = range.s.c; C <= range.e.c; ++C) {
+                    html += `<th>${XLSX.utils.encode_col(C)}</th>`;
+                }
+                html += "</tr></thead><tbody>";
+
+                // Render Rows with Labels (1, 2, 3...)
+                for(let R = range.s.r; R <= range.e.r; ++R) {
+                    html += `<tr><th class="row-label">${R + 1}</th>`;
+                    for(let C = range.s.c; C <= range.e.c; ++C) {
+                        const cellAddress = XLSX.utils.encode_cell({c:C, r:R});
+                        const cell = worksheet[cellAddress];
+                        let val = cell ? XLSX.utils.format_cell(cell) : "";
+                        
+                        // Extract Real Styles (Colors)
+                        let style = "";
+                        if(cell && cell.s) {
+                            if(cell.s.fgColor && cell.s.fgColor.rgb) style += `background-color:#${cell.s.fgColor.rgb};`;
+                            if(cell.s.font && cell.s.font.color && cell.s.font.color.rgb) style += `color:#${cell.s.font.color.rgb};`;
+                        }
+                        
+                        html += `<td style="${style}">${val}</td>`;
+                    }
+                    html += "</tr>";
+                }
+                html += "</tbody></table></div>";
+                contentArea.innerHTML = html;
+                
+            } // End of file type checks
         } catch (err) {
-            contentArea.innerHTML = `<p style="color: var(--mi-red)">Processing Error: ${err.message}</p>`;
-        }
-    } 
-
-    // ADDITIVE: Switching sheet logic
-    switchActiveSheet(fileId, sheetName) {
-        this.processedData[fileId].currentSheet = sheetName;
-        this.renderExcelGrid(fileId, sheetName);
-    }
-
-    // ADDITIVE: Render Excel with colors and exact column headers
-    renderExcelGrid(fileId, sheetName) {
-        const contentArea = document.getElementById(`content-${fileId}`);
-        const fileState = this.processedData[fileId];
-        const sheet = fileState.sheets[sheetName];
-        
-        let chartWarning = fileState.hasCharts ? `<div class="chart-alert">📊 Chart elements detected in original file. Viewing cell data below.</div>` : '';
-        contentArea.innerHTML = `${chartWarning}<div id="grid-${fileId}" class="excel-grid-container"></div>`;
-        
-        // Build columns using the exact first row text (w property)
-        const columns = sheet.headers.map((hCell, colIndex) => ({
-            name: hCell.w || `Col ${colIndex + 1}`,
-            formatter: (cell, row) => {
-                const rowIdx = row.cells[row.cells.length - 1].data; 
-                const cellData = sheet.matrix[rowIdx + 1][colIndex];
-                const bg = this.resolveExcelColor(cellData.s.fill);
-                const fg = this.resolveExcelColor(cellData.s.font);
-                const weight = cellData.s.font?.bold ? 'bold' : 'normal';
-                
-                const styleStr = `background-color: ${bg || 'transparent'}; color: ${fg || 'inherit'}; font-weight: ${weight};`;
-                
-                return gridjs.html(`<input class="cell-input" style="${styleStr}" value="${cellData.w || cellData.v}" oninput="app.updateCellState('${fileId}', '${sheetName}', ${rowIdx + 1}, ${colIndex}, this.value)">`);
-            }
-        }));
-
-        // Prep data rows (excluding header)
-        const dataRows = sheet.matrix.slice(1).map((row, idx) => {
-            return [...row.map(c => c.w || c.v), idx]; // Values + Row index for state sync
-        });
-
-        new gridjs.Grid({
-            columns: [...columns, { name: 'IDX', hidden: true }],
-            data: dataRows,
-            pagination: false,
-            fixedHeader: true,
-            resizable: true
-        }).render(document.getElementById(`grid-${fileId}`));
-    }
-
-    // State bindings
-    updateCellState(fileId, sheetName, rowIdx, colIdx, newValue) {
-        if (this.processedData[fileId]) {
-            this.processedData[fileId].sheets[sheetName].matrix[rowIdx][colIdx].v = newValue;
-            this.processedData[fileId].sheets[sheetName].matrix[rowIdx][colIdx].w = newValue;
-        }
-    }
-
-    updateTextState(fileId, newHtml) {
-        if (this.processedData[fileId]) {
-            this.processedData[fileId].data = newHtml;
-        }
-    }
-
-    // Export with modifications
-    downloadFile(fileId) {
-        const item = this.processedData[fileId];
-        if (!item) return;
-
-        let blob;
-        let filename = item.name;
-
-        if (item.type === 'excel') {
-            const wb = XLSX.utils.book_new();
-            Object.keys(item.sheets).forEach(sName => {
-                const aoa = item.sheets[sName].matrix.map(row => row.map(cell => cell.v));
-                const ws = XLSX.utils.aoa_to_sheet(aoa);
-                XLSX.utils.book_append_sheet(wb, ws, sName);
-            });
-            const buffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-            blob = new Blob([buffer], { type: 'application/octet-stream' });
-        } else if (item.type === 'docx') {
-            blob = new Blob([item.data], { type: 'text/html' });
-            filename = filename.replace('.docx', '.html');
-        } else {
-            const link = document.createElement('a');
-            link.href = item.data;
-            link.download = item.name;
-            link.click();
-            return;
-        }
-
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = filename;
-        link.click();
-    }
+            // If anything goes wrong during processing, show an error message in red
+            contentArea.innerHTML = `<p style="color: var(--mi-red)">Error: ${err.message}</p>`;
+        } // End of try-catch block
+    } // End of renderFileItem function
 
     // Function to delete a file preview from the screen
     removeSpecificFile(fileId, viewKey) {
+        // Find the file's HTML element on the screen
         const item = document.getElementById(`item-${fileId}`);
+        // If it exists, delete it from the page
         if (item) item.remove();
+        // Update our internal list to remove the file data as well
         this.viewFiles[viewKey] = this.viewFiles[viewKey].filter(f => f.id !== fileId);
-        delete this.processedData[fileId];
     } // End of removeSpecificFile function
 
     // Function to hide all main view sections of the dashboard
     hideAllViews() {
+        // Hide the home screen
         this.homeView.classList.remove('active');
+        // Hide the spreadsheet viewer
         this.excelViewport.classList.remove('active');
+        // Hide the general text viewer
         this.genericView.classList.remove('active');
     } // End of hideAllViews function
 
     // Helper function to find a navigation ID based on a page title
     getNavIdByTitle(title) {
+        // An empty mapping object (could be filled if needed)
         const mapping = {};
+        // Return the mapped ID or an empty string if not found
         return mapping[title] || '';
     } // End of getNavIdByTitle function
 
     // Function to highlight the currently selected button in the sidebar
     updateActiveNav(id) {
+        // Remove the "active" look from every single button in the menu
         document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+        // Find the specific button that matches the current page ID
         const activeBtn = document.querySelector(`[data-id="${id}"]`);
+        // If that button exists, give it the "active" highlighted style
         if (activeBtn) activeBtn.classList.add('active');
     } // End of updateActiveNav function
 } // End of MILogisticsApp class definition
