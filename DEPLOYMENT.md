@@ -1,76 +1,91 @@
-Technical Deployment Documentation: IMI Shipping & Freight Dashboard
-This document outlines the professional deployment architecture and configuration requirements for the IMI Shipping & Freight Dashboard. It is intended for software developers and system administrators responsible for the production lifecycle of the application.
+# Technical Deployment Documentation: IMI Shipping & Freight Dashboard
+This document outlines the professional deployment architecture and configuration requirements for the IMI Shipping & Freight Dashboard. It provides a technical roadmap for software developers and system administrators to transition the application from development to a production environment.
 
-1. Deployment Environments
+1. Deployment Environments and Workflows
 A. Static Frontend Hosting (GitHub Pages)
-For deployments where the dashboard operates as a Single Page Application (SPA) utilizing client-side logic for data visualization and basic forecasting.
+This is the recommended approach for hosting the dashboard as a static client-side application.
 
 Infrastructure: Distributed via GitHub’s Global CDN with automated SSL termination.
 
-Pipeline:
+Setup:
 
-Initialize a repository named imi-shipping-dashboard.
+Initialize a repository titled imi-shipping-dashboard.
 
-Deploy artifacts: index.html, app.js, and associated CSS/asset directories.
+Commit the core application files: index.html, app.js, and README.md.
 
-Configure the deployment source via Settings > Pages to the production branch.
+Enable deployment via Settings > Pages, selecting the production branch as the source.
 
-Endpoint: https://[username].github.io/imi-shipping-dashboard/.
+Updates: Subsequent pushes to the main branch will trigger automatic site updates.
 
-B. Containerized Python Backend (Railway / Render)
-Required for workloads involving heavy statistical computation, such as ARIMA or Exponential Smoothing models that exceed client-side performance limits.
+B. Cloud Hosting with Backend Support (Railway / Render)
+Required for deployments that utilize a Python backend for complex data processing or forecasting.
 
-Runtime: Python 3.8 or higher.
+Runtime: Python 3.8+ environment.
 
-Build Specification:
+Railway Pipeline: Connect the GitHub repository; the platform will auto-detect the Python environment and trigger builds on every push.
+
+Render Pipeline:
 
 Build Command: pip install -r requirements.txt.
 
-Start Command: gunicorn app:app or python server.py.
+Start Command: python server.py.
 
-Automation: Continuous Deployment (CD) is triggered automatically upon merging to the main branch.
+C. Local Development and Testing
+Developers can maintain a local environment for offline testing and optimization.
 
-2. Configuration and Environment Management
-Environment Variables
-Sensitive credentials must be injected at runtime and never committed to version control. Maintain a local .env file and include it in .gitignore.
+Procedure: Install dependencies from requirements.txt and execute python server.py to host the dashboard at http://localhost:5000.
 
-FLASK_ENV: Set to production to disable debugger tools.
+D. Enterprise Scaling (Heroku)
+For deployments requiring a more robust ecosystem and scaling capabilities.
 
-PORT: Default is 5000 or as assigned by the cloud provider.
+Configuration: Requires a Procfile containing web: python server.py.
 
-GEMINI_API_KEY: Required for integrated AI analysis features.
+Deployment: Managed via the Heroku CLI (git push heroku main).
 
-SECRET_KEY: Used for session encryption and CSRF protection.
+2. Configuration and System Management
+Environment Variables and Security
+Security protocols dictate that sensitive data must be managed outside of version control.
+
+Environment File: Use a .env file for local development and add it to .gitignore to prevent committing API keys.
+
+Required Keys:
+
+PORT: Assign the application port (typically 5000).
+
+FLASK_ENV: Set to production in live environments.
+
+SECRET_KEY: Defined for session security.
+
+HTTPS: Force HTTPS in production; all recommended platforms provide SSL certificates automatically.
 
 Performance Optimization
-Server-Side Caching: Implement flask-caching with a simple or Redis backend to store frequent query results.
+Caching and Compression: For server-side deployments, implement flask-caching and flask-compress to minimize latency.
 
-Payload Compression: Utilize flask-compress (Gzip/Brotli) to reduce the transfer size of large shipping datasets.
+Asset Management: Consider minifying JavaScript files to improve load times on the GitHub Pages CDN.
 
-Asset Minification: Minify JavaScript and CSS files for production to reduce Time to Interactive (TTI).
+3. Domain and Network Configuration
+Custom Domain Integration
+DNS Setup: Once deployed, map custom domains (e.g., dashboard.imishipping.com) by configuring CNAME or A records according to the specific hosting provider's instructions.
 
-3. Network and Security Protocols
-Domain and SSL
-Custom Hostnames: Map custom domains (e.g., dashboard.imishipping.com) using CNAME or A records as specified by the provider's DNS instructions.
+CORS Policy: Restrict Cross-Origin Resource Sharing in production to authorized domains only.
 
-Forced HTTPS: All deployment targets must enforce TLS 1.2+ for data in transit.
+4. Verification and Troubleshooting
+Troubleshooting Protocols
+Deployment Lag: If GitHub Pages does not reflect changes, force a cache refresh or use a force push to trigger the build action.
 
-CORS Policy
-In the production environment, the Cross-Origin Resource Sharing (CORS) policy must be restricted to prevent unauthorized API access.
+Runtime Errors: Verify that Python versions are 3.8+ and use --force-reinstall for dependencies if the server fails to initialize.
 
-Python
-# Production CORS Example
-from flask_cors import CORS
-CORS(app, origins=['https://dashboard.imishipping.com'])
-4. Verification and QA Checklist
-Prior to final production release, the following functional and integration tests must be completed:
+Integration Errors: Monitor the browser console for Gemini API errors or quota limits.
 
-Data Ingestion: Verify the upload and parsing of the four primary Excel data sources.
+Final QA Checklist
+Prior to production sign-off, verify the following:
 
-Statistical Accuracy: Validate that the Forecasting Time Series Models (including ARIMA and Exponential Smoothing) output matches expected metrics for Rotterdam and Brent Crude benchmarks.
+[ ] Successful upload and parsing of the four required Excel data files.
 
-API Connectivity: Confirm the Gemini API is correctly handling requests and respecting rate limits.
+[ ] Functional validation of the forecasting time series models and optimization engines.
 
-Responsive Design: Test UI rendering across mobile, tablet, and desktop breakpoints to ensure layout integrity.
+[ ] Active Gemini API integration and response handling.
 
-State Management: Ensure that adding new widgets or code snippets does not remove existing dashboard components.
+[ ] Full UI responsiveness across mobile and desktop devices.
+
+[ ] Integrity check of all internal and external hyperlinks.
