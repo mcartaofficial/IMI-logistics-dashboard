@@ -211,111 +211,82 @@
             padding: 24px; 
             width: 100%; 
             min-height: 500px; 
-            max-height: 90vh;
-            overflow: auto !important; /* Force scroll for all file types */
-            -webkit-overflow-scrolling: touch; /* Better mobile momentum */
+            max-height: 85vh; 
+            overflow: auto !important; /* Enable scrolling for all files */
+            -webkit-overflow-scrolling: touch; 
         }
         
         /* Sizing for the embedded PDF viewer */
         .pdf-viewer { 
             width: 100%; 
-            height: 90vh; /* Scalable viewport height */
-            min-height: 800px;
-            border: none;
-            display: block;
+            height: 80vh; 
+            border: none; 
+            display: block; 
         }
+
+        /* DOCX styling preservation */
+        .docx-viewer { 
+            line-height: 1.6; 
+            color: #2d3748; 
+            padding: 40px; 
+            font-size: 1rem; 
+            background: white;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+            border-radius: 8px;
+        }
+        .docx-viewer p { margin-bottom: 1em; }
+        .docx-viewer ul, .docx-viewer ol { margin-left: 2em; margin-bottom: 1em; }
         
-        /* Text styling for Word document previews */
-        .docx-viewer { line-height: 1.8; color: #2d3748; padding: 20px; font-size: 1.1rem; }
+        /* Excel Grid Specifics */
+        .excel-grid-container { 
+            width: 100%; 
+            border: 1px solid #e2e8f0;
+            background: #fdfdfd;
+        }
+        .gridjs-table { border-collapse: collapse !important; width: auto !important; min-width: 100%; }
+        .gridjs-td, .gridjs-th { border: 1px solid #cbd5e0 !important; padding: 0 !important; }
         
-        /* Style for the red "Remove" button on uploaded files */
-        .remove-file { background: var(--mi-red); color: white; border: none; border-radius: 4px; padding: 6px 14px; cursor: pointer; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-
-        /* EXCEL-LIKE GRID STYLING */
-        .excel-grid-container {
-            width: 100%;
-            overflow: auto !important;
-            border: 1px solid #cbd5e0;
-            background: #fff;
-        }
-
-        .gridjs-table {
-            border-collapse: collapse !important;
-            width: auto !important;
-            min-width: 100%;
-        }
-
-        .gridjs-th, .gridjs-td {
-            border: 1px solid #cbd5e0 !important; /* Visual Grid Lines */
-            padding: 0 !important;
-            min-width: 140px;
-        }
-
-        .gridjs-th {
-            background-color: #f8fafc !important;
-            color: #4a5568 !important;
-            font-weight: 600 !important;
-            text-align: center !important;
-            padding: 10px !important;
-        }
-
         .cell-input {
             width: 100%;
             height: 100%;
             border: none;
-            padding: 10px;
-            font-family: 'Inter', sans-serif;
+            padding: 8px 12px;
+            font-family: inherit;
             font-size: 0.85rem;
-            outline: none;
             background: transparent;
-            display: block;
+            outline: none;
             box-sizing: border-box;
+            display: block;
         }
+        .cell-input:focus { background: rgba(214, 25, 43, 0.05); box-shadow: inset 0 0 0 2px var(--mi-red); }
 
-        .cell-input:focus {
-            background: #fffdf0;
-            box-shadow: inset 0 0 0 2px var(--mi-red);
-        }
-
-        .download-btn {
-            background: var(--deep-space);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 6px 14px;
-            cursor: pointer;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-right: 10px;
-        }
-
-        /* ADDITIVE: Multi-sheet styling */
+        /* Multi-sheet dropdown */
         .sheet-selector {
-            padding: 5px 12px;
+            padding: 6px 12px;
             border-radius: 4px;
             border: 1px solid #cbd5e0;
             font-size: 0.8rem;
             margin-right: 10px;
             cursor: pointer;
-            background: #fff;
+            background: white;
         }
 
-        .sheet-selector:focus {
-            outline: 2px solid var(--mi-red);
-        }
-
-        /* ADDITIVE: PDF Scrolling Enhancements */
-        .pdf-outer-container {
-            width: 100%;
-            height: 85vh;
-            overflow: auto !important;
-            position: relative;
-            background: #525659;
+        /* Chart Placeholder styling */
+        .chart-alert {
+            background: #fffbe6;
+            border: 1px solid #ffe58f;
+            padding: 12px 20px;
+            border-radius: 6px;
+            margin-bottom: 15px;
             display: flex;
-            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            color: #856404;
         }
+
+        .download-btn { background: var(--deep-space); color: white; border: none; border-radius: 4px; padding: 6px 14px; cursor: pointer; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; margin-right: 8px; }
+        .remove-file { background: var(--mi-red); color: white; border: none; border-radius: 4px; padding: 6px 14px; cursor: pointer; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
 
         /* Media query: Responsive adjustments for tablets */
         @media (max-width: 1024px) { 
@@ -328,7 +299,7 @@
             .services-grid { grid-template-columns: 1fr; } 
             .hq-grid { grid-template-columns: 1fr; } 
             .img-about-header { grid-template-columns: 1fr; gap: 30px; } 
-            .pdf-viewer { height: 700px; }
+            .pdf-viewer { height: 500px; }
             .view-area { padding: 15px; }
             .card { padding: 15px; }
         }
