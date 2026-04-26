@@ -10,23 +10,14 @@ class MILogisticsApp {
 
         // Create an object to store links for various data analysis spreadsheet pages
         this.analysisPages = {
-            // Link to the Data Visualization spreadsheet view
             "DATA_VISUALIZATION": "https://fau-my.sharepoint.com/personal/nmadrazo2024_fau_edu/_layouts/15/Doc.aspx?sourcedoc={29075b82-afbd-486b-950f-0cd95dc6e491}&action=embedview&AllowTyping=True&ActiveCell='EDF%202018%20Summary'!D2&wdDownloadButton=True&wdInConfigurator=True&wdInConfigurator=True&edaebf=rslc0",
-            // Link to the Rotterdam Exponential Smoothing analysis sheet
             "ROTTERDAM_EXPONENTIAL_SMOOTH": "https://fau-my.sharepoint.com/personal/nmadrazo2024_fau_edu/_layouts/15/Doc.aspx?sourcedoc={42f718b2-df79-4c52-8c5a-f6e80c97b8c0}&action=embedview&AllowTyping=True&ActiveCell='Rotterdam%20Exp%20Smooth%20Table'!A1&wdDownloadButton=True&wdInConfigurator=True&wdInConfigurator=True&edaebf=rslc0",
-            // Link to the Rotterdam Trended Smoothing analysis sheet
             "ROTTERDAM_TRENDED_SMOOTH": "https://fau-my.sharepoint.com/personal/nmadrazo2024_fau_edu/_layouts/15/Doc.aspx?sourcedoc={c6670674-ff90-4868-954e-da22a7229612}&action=embedview&AllowTyping=True&ActiveCell='Rotterdam%20Trend.%20Smooth.%20Table'!A1&wdDownloadButton=True&wdInConfigurator=True&wdInConfigurator=True&edaebf=rslc0",
-            // Link to the Rotterdam ARIMA forecasting sheet
             "ROTTERDAM_ARIMA": "https://fau-my.sharepoint.com/personal/nmadrazo2024_fau_edu/_layouts/15/Doc.aspx?sourcedoc={d402df77-54ee-45a3-bf61-08b31aa14687}&action=embedview&AllowTyping=True&ActiveCell='Rotterdam%20ARIMA%20Table'!A1&wdDownloadButton=True&wdInConfigurator=True&wdInConfigurator=True&edaebf=rslc0",
-            // Link to the Brent Oil Exponential Smoothing analysis sheet
             "BRENT_EXPONENTIAL_SMOOTHING": "https://fau-my.sharepoint.com/personal/nmadrazo2024_fau_edu/_layouts/15/Doc.aspx?sourcedoc={f2b5303c-30b9-47f7-90df-aee6e1ac6751}&action=embedview&AllowTyping=True&ActiveCell='Brent%20Exp%20Smooth%20Table'!A1&wdDownloadButton=True&wdInConfigurator=True&wdInConfigurator=True&edaebf=rslc0",
-            // Link to the Brent Oil Trended Smoothing analysis sheet
             "BRENT_TRENDED_SMOOTH": "https://fau-my.sharepoint.com/personal/nmadrazo2024_fau_edu/_layouts/15/Doc.aspx?sourcedoc={207b54d4-07ce-4348-a273-c21bbe8c5d72}&action=embedview&AllowTyping=True&ActiveCell='Brent%20Trend.%20Exp.%20Smooth.%20Table'!A1&wdDownloadButton=True&wdInConfigurator=True&wdInConfigurator=True&edaebf=rslc0",
-            // Link to the Brent Oil ARIMA forecasting sheet
             "BRENT_ARIMA": "https://fau-my.sharepoint.com/personal/nmadrazo2024_fau_edu/_layouts/15/Doc.aspx?sourcedoc={387040cf-f417-4999-974f-e082d18765e8}&action=embedview&AllowTyping=True&ActiveCell='Brent%20ARIMA%20Table'!A1&wdDownloadButton=True&wdInConfigurator=True&wdInConfigurator=True&edaebf=rslc0",
-            // Link to the Rotterdam Statistical Significance sheet
             "ROTTERDAM_STAT": "https://fau-my.sharepoint.com/personal/nmadrazo2024_fau_edu/_layouts/15/Doc.aspx?sourcedoc={fc00bff8-29ee-4a6c-b472-ef0fd72dfd47}&action=embedview&AllowTyping=True&ActiveCell='Rotterdam%20Stat.%20Sign.'!A1&wdDownloadButton=True&wdInConfigurator=True",
-            // Link to the Brent Crude Oil Statistical Significance sheet
             "BRENT_CRUDE_OIL": "https://fau-my.sharepoint.com/personal/nmadrazo2024_fau_edu/_layouts/15/Doc.aspx?sourcedoc={f5bcbb70-554b-4e08-9f3d-bc8ec9668941}&action=embedview&AllowTyping=True&ActiveCell='Brent%20Crude%20Oil%20Stat.%20Sign.'!A1&wdDownloadButton=True&wdInConfigurator=True"
         }; // End of the analysis pages object
 
@@ -98,9 +89,6 @@ class MILogisticsApp {
         
         // Initialize an object to track how many files are uploaded to each view
         this.viewFiles = { excel: [], generic: [] };
-
-        // --- EXTENDED STATE FOR EDITING & MULTI-SHEET ---
-        this.workbookStates = new Map(); // Stores edited data for Excel files
 
         // Run the initialization function to set up the app
         this.init();
@@ -326,27 +314,17 @@ class MILogisticsApp {
 
         // Create a new div element to hold the widget
         const widgetDiv = document.createElement('div');
-        // Set the unique class name required by the widget provider
         widgetDiv.className = "embeddable-eicHZF6jsR";
-        // Tell the widget to use the development version
         widgetDiv.setAttribute('data-version', 'dev');
-        // Tell the widget not to use cached data
         widgetDiv.setAttribute('data-ignore-cache', 'true');
-        // Tell the widget not to show its own loading screen
         widgetDiv.setAttribute('data-loader', 'false');
-        // Tell the widget to load immediately rather than waiting
         widgetDiv.setAttribute('data-lazy-load', 'false');
 
-        // Create a script element to load the widget's brain (software library)
         const script = document.createElement('script');
-        // Set the source address for the widget library
         script.src = "https://widgets.embeddable.co/sdk/latest/embeddable.js";
-        // Tell the browser to load this script in the background
         script.async = true;
 
-        // Add the widget div to the page
         container.appendChild(widgetDiv);
-        // Add the widget script to the page
         container.appendChild(script);
     } // End of renderEmbeddableWidget function
 
@@ -411,21 +389,13 @@ class MILogisticsApp {
         } else {
             // If it's new, show the loading spinner
             this.loader.style.display = 'block';
-            // Create a new iframe (window inside a window) element
             const newFrame = document.createElement('iframe');
-            // Make the frame take up the full width
             newFrame.style.width = "100%";
-            // Set the frame height to 850 pixels
             newFrame.style.height = "850px";
-            // Remove the default border around the frame
             newFrame.style.border = "none";
-            // Set the web address for the frame to the Excel link
             newFrame.src = this.analysisPages[pageId];
-            // Tell the computer to hide the loading spinner once the spreadsheet is ready
             newFrame.onload = () => { this.loader.style.display = 'none'; };
-            // Add the spreadsheet to the hidden cache container
             this.iframeContainer.appendChild(newFrame);
-            // Save a reference to this frame so we can find it quickly later
             this.iframeCache[pageId] = newFrame;
         } // End of cache check
         // Add the file upload tool to the bottom of the spreadsheet view
@@ -434,35 +404,24 @@ class MILogisticsApp {
 
     // Function to show a simple page with text instead of a spreadsheet
     showGenericPage(title, description) {
-        // Find the right ID for the navigation and highlight it
         this.updateActiveNav(this.getNavIdByTitle(title));
-        // Update the page title text
         this.titleText.innerText = title;
-        // Hide all main screen sections
         this.hideAllViews();
-        // Show the general text section
         this.genericView.classList.add('active');
 
-        // Check if the page being requested is the "About" page
         if(title === 'About IMI Logistics') {
-            // If so, use the pre-formatted About HTML
             this.genericContent.innerHTML = this.aboutContentHtml;
         } else {
-            // Otherwise, just display the title and description text provided
             this.genericContent.innerHTML = `<h2 style="color: var(--mi-red); border-bottom: 2px solid var(--off-white); padding-bottom: 10px;">${title}</h2><p style="color: var(--deep-space); line-height: 1.6;">${description}</p>`;
-        } // End of about check
-        // Add the file upload tool to the bottom of the text view
+        }
         this.renderMultiUploader('generic-upload-container', 'generic');
     } // End of showGenericPage function
 
     // Function to build the file uploader interface
     renderMultiUploader(containerId, viewKey) {
-        // Find the container where the uploader should appear
         const container = document.getElementById(containerId);
-        // If the uploader is already there, don't build it again
         if (container.innerHTML !== "") return;
 
-        // Insert the HTML structure for the "Drag & Drop" box
         container.innerHTML = `
             <div class="upload-section">
                 <div id="dropzone-${viewKey}" class="dropzone">
@@ -474,255 +433,183 @@ class MILogisticsApp {
                 <div id="viewer-list-${viewKey}" class="viewer-list"></div>
             </div>
         `; // End of uploader HTML
-        // Set up the technical logic for the drag-and-drop box
         this.initDropzone(viewKey);
     } // End of renderMultiUploader function
 
     // Function to handle the technical events for the drag-and-drop area
     initDropzone(viewKey) {
-        // Find the visual dropzone box
         const zone = document.getElementById(`dropzone-${viewKey}`);
-        // Find the hidden file selector input
         const input = document.getElementById(`fileInput-${viewKey}`);
-        // When the box is clicked, trigger the hidden file selector
         zone.onclick = () => input.click();
-        // When a file is dragged over the box, stop the browser from opening it and highlight the box
         zone.ondragover = (e) => { e.preventDefault(); zone.classList.add('dragover'); };
-        // When a file is dragged away from the box, remove the highlight
         zone.ondragleave = () => zone.classList.remove('dragover');
-        // When a file is dropped into the box
         zone.ondrop = (e) => {
-            // Stop the browser from just opening the file
             e.preventDefault();
-            // Remove the highlight from the box
             zone.classList.remove('dragover');
-            // Process the files that were dropped
             this.handleFiles(e.dataTransfer.files, viewKey);
-        }; // End of drop logic
-        // When files are selected via the traditional click-and-browse menu
+        };
         input.onchange = (e) => this.handleFiles(e.target.files, viewKey);
     } // End of initDropzone function
 
     // Function to manage the list of files being uploaded
     async handleFiles(files, viewKey) {
-        // Convert the list of files into a standard JavaScript list (array)
         const fileList = Array.from(files);
-        // Calculate how many more files are allowed (up to 10 total)
         const remainingSlots = 10 - this.viewFiles[viewKey].length;
-        // Take only the number of files that fit in the remaining slots
         const filesToProcess = fileList.slice(0, remainingSlots);
 
-        // If the user tried to upload too many files, show an alert
         if (fileList.length > remainingSlots) {
             alert(`Limit reached. Only up to 10 files can be displayed at once.`);
-        } // End of limit check
+        }
 
-        // Loop through every file that is allowed to be processed
         for (const file of filesToProcess) {
-            // Create a unique random ID for this specific file
             const fileId = Date.now() + Math.random().toString(36).substr(2, 9);
-            // Save the file info to our app's internal list
             this.viewFiles[viewKey].push({ id: fileId, file });
-            // Run the function to show this file on the screen
             await this.renderFileItem(file, fileId, viewKey);
-        } // End of loop
+        }
     } // End of handleFiles function
 
-    // Function to display the content of an uploaded file on the page
+    // RESTORED: Function to display the content of an uploaded file with Download capability
     async renderFileItem(file, fileId, viewKey) {
-        // Find the list where file previews are shown
         const list = document.getElementById(`viewer-list-${viewKey}`);
-        // Create a new div element for this specific file preview
         const item = document.createElement('div');
-        // Set the style class for the file item
         item.className = 'viewer-item';
-        // Set the ID so we can find this item later to remove it
         item.id = `item-${fileId}`;
-        // Set the HTML structure for the file header and content area
+        
+        // Re-added the "Download" button in the header alongside the "Remove" button
         item.innerHTML = `
             <div class="viewer-header">
                 <span>${file.name}</span>
-                <button class="remove-file" onclick="app.removeSpecificFile('${fileId}', '${viewKey}')">Remove</button>
+                <div class="header-actions">
+                    <button class="download-file" onclick="app.handleDownload('${fileId}', '${viewKey}')">Download</button>
+                    <button class="remove-file" onclick="app.removeSpecificFile('${fileId}', '${viewKey}')">Remove</button>
+                </div>
             </div>
             <div id="content-${fileId}" class="viewer-content">Processing...</div>
-        `; // End of item HTML
-        // Add the new file item to the list on the screen
+        `;
         list.appendChild(item);
 
-        // Find the specific area where the file content will be written
         const contentArea = document.getElementById(`content-${fileId}`);
-        // Figure out the file type (like 'pdf' or 'xlsx') from the filename
         const extension = file.name.split('.').pop().toLowerCase();
 
         try {
-            // Logic for PDF files
             if (extension === 'pdf') {
-                // Create a temporary web link to the file on the user's computer
                 const url = URL.createObjectURL(file);
-                // Display the PDF inside an iframe - WRAPPED IN FORCED SCROLL CONTAINER
-                contentArea.innerHTML = `
-                    <div style="background:#eee; padding:10px; font-size:0.8rem; border-bottom:1px solid #ccc;">
-                        💡 <b>Annotation Mode:</b> Use system PDF viewer tools to add text or highlights.
-                    </div>
-                    <div class="pdf-viewer-wrapper">
-                        <iframe src="${url}" class="pdf-viewer"></iframe>
-                    </div>`;
-            // Logic for Microsoft Word files
+                contentArea.innerHTML = `<iframe src="${url}" class="pdf-viewer" id="pdf-${fileId}"></iframe>`;
             } else if (extension === 'docx') {
-                // Read the file's raw binary data
                 const arrayBuffer = await file.arrayBuffer();
-                // Use a special library (mammoth) to turn Word data into HTML
                 const result = await mammoth.convertToHtml({ arrayBuffer });
-                // Display the converted text on the screen - ENABLED EDITING
-                contentArea.innerHTML = `
-                    <div style="background:#f8fafc; padding:10px; border-bottom:1px solid #e2e8f0; font-size:0.8rem;">✏️ <b>Rich Text Editing:</b> Click anywhere to edit. Formatting is preserved.</div>
-                    <div class="docx-viewer" contenteditable="true" spellcheck="false">
-                        ${result.value}
-                    </div>`;
-            // Logic for Excel or CSV spreadsheets
+                contentArea.innerHTML = `<div class="docx-viewer" id="docx-${fileId}" contenteditable="true">${result.value}</div>`;
             } else if (extension === 'xlsx' || extension === 'csv') {
-                // Read the file's raw binary data
                 const arrayBuffer = await file.arrayBuffer();
-                // Use a library (XLSX) to read the spreadsheet data
-                const workbook = XLSX.read(arrayBuffer, { cellStyles: true, cellNF: true, cellDates: true });
+                const workbook = XLSX.read(arrayBuffer);
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
                 
-                // --- SPREADSHEET RENDERER (COORDS + TABS + EDITING) ---
-                this.renderExcelWithTabs(workbook, fileId, contentArea);
+                contentArea.innerHTML = `<div id="grid-${fileId}"></div>`;
+                const grid = new gridjs.Grid({
+                    columns: data[0].map(c => ({ name: c, attributes: (cell) => ({ 'contenteditable': 'true' }) })),
+                    data: data.slice(1),
+                    pagination: { limit: 10 },
+                    sort: true,
+                    resizable: true,
+                    search: true
+                }).render(document.getElementById(`grid-${fileId}`));
                 
-            } // End of file type checks
+                // Store the grid instance to the file object for data extraction during download
+                const fileObj = this.viewFiles[viewKey].find(f => f.id === fileId);
+                if (fileObj) fileObj.gridInstance = grid;
+            }
         } catch (err) {
-            // If anything goes wrong during processing, show an error message in red
             contentArea.innerHTML = `<p style="color: var(--mi-red)">Error: ${err.message}</p>`;
-        } // End of try-catch block
+        }
     } // End of renderFileItem function
 
-    // --- EXCEL TAB & EDITING LOGIC ---
-    renderExcelWithTabs(workbook, fileId, container) {
-        const sheetNames = workbook.SheetNames;
-        
-        // Create Tabs UI
-        let tabsHtml = `<div class="excel-tabs" id="tabs-${fileId}">`;
-        sheetNames.forEach((name, idx) => {
-            tabsHtml += `<button class="excel-tab-btn ${idx === 0 ? 'active' : ''}" onclick="app.switchExcelSheet('${fileId}', '${name.replace(/'/g, "\\'")}')">${name}</button>`;
-        });
-        tabsHtml += `</div><div id="sheet-viewport-${fileId}"></div>`;
-        
-        container.innerHTML = tabsHtml;
-        
-        // Render first sheet by default
-        this.renderExcelSheet(workbook, sheetNames[0], fileId);
-    }
-
-    switchExcelSheet(fileId, sheetName) {
-        // Update Tab active state
-        const tabContainer = document.getElementById(`tabs-${fileId}`);
-        tabContainer.querySelectorAll('.excel-tab-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.innerText === sheetName);
-        });
-
-        // Re-render sheet content
-        const fileObj = this.viewFiles.excel.find(f => f.id === fileId) || this.viewFiles.generic.find(f => f.id === fileId);
+    // RESTORED: Main entry point for download requests
+    async handleDownload(fileId, viewKey) {
+        const fileObj = this.viewFiles[viewKey].find(f => f.id === fileId);
         if (!fileObj) return;
 
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const data = new Uint8Array(e.target.result);
-            const workbook = XLSX.read(data, { cellStyles: true, cellNF: true, cellDates: true });
-            this.renderExcelSheet(workbook, sheetName, fileId);
-        };
-        reader.readAsArrayBuffer(fileObj.file);
-    }
-
-    renderExcelSheet(workbook, sheetName, fileId) {
-        const worksheet = workbook.Sheets[sheetName];
-        const viewport = document.getElementById(`sheet-viewport-${fileId}`);
-        const stateKey = `${fileId}-${sheetName}`;
-
-        // Detect Charts
-        let chartMsg = "";
-        if(worksheet['!drawings'] || worksheet['!chart']) {
-            chartMsg = `<div class="chart-notification">📊 Chart detected in this sheet</div>`;
-        }
-
-        const range = XLSX.utils.decode_range(worksheet['!ref']);
-        let html = `${chartMsg}<div class="excel-table-container"><table class="excel-table"><thead><tr><th class="row-label"></th>`;
+        const extension = fileObj.file.name.split('.').pop().toLowerCase();
         
-        for(let C = range.s.c; C <= range.e.c; ++C) {
-            html += `<th>${XLSX.utils.encode_col(C)}</th>`;
+        if (extension === 'xlsx' || extension === 'csv') {
+            this.exportExcel(fileObj);
+        } else if (extension === 'pdf') {
+            this.exportPDF(fileObj);
+        } else if (extension === 'docx') {
+            this.exportDOCX(fileObj, fileId);
         }
-        html += "</tr></thead><tbody>";
-
-        for(let R = range.s.r; R <= range.e.r; ++R) {
-            html += `<tr><th class="row-label">${R + 1}</th>`;
-            for(let C = range.s.c; C <= range.e.c; ++C) {
-                const addr = XLSX.utils.encode_cell({c:C, r:R});
-                const cell = worksheet[addr];
-                
-                // Check state for edits first, else use original
-                const savedValue = this.workbookStates.get(`${stateKey}-${addr}`);
-                let val = savedValue !== undefined ? savedValue : (cell ? XLSX.utils.format_cell(cell) : "");
-                
-                let style = "";
-                if(cell && cell.s) {
-                    if(cell.s.fgColor && cell.s.fgColor.rgb) style += `background-color:#${cell.s.fgColor.rgb};`;
-                    if(cell.s.font && cell.s.font.color && cell.s.font.color.rgb) style += `color:#${cell.s.font.color.rgb};`;
-                }
-                
-                html += `<td contenteditable="true" 
-                            style="${style}" 
-                            oninput="app.saveExcelCell('${fileId}', '${sheetName.replace(/'/g, "\\'")}', '${addr}', this.innerText)"
-                         >${val}</td>`;
-            }
-            html += "</tr>";
-        }
-        html += "</tbody></table></div>";
-        viewport.innerHTML = html;
     }
 
-    saveExcelCell(fileId, sheetName, addr, value) {
-        this.workbookStates.set(`${fileId}-${sheetName}-${addr}`, value);
+    // RESTORED: Downloads PDF files (Original Blobs)
+    exportPDF(fileObj) {
+        const url = URL.createObjectURL(fileObj.file);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileObj.file.name;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+
+    // RESTORED: Downloads DOCX edits as HTML-formatted files
+    exportDOCX(fileObj, fileId) {
+        const content = document.getElementById(`docx-${fileId}`).innerHTML;
+        const blob = new Blob([content], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Edited_${fileObj.file.name}.html`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+
+    // RESTORED: Downloads Excel edits by reconstructing data from Grid.js
+    exportExcel(fileObj) {
+        try {
+            // Get data from Grid.js instance if available
+            let finalData = [];
+            if (fileObj.gridInstance) {
+                const columns = fileObj.gridInstance.config.columns.map(c => c.name);
+                const rows = fileObj.gridInstance.config.data;
+                finalData = [columns, ...rows];
+            }
+
+            // Create workbook and download
+            const ws = XLSX.utils.aoa_to_sheet(finalData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+            XLSX.writeFile(wb, `Edited_${fileObj.file.name}`);
+        } catch (err) {
+            alert("Error exporting spreadsheet: " + err.message);
+        }
     }
 
     // Function to delete a file preview from the screen
     removeSpecificFile(fileId, viewKey) {
-        // Find the file's HTML element on the screen
         const item = document.getElementById(`item-${fileId}`);
-        // If it exists, delete it from the page
         if (item) item.remove();
-        // Update our internal list to remove the file data as well
         this.viewFiles[viewKey] = this.viewFiles[viewKey].filter(f => f.id !== fileId);
-        
-        // Clean up stored state
-        for (let key of this.workbookStates.keys()) {
-            if (key.startsWith(fileId)) this.workbookStates.delete(key);
-        }
     } // End of removeSpecificFile function
 
     // Function to hide all main view sections of the dashboard
     hideAllViews() {
-        // Hide the home screen
         this.homeView.classList.remove('active');
-        // Hide the spreadsheet viewer
         this.excelViewport.classList.remove('active');
-        // Hide the general text viewer
         this.genericView.classList.remove('active');
     } // End of hideAllViews function
 
     // Helper function to find a navigation ID based on a page title
     getNavIdByTitle(title) {
-        // An empty mapping object (could be filled if needed)
         const mapping = {};
-        // Return the mapped ID or an empty string if not found
         return mapping[title] || '';
     } // End of getNavIdByTitle function
 
     // Function to highlight the currently selected button in the sidebar
     updateActiveNav(id) {
-        // Remove the "active" look from every single button in the menu
         document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-        // Find the specific button that matches the current page ID
         const activeBtn = document.querySelector(`[data-id="${id}"]`);
-        // If that button exists, give it the "active" highlighted style
         if (activeBtn) activeBtn.classList.add('active');
     } // End of updateActiveNav function
 } // End of MILogisticsApp class definition
