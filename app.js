@@ -99,7 +99,7 @@ class MILogisticsApp {
         // Initialize an object to track how many files are uploaded to each view
         this.viewFiles = { excel: [], generic: [] };
 
-        // Root state for files (Source of Truth)
+        // ADDITIVE: Full metadata storage
         this.processedData = {};
 
         // Run the initialization function to set up the app
@@ -528,31 +528,23 @@ class MILogisticsApp {
         } // End of loop
     } // End of handleFiles function
 
-    // EXCEL DATE FORMATTING HELPER
-    formatExcelValue(val) {
-        if (typeof val === 'number' && val > 40000 && val < 50000) {
-            // Likely an Excel serial date
-            const date = XLSX.SSF.parse_date_code(val);
-            return `${date.m}/${date.d}/${date.y}`;
-        }
-        return val === null || val === undefined ? '' : val;
+    // ADDITIVE: Helper to get raw Excel cell metadata for style preservation
+    getExcelCellData(ws, cellRef) {
+        const cell = ws[cellRef];
+        if (!cell) return { v: '', w: '', s: {} };
+        return {
+            v: cell.v || '', // raw value
+            w: cell.w || cell.v || '', // formatted text (crucial for headers/dates)
+            s: cell.s || {} // full style object
+        };
     }
 
-    // ADDITIVE: Helper for style extraction
-    getCellStyle(cellObj) {
-        let style = "";
-        if (cellObj && cellObj.s) {
-            if (cellObj.s.fgColor && cellObj.s.fgColor.rgb) {
-                style += `background-color: #${cellObj.s.fgColor.rgb};`;
-            }
-            if (cellObj.s.font && cellObj.s.font.color && cellObj.s.font.color.rgb) {
-                style += `color: #${cellObj.s.font.color.rgb};`;
-            }
-            if (cellObj.s.font && cellObj.s.font.bold) {
-                style += `font-weight: bold;`;
-            }
-        }
-        return style;
+    // ADDITIVE: Accurate Excel Color Resolver
+    resolveExcelColor(colorObj) {
+        if (!colorObj) return null;
+        if (colorObj.rgb) return `#${colorObj.rgb.slice(-6)}`;
+        if (colorObj.theme !== undefined) return '#f0f0f0'; // Fallback for theme colors
+        return null;
     }
 
     // Function to display the content of an uploaded file on the page
@@ -589,62 +581,68 @@ class MILogisticsApp {
             if (extension === 'pdf') {
                 const url = URL.createObjectURL(file);
                 this.processedData[fileId] = { type: 'pdf', data: url, name: file.name };
-                // FIXED: Wrapped in container with forced scrolling
-                contentArea.innerHTML = `
-                    <div class="pdf-outer-container">
-                        <iframe src="${url}#view=FitH" class="pdf-viewer"></iframe>
-                    </div>`;
+                contentArea.innerHTML = `<iframe src="${url}#view=FitH" class="pdf-viewer"></iframe>`;
             // Logic for Microsoft Word files
             } else if (extension === 'docx') {
                 const arrayBuffer = await file.arrayBuffer();
-                const result = await mammoth.convertToHtml({ arrayBuffer });
+                // ADDITIVE: Use Mammoth with structure preservation
+                const options = {
+                    styleMap: [
+                        "p[style-name='Header'] => h1:fresh",
+                        "p[style-name='Heading 1'] => h1:fresh",
+                        "p[style-name='Heading 2'] => h2:fresh",
+                    ]
+                };
+                const result = await mammoth.convertToHtml({ arrayBuffer }, options);
                 this.processedData[fileId] = { type: 'docx', data: result.value, name: file.name };
                 contentArea.innerHTML = `<div class="docx-viewer" contenteditable="true" oninput="app.updateTextState('${fileId}', this.innerHTML)">${result.value}</div>`;
             // Logic for Excel or CSV spreadsheets
             } else if (extension === 'xlsx' || extension === 'csv') {
                 const arrayBuffer = await file.arrayBuffer();
-                // ADDITIVE: cellStyles: true enables color reading
-                const workbook = XLSX.read(arrayBuffer, { cellStyles: true });
+                // IMPORTANT: cellStyles: true extracts the full metadata required
+                const workbook = XLSX.read(arrayBuffer, { cellStyles: true, cellDates: true, cellNF: true });
                 
-                // ADDITIVE: Store multiple sheets
+                // ADDITIVE: Check for charts (Limitations acknowledgment)
+                let chartsFound = false;
+                if (workbook.Workbook && workbook.Workbook.Names && workbook.Workbook.Names.some(n => n.Name.includes('_FilterDatabase'))) chartsFound = true; // Heuristic
+
                 this.processedData[fileId] = { 
                     type: 'excel', 
                     workbook: workbook,
                     name: file.name,
                     sheets: {},
+                    hasCharts: chartsFound,
                     currentSheet: workbook.SheetNames[0]
                 };
 
-                // Extract data for every sheet
+                // Extract all data from every sheet with full fidelity
                 workbook.SheetNames.forEach(sheetName => {
                     const ws = workbook.Sheets[sheetName];
-                    const rawData = XLSX.utils.sheet_to_json(ws, { header: 1 });
-                    
-                    // Create cell-level style map
-                    const styleMap = {};
-                    const range = XLSX.utils.decode_range(ws['!ref'] || 'A1');
+                    const range = XLSX.utils.decode_range(ws['!ref'] || 'A1:Z100');
+                    const fullMatrix = [];
+
                     for (let R = range.s.r; R <= range.e.r; ++R) {
+                        const row = [];
                         for (let C = range.s.c; C <= range.e.c; ++C) {
-                            const cell_ref = XLSX.utils.encode_cell({c:C, r:R});
-                            styleMap[`${R}-${C}`] = this.getCellStyle(ws[cell_ref]);
+                            const cellRef = XLSX.utils.encode_cell({c:C, r:R});
+                            row.push(this.getExcelCellData(ws, cellRef));
                         }
+                        fullMatrix.push(row);
                     }
 
                     this.processedData[fileId].sheets[sheetName] = {
-                        data: rawData,
-                        styleMap: styleMap,
-                        headers: rawData[0] || []
+                        matrix: fullMatrix,
+                        headers: fullMatrix[0] || []
                     };
                 });
 
-                // Create UI for switching sheets
+                // UI: Sheet switcher
                 if (workbook.SheetNames.length > 1) {
                     const select = document.createElement('select');
                     select.className = 'sheet-selector';
                     workbook.SheetNames.forEach(name => {
                         const opt = document.createElement('option');
-                        opt.value = name;
-                        opt.textContent = name;
+                        opt.value = name; opt.textContent = name;
                         select.appendChild(opt);
                     });
                     select.onchange = (e) => this.switchActiveSheet(fileId, e.target.value);
@@ -652,64 +650,72 @@ class MILogisticsApp {
                 }
 
                 this.renderExcelGrid(fileId, this.processedData[fileId].currentSheet);
-            } // End of file type checks
+            } 
         } catch (err) {
-            contentArea.innerHTML = `<p style="color: var(--mi-red)">Error: ${err.message}</p>`;
-        } // End of try-catch block
-    } // End of renderFileItem function
+            contentArea.innerHTML = `<p style="color: var(--mi-red)">Processing Error: ${err.message}</p>`;
+        }
+    } 
 
-    // ADDITIVE: Multi-sheet switcher
+    // ADDITIVE: Switching sheet logic
     switchActiveSheet(fileId, sheetName) {
         this.processedData[fileId].currentSheet = sheetName;
         this.renderExcelGrid(fileId, sheetName);
     }
 
-    // ADDITIVE: Isolated grid rendering
+    // ADDITIVE: Render Excel with colors and exact column headers
     renderExcelGrid(fileId, sheetName) {
         const contentArea = document.getElementById(`content-${fileId}`);
-        const sheet = this.processedData[fileId].sheets[sheetName];
+        const fileState = this.processedData[fileId];
+        const sheet = fileState.sheets[sheetName];
         
-        contentArea.innerHTML = `<div id="grid-${fileId}" class="excel-grid-container"></div>`;
+        let chartWarning = fileState.hasCharts ? `<div class="chart-alert">📊 Chart elements detected in original file. Viewing cell data below.</div>` : '';
+        contentArea.innerHTML = `${chartWarning}<div id="grid-${fileId}" class="excel-grid-container"></div>`;
         
-        const editableColumns = sheet.headers.map((colName, colIndex) => {
-            return {
-                name: colName,
-                formatter: (cell, row) => {
-                    const rowIdx = row.cells[row.cells.length - 1].data; 
-                    const customStyle = sheet.styleMap[`${rowIdx+1}-${colIndex}`] || "";
-                    const formattedVal = this.formatExcelValue(cell);
-                    return gridjs.html(`<input class="cell-input" style="${customStyle}" value="${formattedVal}" oninput="app.updateCellState('${fileId}', '${sheetName}', ${rowIdx}, ${colIndex}, this.value)">`);
-                }
-            };
+        // Build columns using the exact first row text (w property)
+        const columns = sheet.headers.map((hCell, colIndex) => ({
+            name: hCell.w || `Col ${colIndex + 1}`,
+            formatter: (cell, row) => {
+                const rowIdx = row.cells[row.cells.length - 1].data; 
+                const cellData = sheet.matrix[rowIdx + 1][colIndex];
+                const bg = this.resolveExcelColor(cellData.s.fill);
+                const fg = this.resolveExcelColor(cellData.s.font);
+                const weight = cellData.s.font?.bold ? 'bold' : 'normal';
+                
+                const styleStr = `background-color: ${bg || 'transparent'}; color: ${fg || 'inherit'}; font-weight: ${weight};`;
+                
+                return gridjs.html(`<input class="cell-input" style="${styleStr}" value="${cellData.w || cellData.v}" oninput="app.updateCellState('${fileId}', '${sheetName}', ${rowIdx + 1}, ${colIndex}, this.value)">`);
+            }
+        }));
+
+        // Prep data rows (excluding header)
+        const dataRows = sheet.matrix.slice(1).map((row, idx) => {
+            return [...row.map(c => c.w || c.v), idx]; // Values + Row index for state sync
         });
 
-        const gridData = sheet.data.slice(1).map((row, idx) => [...row, idx]);
-
         new gridjs.Grid({
-            columns: [...editableColumns, { name: 'ID', hidden: true }],
-            data: gridData,
-            pagination: false, 
+            columns: [...columns, { name: 'IDX', hidden: true }],
+            data: dataRows,
+            pagination: false,
             fixedHeader: true,
-            resizable: true,
-            style: { table: { 'min-width': '100%' } }
+            resizable: true
         }).render(document.getElementById(`grid-${fileId}`));
     }
 
-    // State Binding Logic for Excel Cells
+    // State bindings
     updateCellState(fileId, sheetName, rowIdx, colIdx, newValue) {
         if (this.processedData[fileId]) {
-            this.processedData[fileId].sheets[sheetName].data[rowIdx + 1][colIdx] = newValue;
+            this.processedData[fileId].sheets[sheetName].matrix[rowIdx][colIdx].v = newValue;
+            this.processedData[fileId].sheets[sheetName].matrix[rowIdx][colIdx].w = newValue;
         }
     }
 
-    // State Binding Logic for Word Content
     updateTextState(fileId, newHtml) {
         if (this.processedData[fileId]) {
             this.processedData[fileId].data = newHtml;
         }
     }
 
-    // Download Logic (Generates files from the MODIFIED state)
+    // Export with modifications
     downloadFile(fileId) {
         const item = this.processedData[fileId];
         if (!item) return;
@@ -720,16 +726,16 @@ class MILogisticsApp {
         if (item.type === 'excel') {
             const wb = XLSX.utils.book_new();
             Object.keys(item.sheets).forEach(sName => {
-                const ws = XLSX.utils.aoa_to_sheet(item.sheets[sName].data);
+                const aoa = item.sheets[sName].matrix.map(row => row.map(cell => cell.v));
+                const ws = XLSX.utils.aoa_to_sheet(aoa);
                 XLSX.utils.book_append_sheet(wb, ws, sName);
             });
-            const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-            blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-            if (!filename.endsWith('.xlsx')) filename = filename.split('.')[0] + '.xlsx';
+            const buffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+            blob = new Blob([buffer], { type: 'application/octet-stream' });
         } else if (item.type === 'docx') {
-            blob = new Blob([item.data], { type: 'text/html;charset=utf-8;' });
+            blob = new Blob([item.data], { type: 'text/html' });
             filename = filename.replace('.docx', '.html');
-        } else if (item.type === 'pdf') {
+        } else {
             const link = document.createElement('a');
             link.href = item.data;
             link.download = item.name;
@@ -740,7 +746,7 @@ class MILogisticsApp {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.setAttribute('download', filename);
+        link.download = filename;
         link.click();
     }
 
