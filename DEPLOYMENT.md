@@ -7,7 +7,7 @@ This is the recommended approach for hosting the dashboard as a static client-si
 
 Infrastructure: Distributed via GitHub’s Global CDN with automated SSL termination.
 
-Setup:
+# Setup:
 
 Initialize a repository titled imi-shipping-dashboard.
 
@@ -20,11 +20,11 @@ Updates: Subsequent pushes to the main branch will trigger automatic site update
 B. Cloud Hosting with Backend Support (Railway / Render)
 Required for deployments that utilize a Python backend for complex data processing or forecasting.
 
-Runtime: Python 3.8+ environment.
+# Runtime: Python 3.8+ environment.
 
 Railway Pipeline: Connect the GitHub repository; the platform will auto-detect the Python environment and trigger builds on every push.
 
-Render Pipeline:
+# Render Pipeline:
 
 Build Command: pip install -r requirements.txt.
 
@@ -48,7 +48,7 @@ Security protocols dictate that sensitive data must be managed outside of versio
 
 Environment File: Use a .env file for local development and add it to .gitignore to prevent committing API keys.
 
-Required Keys:
+# Required Keys:
 
 PORT: Assign the application port (typically 5000).
 
@@ -77,8 +77,8 @@ Runtime Errors: Verify that Python versions are 3.8+ and use --force-reinstall f
 
 Integration Errors: Monitor the browser console for Gemini API errors or quota limits.
 
-Final QA Checklist
-Prior to production sign-off, verify the following:
+# Final QA Checklist
+# Prior to production sign-off, verify the following:
 
 [ ] Successful upload and parsing of the four required Excel data files.
 
