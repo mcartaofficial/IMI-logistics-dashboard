@@ -77,8 +77,7 @@ Runtime Errors: Verify that Python versions are 3.8+ and use --force-reinstall f
 
 Integration Errors: Monitor the browser console for Gemini API errors or quota limits.
 
-# Final QA Checklist
-# Prior to production sign-off, verify the following:
+# Final QA Checklist Prior to production sign-off, verify the following:
 
 [ ] Successful upload and parsing of the four required Excel data files.
 
