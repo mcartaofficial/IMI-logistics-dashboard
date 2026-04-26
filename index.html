@@ -215,6 +215,19 @@
         }
         /* Style for the folder icon in the dropzone */
         .dropzone-icon { font-size: 2rem; margin-bottom: 10px; display: block; }
+
+        /* SharePoint Additions Style */
+        .sharepoint-input-group { 
+            display: flex; 
+            gap: 10px; 
+            margin-bottom: 20px; 
+            background: #fff; 
+            padding: 15px; 
+            border-radius: 8px; 
+            border: 1px solid #e2e8f0;
+        }
+        .sharepoint-input { flex: 1; padding: 10px; border: 1px solid #cbd5e0; border-radius: 4px; font-size: 0.85rem; }
+        .sharepoint-btn { background: #0078d4; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.85rem; }
         
         /* List layout for uploaded file viewers */
         .viewer-list { display: flex; flex-direction: column; gap: 40px; margin-top: 30px; }
@@ -370,6 +383,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gridjs/dist/gridjs.umd.js"></script>
     
+    <script src="https://alcdn.msauth.net/browser/2.14.2/js/msal-browser.min.js"></script>
+
     <script src="https://elfsightcdn.com/platform.js" async></script>
     <div class="elfsight-app-6ba85109-b815-4820-91b7-5719ae4049e2" data-elfsight-app-lazy></div>
     
