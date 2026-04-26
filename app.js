@@ -528,6 +528,16 @@ class MILogisticsApp {
         } // End of loop
     } // End of handleFiles function
 
+    // ADDED: EXCEL DATE FORMATTING HELPER
+    formatExcelValue(val) {
+        if (typeof val === 'number' && val > 40000 && val < 50000) {
+            // Likely an Excel serial date
+            const date = XLSX.SSF.parse_date_code(val);
+            return `${date.m}/${date.d}/${date.y}`;
+        }
+        return val === null || val === undefined ? '' : val;
+    }
+
     // Function to display the content of an uploaded file on the page
     async renderFileItem(file, fileId, viewKey) {
         // Find the list where file previews are shown
@@ -590,14 +600,15 @@ class MILogisticsApp {
                 // Create a scrollable container
                 contentArea.innerHTML = `<div id="grid-${fileId}" class="excel-grid-container"></div>`;
                 
-                // ADDITIVE: Define the editable column structure
+                // ADDITIVE: Define the editable column structure with Date Formatting
                 const editableColumns = this.processedData[fileId].headers.map((colName, colIndex) => {
                     return {
                         name: colName,
                         formatter: (cell, row) => {
-                            // Convert row cell to editable input bound to state
-                            const rowIdx = row.cells[row.cells.length - 1].data; // We'll hide row index in last cell
-                            return gridjs.html(`<input class="cell-input" value="${cell || ''}" oninput="app.updateCellState('${fileId}', ${rowIdx}, ${colIndex}, this.value)">`);
+                            // Apply Date Formatting to the visual display
+                            const formattedVal = this.formatExcelValue(cell);
+                            const rowIdx = row.cells[row.cells.length - 1].data; 
+                            return gridjs.html(`<input class="cell-input" value="${formattedVal}" oninput="app.updateCellState('${fileId}', ${rowIdx}, ${colIndex}, this.value)">`);
                         }
                     };
                 });
@@ -612,10 +623,10 @@ class MILogisticsApp {
                     pagination: false, 
                     fixedHeader: true,
                     resizable: true,
-                    sort: false, // Sorting disabled to maintain row index alignment
+                    sort: false, 
                     style: {
                         container: {
-                            'min-width': 'max-content' // Forces horizontal expansion
+                            'min-width': 'max-content' 
                         }
                     }
                 }).render(document.getElementById(`grid-${fileId}`)); 
