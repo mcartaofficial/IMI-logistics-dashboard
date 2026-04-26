@@ -1,7 +1,20 @@
+# Flask is the core web framework used to build the website and handle user requests. [cite: 1]
 Flask==3.0.0
+
+# This tool allows the website to safely communicate with other web services located on different domains. [cite: 1]
 flask-cors==4.0.0
+
+# A powerful data analysis tool used to organize, filter, and calculate information in tables (like spreadsheets). [cite: 1]
 pandas==2.1.4
+
+# A specialized helper that allows the program to read from and write to Excel (.xlsx) files. [cite: 1]
 openpyxl==3.1.2
+
+# An optimization library used to solve complex mathematical problems and find the best possible outcomes. [cite: 1]
 PuLP==2.7.0
+
+# A library for performing advanced mathematical calculations and managing large lists of numbers efficiently. [cite: 1]
 numpy==1.26.2
+
+# A simple tool that allows the program to send information to and receive data from other websites. [cite: 1]
 requests==2.31.0
