@@ -1,358 +1,80 @@
-# 🚀 QUICK START GUIDE - International Materials Shipping Dashboard
-
-## ⚡ Get Running in 5 Minutes!
-
-### What You've Received
-
-A completely redesigned, modern shipping route optimization dashboard featuring:
-- ✅ **Professional IMI branding** with actual logo and cargo ship imagery
-- ✅ **Modern UI/UX** with enhanced contrast and readability
-- ✅ **Linear programming** optimization engine
-- ✅ **Google Gemini AI** integration for intelligent insights
-- ✅ **Excel file upload** with drag-and-drop interface
-- ✅ **Responsive design** that works on all devices
-- ✅ **Complete documentation** for users and developers
-
-### Files Included
-
-```
-imi-shipping-dashboard/
-├── index.html              # Main dashboard (open this!)
-├── app.js                  # JavaScript application logic
-├── IMI_logo.jpg           # Your company logo
-├── Cargo_Ship.jpg         # Header background image
-├── optimizer.py            # Python optimization engine
-├── server.py              # Flask backend (optional)
-├── requirements.txt        # Python dependencies
-├── README.md              # Full documentation
-├── DEPLOYMENT.md          # Deployment guide
-├── USER_GUIDE.md          # End-user instructions
-└── test_optimizer.py      # Test script
-```
-
----
-
-## 🎯 Option 1: Instant Demo (Fastest)
-
-**Just want to see it work?**
-
-1. **Download all files** to the same folder:
-   - `index.html`
-   - `app.js`
-   - `IMI_logo.jpg`
-   - `Cargo_Ship.jpg`
-2. **Double-click** `index.html`
-3. Upload your 4 Excel files (drag and drop!)
-4. Enter bunker price (e.g., 400)
-5. Add your Gemini API key (optional but recommended)
-6. Click "🚀 Optimize Routes"
-7. **Done!** See your optimized routes with beautiful visualizations
-
-**Note:** Works immediately in any modern browser (Chrome, Firefox, Safari, Edge). No installation or server needed!
-
----
-
-## 🌐 Option 2: Deploy to GitHub Pages (Recommended)
-
-**Best for:** Sharing with your team, permanent hosting, professional access
-
-### Steps:
+# Technical Quick Start Guide: IMI Shipping & Freight Dashboard
+This guide provides an accelerated technical overview for deploying and utilizing the IMI Shipping & Freight Dashboard. This version is optimized for professional software environments and follows the architectural standards of the International Materials (IMI) logistics suite.
 
-1. **Create GitHub Account** (if needed)
-   - Go to https://github.com/join
+# 1. Repository Architecture
+The following file structure is required for a complete deployment. Ensure all assets are present in the root directory to maintain internal referencing:
 
-2. **Create New Repository**
-   - Click "+" → "New repository"
-   - Name: `imi-shipping-dashboard`
-   - Public or Private (your choice)
-   - Click "Create repository"
+index.html: The core entry point containing the dashboard’s Document Object Model (DOM) and CSS variable definitions.
 
-3. **Upload Files**
-   - Click "uploading an existing file"
-   - Drag these **5 files** into the upload area:
-     - `index.html`
-     - `app.js`
-     - `IMI_logo.jpg`
-     - `Cargo_Ship.jpg`
-     - `README.md`
-   - Click "Commit changes"
+app.js: The primary application logic, including the MILogisticsApp class, widget configurations, and iframe caching.
 
-4. **Enable GitHub Pages**
-   - Settings → Pages
-   - Source: `main` branch
-   - Click "Save"
+optimizer.py: Python-based linear programming engine for route optimization.
 
-5. **Access Your Dashboard**
-   - Wait 2-3 minutes
-   - Visit: `https://YOUR_USERNAME.github.io/imi-shipping-dashboard/`
-   - Share this URL with your entire team!
+server.py: Flask-based backend for handling server-side requests and data persistence.
 
-**Total time:** ~5 minutes  
-**Cost:** Free forever  
-**Update:** Just upload new files to GitHub  
-**SSL:** Automatic HTTPS included
+requirements.txt: List of Python dependencies for local and cloud environments.
 
----
+Deployment Assets: IMI_logo.jpg and Cargo_Ship.jpg for professional branding and UI consistency.
 
-## 💻 Option 3: Run Locally with Python
+# 2. Primary Deployment Workflows
+Option A: Static Frontend (Immediate Access)
+This method utilizes client-side execution and is the fastest way to initialize the dashboard.
 
-**Best for:** Offline use, full Python capabilities
+Consolidate index.html, app.js, and branding assets into a single local directory.
 
-### Steps:
+Launch index.html in a modern web browser (Chrome, Edge, or Safari).
 
-1. **Install Python** (if needed)
-   - Download from https://python.org
-   - Version 3.8 or higher
+Upload the four required Excel data sources via the drag-and-drop interface.
 
-2. **Install Dependencies**
-   ```bash
-   cd imi-shipping-dashboard
-   pip install -r requirements.txt
-   ```
+Option B: GitHub Pages (Team Distribution)
+Recommended for persistent, professional access across the organization.
 
-3. **Run Server**
-   ```bash
-   python server.py
-   ```
+Initialize a GitHub repository titled imi-shipping-dashboard.
 
-4. **Open Browser**
-   - Go to `http://localhost:5000`
+Commit all core files and branding assets to the main branch.
 
----
+Navigate to Settings > Pages and set the deployment source to the main branch.
 
-## 🎨 New Modern Design Features
+The dashboard will be live at https://[username].github.io/imi-shipping-dashboard/ within minutes.
 
-### Enhanced User Experience
-- **High-Contrast Interface**: Improved readability with carefully selected color ratios
-- **Professional Typography**: Clean, modern fonts optimized for screen reading
-- **Smooth Animations**: Subtle transitions that enhance, not distract
-- **Responsive Layout**: Perfect on desktop, tablet, and mobile devices
+Option C: Local Python Environment
+For developers requiring a full backend for offline testing or extended processing.
 
-### Visual Improvements
-- **Real IMI Logo**: Your actual International Materials branding
-- **Cargo Ship Header**: Stunning background image with gradient overlay
-- **Color-Coded Status**: Green for uploaded files, red accents for actions
-- **Modern Cards**: Elevated design with shadows and hover effects
-- **Clean Tables**: Alternating rows, smooth borders, professional styling
+Install dependencies: pip install -r requirements.txt.
 
-### Accessibility
-- **WCAG Compliant**: Meets web accessibility standards
-- **Keyboard Navigation**: Full keyboard support
-- **Screen Reader Friendly**: Proper semantic HTML
-- **High Contrast Mode**: Works with system accessibility settings
+Execute the server: python server.py.
 
----
+Access the dashboard at http://localhost:5000.
 
-## 🔑 Get Your Gemini API Key
+# 3. Integrated Features and Logic
+UI Architecture: High-contrast, WCAG-compliant design featuring a responsive sidebar, sticky top-bar navigation, and unified card-based views.
 
-**For AI-powered explanations:**
+Real-Time Visualization: Integrated ShipXplorer tracking map and embeddable chart widgets for route analysis.
 
-1. Visit https://makersuite.google.com/app/apikey
-2. Sign in with Google
-3. Click "Create API Key"
-4. Copy the key
-5. Paste into dashboard
+Forecasting Integration: Direct access to external analysis sheets including Rotterdam and Brent Oil ARIMA and Exponential Smoothing models.
 
-**Cost:** Free tier includes 60 requests/minute
+Multi-Format File Viewer: Integrated support for PDF, DOCX, and XLSX/CSV files with on-page editing and state preservation.
 
----
+Gemini AI Insights: Integration for automated, intelligent route explanations and optimization logic.
 
-## 📊 Using Your Data
+# 4. Technical Data Requirements
+The optimization engine requires four specific Excel data sources with exact column naming conventions:
 
-### Required Excel Files:
+COA_List.xlsx: Shipping contract definitions.
 
-1. **COA_List.xlsx** - Your shipping contracts
-2. **COA_Rate.xlsx** - Route pricing
-3. **FOB_Prices.xlsx** - Port costs and capacity
-4. **Shipment_Schedule.xlsx** - Shipments to optimize
+COA_Rate.xlsx: Pricing and route rate data.
 
-**Samples included!** Use the files you provided to see it work immediately.
+FOB_Prices.xlsx: Port capacity and cost metrics.
 
-### File Format Requirements:
+Shipment_Schedule.xlsx: Active shipments for optimization.
 
-✅ Must be `.xlsx` or `.xls`  
-✅ Column names must match exactly  
-✅ No empty rows at top  
-✅ Numbers as numbers (not text)
+# 5. Troubleshooting and Verification
+Data Ingestion: If optimization fails, verify that total shipments do not exceed the minimum contract requirements (COA).
 
----
+API Functionality: Ensure a valid Gemini API key is provided for AI-driven insights.
 
-## 🎨 Customization
+Browser Rendering: If updates are not visible, clear the browser cache or force a hard reload.
 
-### Change Branding Colors
+Accessibility: Full keyboard navigation and screen reader support are built into the semantic HTML structure.
 
-Edit `index.html`, find:
-
-```css
-:root {
-    --imi-red: #C8102E;        /* Your primary color */
-    --imi-dark-red: #9B0C23;   /* Your secondary color */
-}
-```
-
-### Add Your Logo
-
-Replace the "IMI" text in the logo section with your image:
-
-```html
-<div class="logo">
-    <img src="your-logo.png" alt="Logo">
-</div>
-```
-
----
-
-## 📖 Documentation Guide
-
-**For Different Users:**
-
-- **End Users** → Read `USER_GUIDE.md`
-- **Developers** → Read `README.md`
-- **IT/DevOps** → Read `DEPLOYMENT.md`
-
----
-
-## 🔥 Common Use Cases
-
-### 1. Monthly Route Planning
-- Upload current month's schedule
-- Run optimization
-- Share results with team
-
-### 2. Fuel Price Sensitivity
-- Run at current bunker price
-- Run at +10%, +20%, +30%
-- Build contingency budget
-
-### 3. Contract Optimization
-- Test different COA min/max values
-- Identify most valuable contracts
-- Support negotiations with data
-
-### 4. Port Strategy
-- Compare single vs. multi-port loading
-- Optimize port utilization
-- Balance capacity across facilities
-
----
-
-## ✅ Success Checklist
-
-Before sharing with your team:
-
-- [ ] Test with your actual data files
-- [ ] Verify all shipments are assigned
-- [ ] Check constraint satisfaction
-- [ ] Test Gemini AI explanations
-- [ ] Deploy to GitHub Pages
-- [ ] Share URL with stakeholders
-- [ ] Train users on interface
-
----
-
-## 🐛 Troubleshooting
-
-**Dashboard won't load?**
-- Make sure all 3 files are in same folder
-- Use Chrome, Firefox, Safari, or Edge (updated version)
-
-**Optimization fails?**
-- Check that sum of COA minimums ≤ total shipments
-- Verify every shipment has available routes
-- See USER_GUIDE.md troubleshooting section
-
-**Gemini not working?**
-- Verify API key is correct
-- Check internet connection
-- Try again (may be temporary API issue)
-
----
-
-## 📞 Support
-
-**Need help?**
-1. Check USER_GUIDE.md (comprehensive)
-2. Check README.md (technical details)
-3. Email: support@imishipping.com
-
----
-
-## 🎓 Next Steps
-
-1. **Test Now**
-   - Open `index.html`
-   - Upload your sample files
-   - Run optimization
-
-2. **Deploy**
-   - Follow GitHub Pages steps above
-   - Share with team
-
-3. **Customize**
-   - Add your logo
-   - Adjust colors
-   - Modify parameters
-
-4. **Scale**
-   - Use with full shipment schedules
-   - Compare monthly scenarios
-   - Track savings over time
-
----
-
-## 💡 Pro Tips
-
-**For Best Results:**
-- Run optimization weekly to adjust for fuel prices
-- Save scenarios for year-over-year comparison
-- Use Gemini insights to negotiate better rates
-- Share results in team meetings (screenshot the summary cards!)
-
-**Cost Savings Example:**
-A typical optimization can save 5-15% on shipping costs. For a company spending $1M annually, that's **$50,000-$150,000 saved!**
-
----
-
-## 🏆 What Makes This Special?
-
-Unlike other tools:
-- ✨ No subscription fees
-- ✨ No data leaves your browser (privacy!)
-- ✨ Works offline (if using local Python)
-- ✨ AI explains the "why" not just "what"
-- ✨ Professional, branded interface
-- ✨ Full source code included
-
----
-
-## 📈 Measuring Success
-
-**Track these metrics:**
-- Total cost per optimization run
-- Average cost per shipment
-- COA utilization rates
-- Port distribution efficiency
-- Month-over-month cost trends
-
-**Set goals:**
-- Target: <5% cost variance month-to-month
-- Target: >85% utilization of best-value COAs
-- Target: Balanced port usage (avoid single-port dependency)
-
----
-
-## 🎉 You're All Set!
-
-**Your IMI Shipping Dashboard is ready to save you time and money!**
-
-Start with the 5-minute demo, then deploy to GitHub Pages for team access.
-
-**Questions?** Check the included documentation files.
-
-**Success story to share?** We'd love to hear how much you've saved!
-
----
-
-**Happy Shipping! 🚢💰**
-
-*Built with ❤️ for IMI Shipping & Freight*
+For extended technical documentation, refer to the README.md or DEPLOYMENT.md files included in the repository.
