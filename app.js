@@ -462,23 +462,18 @@ class MILogisticsApp {
         // If the uploader is already there, don't build it again
         if (container.innerHTML !== "") return;
 
-        // Insert the HTML structure for the "Drag & Drop" box + SharePoint Input
+        // Insert the HTML structure for the "Drag & Drop" box
         container.innerHTML = `
             <div class="upload-section">
-                <div class="remote-import-box">
-                    <h4>🔗 SharePoint / Cloud Import</h4>
-                    <div style="display: flex; gap: 10px;">
-                        <input type="text" id="remote-url-${viewKey}" placeholder="Paste SharePoint Iframe code or Link here..." class="remote-input">
-                        <button class="import-btn" onclick="app.importRemoteSharePoint('${viewKey}')">Import Live View</button>
-                    </div>
-                    <p style="font-size: 0.7rem; color: var(--text-gray); margin-top: 5px;">Supports: fau-my.sharepoint.com embed links</p>
-                </div>
-
                 <div id="dropzone-${viewKey}" class="dropzone">
                     <span class="dropzone-icon">📁</span>
                     <p><strong>Drag & Drop</strong> up to 10 files or click to browse</p>
-                    <p style="font-size: 0.75rem; opacity: 0.7;">PDF, DOCX, XLSX, CSV</p>
+                    <p style="font-size: 0.75rem; opacity: 0.7;">PDF, DOCX, XLSX, CSV or SharePoint URL</p>
                     <input type="file" id="fileInput-${viewKey}" style="display: none;" accept=".pdf,.docx,.xlsx,.csv" multiple>
+                    <div style="margin-top: 15px;">
+                        <input type="text" id="sharepoint-input-${viewKey}" class="sharepoint-link-input" placeholder="Paste SharePoint Embed Code or URL here..." onclick="event.stopPropagation()">
+                        <button class="add-sharepoint-btn" onclick="event.stopPropagation(); app.handleSharePointInput('${viewKey}')">Add Live View</button>
+                    </div>
                 </div>
                 <div id="viewer-list-${viewKey}" class="viewer-list"></div>
             </div>
@@ -487,70 +482,29 @@ class MILogisticsApp {
         this.initDropzone(viewKey);
     } // End of renderMultiUploader function
 
-    // --- NEW: SharePoint Excel Live Import Logic ---
-    async importRemoteSharePoint(viewKey) {
-        const input = document.getElementById(`remote-url-${viewKey}`);
-        let url = input.value.trim();
+    // New Function to handle SharePoint URL/Iframe input
+    handleSharePointInput(viewKey) {
+        const input = document.getElementById(`sharepoint-input-${viewKey}`);
+        let content = input.value.trim();
+        if (!content) return;
 
-        if (!url) return;
+        let finalUrl = "";
 
-        // 1. Detect if input is an iframe tag and extract src
-        if (url.includes('<iframe')) {
-            const match = url.match(/src="([^"]+)"/);
-            if (match) url = match[1];
+        // Detection Logic: Check if it's an iframe string or a direct URL
+        if (content.includes('<iframe') && content.includes('src="')) {
+            // Extract URL from src attribute
+            const match = content.match(/src="([^"]+)"/);
+            if (match && match[1]) finalUrl = match[1];
+        } else if (content.includes('sharepoint.com') && content.includes('Doc.aspx')) {
+            finalUrl = content;
         }
 
-        // 2. Validate it's a SharePoint link
-        if (!url.includes('sharepoint.com') || !url.includes('Doc.aspx')) {
-            alert("Invalid Source: Please provide a valid SharePoint embed link.");
-            return;
-        }
-
-        // 3. Transform to "Downloadable" variant for parsing (forcing embedview to data stream)
-        // Note: In real-world browsers, CORS policy may require a proxy or specific tenant settings.
-        // We attempt to fetch the binary data directly using XLSX.
-        this.loader.style.display = 'block';
-
-        try {
-            // Extract a filename or use a default
-            const fileName = "SharePoint File (Connected View).xlsx";
+        if (finalUrl && finalUrl.includes('action=embedview')) {
             const fileId = "sp-" + Date.now();
-            
-            // Add a placeholder to the UI
-            const list = document.getElementById(`viewer-list-${viewKey}`);
-            const item = document.createElement('div');
-            item.className = 'viewer-item';
-            item.id = `item-${fileId}`;
-            item.innerHTML = `
-                <div class="viewer-header" style="background: var(--mi-red); color: white;">
-                    <span>🌐 ${fileName}</span>
-                    <div class="viewer-actions">
-                        <button class="remove-file" onclick="app.removeSpecificFile('${fileId}', '${viewKey}')">Disconnect</button>
-                    </div>
-                </div>
-                <div id="content-${fileId}" class="viewer-content">Initializing Secure Connection...</div>
-            `;
-            list.prepend(item);
-
-            const contentArea = document.getElementById(`content-${fileId}`);
-
-            // Fetch the spreadsheet data
-            const response = await fetch(url);
-            const arrayBuffer = await response.arrayBuffer();
-            const workbook = XLSX.read(arrayBuffer, { cellStyles: true, cellNF: true, cellDates: true });
-            
-            // Render using existing excel logic
-            this.renderExcelWithTabs(workbook, fileId, contentArea);
-            
-            // Save to file registry so removals/state works
-            this.viewFiles[viewKey].push({ id: fileId, file: { name: fileName }, isRemote: true });
-            
+            this.renderSharePointItem(finalUrl, fileId, viewKey);
             input.value = ""; // Clear input
-        } catch (err) {
-            console.error(err);
-            alert("Connection Error: Could not extract data from this link. Ensure the file has 'Embed' permissions enabled.");
-        } finally {
-            this.loader.style.display = 'none';
+        } else {
+            alert("Please provide a valid SharePoint 'Embed View' link or iframe code.");
         }
     }
 
@@ -603,6 +557,30 @@ class MILogisticsApp {
             await this.renderFileItem(file, fileId, viewKey);
         } // End of loop
     } // End of handleFiles function
+
+    // New Function to render SharePoint Iframe (View Mode Only)
+    renderSharePointItem(url, fileId, viewKey) {
+        const list = document.getElementById(`viewer-list-${viewKey}`);
+        const item = document.createElement('div');
+        item.className = 'viewer-item';
+        item.id = `item-${fileId}`;
+        
+        // Add specific metadata to tracking list
+        this.viewFiles[viewKey].push({ id: fileId, type: 'sharepoint', url: url });
+
+        item.innerHTML = `
+            <div class="viewer-header">
+                <span>SharePoint Excel (View Mode)</span>
+                <div class="viewer-actions">
+                    <button class="remove-file" onclick="app.removeSpecificFile('${fileId}', '${viewKey}')">Remove</button>
+                </div>
+            </div>
+            <div class="viewer-content" style="padding: 0; min-height: 600px;">
+                <iframe src="${url}" width="100%" height="700" frameborder="0" scrolling="no" style="display: block;"></iframe>
+            </div>
+        `;
+        list.appendChild(item);
+    }
 
     // Function to display the content of an uploaded file on the page
     async renderFileItem(file, fileId, viewKey) {
@@ -679,7 +657,7 @@ class MILogisticsApp {
     downloadFile(fileId, viewKey) {
         // Find the file in our internal tracking list
         const fileObj = this.viewFiles[viewKey].find(f => f.id === fileId);
-        if (!fileObj || fileObj.isRemote) return;
+        if (!fileObj || fileObj.type === 'sharepoint') return;
 
         // Create a temporary link element to trigger the download
         const url = URL.createObjectURL(fileObj.file);
@@ -707,12 +685,6 @@ class MILogisticsApp {
         
         container.innerHTML = tabsHtml;
         
-        // Save workbook to file system if it's remote so switching sheets works
-        const fileEntry = this.viewFiles.excel.find(f => f.id === fileId) || this.viewFiles.generic.find(f => f.id === fileId);
-        if(fileEntry && fileEntry.isRemote) {
-            fileEntry.workbookData = workbook;
-        }
-
         // Render first sheet by default
         this.renderExcelSheet(workbook, sheetNames[0], fileId);
     }
@@ -728,17 +700,13 @@ class MILogisticsApp {
         const fileObj = this.viewFiles.excel.find(f => f.id === fileId) || this.viewFiles.generic.find(f => f.id === fileId);
         if (!fileObj) return;
 
-        if (fileObj.isRemote && fileObj.workbookData) {
-            this.renderExcelSheet(fileObj.workbookData, sheetName, fileId);
-        } else {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const data = new Uint8Array(e.target.result);
-                const workbook = XLSX.read(data, { cellStyles: true, cellNF: true, cellDates: true });
-                this.renderExcelSheet(workbook, sheetName, fileId);
-            };
-            reader.readAsArrayBuffer(fileObj.file);
-        }
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { cellStyles: true, cellNF: true, cellDates: true });
+            this.renderExcelSheet(workbook, sheetName, fileId);
+        };
+        reader.readAsArrayBuffer(fileObj.file);
     }
 
     renderExcelSheet(workbook, sheetName, fileId) {
