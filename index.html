@@ -195,6 +195,12 @@
 
         /* Layout for the file upload area */
         .upload-section { margin-top: 40px; padding-top: 40px; border-top: 2px dashed #e2e8f0; }
+        /* New: Remote Import Box styles */
+        .remote-import-box { background: #f1f5f9; padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
+        .remote-import-box h4 { margin: 0 0 10px 0; font-size: 0.9rem; color: var(--deep-space); }
+        .remote-input { flex: 1; padding: 10px; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 0.85rem; }
+        .import-btn { background: var(--deep-space); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.8rem; }
+
         /* Visual style for the drag-and-drop box */
         .dropzone {
             border: 2px dashed #cbd5e0;
@@ -215,19 +221,6 @@
         }
         /* Style for the folder icon in the dropzone */
         .dropzone-icon { font-size: 2rem; margin-bottom: 10px; display: block; }
-
-        /* SharePoint Additions Style */
-        .sharepoint-input-group { 
-            display: flex; 
-            gap: 10px; 
-            margin-bottom: 20px; 
-            background: #fff; 
-            padding: 15px; 
-            border-radius: 8px; 
-            border: 1px solid #e2e8f0;
-        }
-        .sharepoint-input { flex: 1; padding: 10px; border: 1px solid #cbd5e0; border-radius: 4px; font-size: 0.85rem; }
-        .sharepoint-btn { background: #0078d4; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.85rem; }
         
         /* List layout for uploaded file viewers */
         .viewer-list { display: flex; flex-direction: column; gap: 40px; margin-top: 30px; }
@@ -383,8 +376,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gridjs/dist/gridjs.umd.js"></script>
     
-    <script src="https://alcdn.msauth.net/browser/2.14.2/js/msal-browser.min.js"></script>
-
     <script src="https://elfsightcdn.com/platform.js" async></script>
     <div class="elfsight-app-6ba85109-b815-4820-91b7-5719ae4049e2" data-elfsight-app-lazy></div>
     
