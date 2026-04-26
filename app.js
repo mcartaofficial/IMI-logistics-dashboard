@@ -465,6 +465,11 @@ class MILogisticsApp {
         // Insert the HTML structure for the "Drag & Drop" box
         container.innerHTML = `
             <div class="upload-section">
+                <div class="sharepoint-input-group">
+                    <input type="text" id="sp-url-${viewKey}" class="sharepoint-input" placeholder="Paste SharePoint / OneDrive Direct Link here...">
+                    <button class="sharepoint-btn" onclick="app.handleSharePointLink('${viewKey}')">Load from SharePoint</button>
+                </div>
+
                 <div id="dropzone-${viewKey}" class="dropzone">
                     <span class="dropzone-icon">📁</span>
                     <p><strong>Drag & Drop</strong> up to 10 files or click to browse</p>
@@ -502,6 +507,44 @@ class MILogisticsApp {
         // When files are selected via the traditional click-and-browse menu
         input.onchange = (e) => this.handleFiles(e.target.files, viewKey);
     } // End of initDropzone function
+
+    // SharePoint Support: Logic to handle URL-based file loading
+    async handleSharePointLink(viewKey) {
+        const urlInput = document.getElementById(`sp-url-${viewKey}`);
+        const url = urlInput.value.trim();
+        if(!url) return;
+
+        this.loader.style.display = 'block';
+        try {
+            // Convert SharePoint URL to download URL if needed (Simplified parsing)
+            let downloadUrl = url;
+            if (url.includes('sharepoint.com') && !url.includes('download=1')) {
+                downloadUrl = url + (url.includes('?') ? '&' : '?') + 'download=1';
+            }
+
+            const response = await fetch(downloadUrl);
+            const blob = await response.blob();
+            
+            // Extract filename from URL or header
+            let filename = "sharepoint_file";
+            const contentDisposition = response.headers.get('Content-Disposition');
+            if (contentDisposition && contentDisposition.includes('filename=')) {
+                filename = contentDisposition.split('filename=')[1].split(';')[0].replace(/"/g, '');
+            } else {
+                const urlParts = url.split('/');
+                filename = urlParts[urlParts.length - 1].split('?')[0] || "sp_data.xlsx";
+            }
+
+            const file = new File([blob], filename, { type: blob.type });
+            await this.handleFiles([file], viewKey);
+            urlInput.value = ""; // Clear input on success
+        } catch (err) {
+            alert("Error loading SharePoint file. Please ensure the link is a 'Direct Link' or the file is publicly shared.");
+            console.error(err);
+        } finally {
+            this.loader.style.display = 'none';
+        }
+    }
 
     // Function to manage the list of files being uploaded
     async handleFiles(files, viewKey) {
