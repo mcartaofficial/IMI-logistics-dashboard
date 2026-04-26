@@ -99,7 +99,7 @@ class MILogisticsApp {
         // Initialize an object to track how many files are uploaded to each view
         this.viewFiles = { excel: [], generic: [] };
 
-        // ADDED: Root state for files (Source of Truth)
+        // Root state for files (Source of Truth)
         this.processedData = {};
 
         // Run the initialization function to set up the app
@@ -528,7 +528,7 @@ class MILogisticsApp {
         } // End of loop
     } // End of handleFiles function
 
-    // ADDED: EXCEL DATE FORMATTING HELPER
+    // EXCEL DATE FORMATTING HELPER
     formatExcelValue(val) {
         if (typeof val === 'number' && val > 40000 && val < 50000) {
             // Likely an Excel serial date
@@ -536,6 +536,23 @@ class MILogisticsApp {
             return `${date.m}/${date.d}/${date.y}`;
         }
         return val === null || val === undefined ? '' : val;
+    }
+
+    // ADDITIVE: Helper for style extraction
+    getCellStyle(cellObj) {
+        let style = "";
+        if (cellObj && cellObj.s) {
+            if (cellObj.s.fgColor && cellObj.s.fgColor.rgb) {
+                style += `background-color: #${cellObj.s.fgColor.rgb};`;
+            }
+            if (cellObj.s.font && cellObj.s.font.color && cellObj.s.font.color.rgb) {
+                style += `color: #${cellObj.s.font.color.rgb};`;
+            }
+            if (cellObj.s.font && cellObj.s.font.bold) {
+                style += `font-weight: bold;`;
+            }
+        }
+        return style;
     }
 
     // Function to display the content of an uploaded file on the page
@@ -551,8 +568,8 @@ class MILogisticsApp {
         // Set the HTML structure for the file header and content area
         item.innerHTML = `
             <div class="viewer-header">
-                <span>${file.name}</span>
-                <div style="display: flex; gap: 10px;">
+                <span id="title-${fileId}">${file.name}</span>
+                <div style="display: flex; gap: 10px; align-items: center;" id="actions-${fileId}">
                     <button class="download-btn" onclick="app.downloadFile('${fileId}')">Download</button>
                     <button class="remove-file" onclick="app.removeSpecificFile('${fileId}', '${viewKey}')">Remove</button>
                 </div>
@@ -572,7 +589,11 @@ class MILogisticsApp {
             if (extension === 'pdf') {
                 const url = URL.createObjectURL(file);
                 this.processedData[fileId] = { type: 'pdf', data: url, name: file.name };
-                contentArea.innerHTML = `<iframe src="${url}" class="pdf-viewer"></iframe>`;
+                // FIXED: Wrapped in container with forced scrolling
+                contentArea.innerHTML = `
+                    <div class="pdf-outer-container">
+                        <iframe src="${url}#view=FitH" class="pdf-viewer"></iframe>
+                    </div>`;
             // Logic for Microsoft Word files
             } else if (extension === 'docx') {
                 const arrayBuffer = await file.arrayBuffer();
@@ -582,76 +603,113 @@ class MILogisticsApp {
             // Logic for Excel or CSV spreadsheets
             } else if (extension === 'xlsx' || extension === 'csv') {
                 const arrayBuffer = await file.arrayBuffer();
-                const workbook = XLSX.read(arrayBuffer);
-                const firstSheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[firstSheetName];
+                // ADDITIVE: cellStyles: true enables color reading
+                const workbook = XLSX.read(arrayBuffer, { cellStyles: true });
                 
-                // FIXED: Do NOT use .slice() or limits. Read entire sheet.
-                const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-                
-                // BINDING: Save full data to state
+                // ADDITIVE: Store multiple sheets
                 this.processedData[fileId] = { 
                     type: 'excel', 
-                    data: data, 
+                    workbook: workbook,
                     name: file.name,
-                    headers: data[0]
+                    sheets: {},
+                    currentSheet: workbook.SheetNames[0]
                 };
 
-                // Create a scrollable container
-                contentArea.innerHTML = `<div id="grid-${fileId}" class="excel-grid-container"></div>`;
-                
-                // ADDITIVE: Define the editable column structure with Date Formatting
-                const editableColumns = this.processedData[fileId].headers.map((colName, colIndex) => {
-                    return {
-                        name: colName,
-                        formatter: (cell, row) => {
-                            // Apply Date Formatting to the visual display
-                            const formattedVal = this.formatExcelValue(cell);
-                            const rowIdx = row.cells[row.cells.length - 1].data; 
-                            return gridjs.html(`<input class="cell-input" value="${formattedVal}" oninput="app.updateCellState('${fileId}', ${rowIdx}, ${colIndex}, this.value)">`);
+                // Extract data for every sheet
+                workbook.SheetNames.forEach(sheetName => {
+                    const ws = workbook.Sheets[sheetName];
+                    const rawData = XLSX.utils.sheet_to_json(ws, { header: 1 });
+                    
+                    // Create cell-level style map
+                    const styleMap = {};
+                    const range = XLSX.utils.decode_range(ws['!ref'] || 'A1');
+                    for (let R = range.s.r; R <= range.e.r; ++R) {
+                        for (let C = range.s.c; C <= range.e.c; ++C) {
+                            const cell_ref = XLSX.utils.encode_cell({c:C, r:R});
+                            styleMap[`${R}-${C}`] = this.getCellStyle(ws[cell_ref]);
                         }
+                    }
+
+                    this.processedData[fileId].sheets[sheetName] = {
+                        data: rawData,
+                        styleMap: styleMap,
+                        headers: rawData[0] || []
                     };
                 });
 
-                // Map data rows and include the original row index for state tracking
-                const gridData = data.slice(1).map((row, idx) => [...row, idx]);
+                // Create UI for switching sheets
+                if (workbook.SheetNames.length > 1) {
+                    const select = document.createElement('select');
+                    select.className = 'sheet-selector';
+                    workbook.SheetNames.forEach(name => {
+                        const opt = document.createElement('option');
+                        opt.value = name;
+                        opt.textContent = name;
+                        select.appendChild(opt);
+                    });
+                    select.onchange = (e) => this.switchActiveSheet(fileId, e.target.value);
+                    document.getElementById(`actions-${fileId}`).prepend(select);
+                }
 
-                // Render with Grid.js but NO pagination + Forced expansion
-                new gridjs.Grid({
-                    columns: [...editableColumns, { name: 'ID', hidden: true }],
-                    data: gridData,
-                    pagination: false, 
-                    fixedHeader: true,
-                    resizable: true,
-                    sort: false, 
-                    style: {
-                        container: {
-                            'min-width': 'max-content' 
-                        }
-                    }
-                }).render(document.getElementById(`grid-${fileId}`)); 
+                this.renderExcelGrid(fileId, this.processedData[fileId].currentSheet);
             } // End of file type checks
         } catch (err) {
             contentArea.innerHTML = `<p style="color: var(--mi-red)">Error: ${err.message}</p>`;
         } // End of try-catch block
     } // End of renderFileItem function
 
-    // ADDED: State Binding Logic for Excel Cells
-    updateCellState(fileId, rowIdx, colIdx, newValue) {
+    // ADDITIVE: Multi-sheet switcher
+    switchActiveSheet(fileId, sheetName) {
+        this.processedData[fileId].currentSheet = sheetName;
+        this.renderExcelGrid(fileId, sheetName);
+    }
+
+    // ADDITIVE: Isolated grid rendering
+    renderExcelGrid(fileId, sheetName) {
+        const contentArea = document.getElementById(`content-${fileId}`);
+        const sheet = this.processedData[fileId].sheets[sheetName];
+        
+        contentArea.innerHTML = `<div id="grid-${fileId}" class="excel-grid-container"></div>`;
+        
+        const editableColumns = sheet.headers.map((colName, colIndex) => {
+            return {
+                name: colName,
+                formatter: (cell, row) => {
+                    const rowIdx = row.cells[row.cells.length - 1].data; 
+                    const customStyle = sheet.styleMap[`${rowIdx+1}-${colIndex}`] || "";
+                    const formattedVal = this.formatExcelValue(cell);
+                    return gridjs.html(`<input class="cell-input" style="${customStyle}" value="${formattedVal}" oninput="app.updateCellState('${fileId}', '${sheetName}', ${rowIdx}, ${colIndex}, this.value)">`);
+                }
+            };
+        });
+
+        const gridData = sheet.data.slice(1).map((row, idx) => [...row, idx]);
+
+        new gridjs.Grid({
+            columns: [...editableColumns, { name: 'ID', hidden: true }],
+            data: gridData,
+            pagination: false, 
+            fixedHeader: true,
+            resizable: true,
+            style: { table: { 'min-width': '100%' } }
+        }).render(document.getElementById(`grid-${fileId}`));
+    }
+
+    // State Binding Logic for Excel Cells
+    updateCellState(fileId, sheetName, rowIdx, colIdx, newValue) {
         if (this.processedData[fileId]) {
-            // Data is [headerRow, row1, row2...] so rowIdx 0 is actually index 1
-            this.processedData[fileId].data[rowIdx + 1][colIdx] = newValue;
+            this.processedData[fileId].sheets[sheetName].data[rowIdx + 1][colIdx] = newValue;
         }
     }
 
-    // ADDED: State Binding Logic for Word Content
+    // State Binding Logic for Word Content
     updateTextState(fileId, newHtml) {
         if (this.processedData[fileId]) {
             this.processedData[fileId].data = newHtml;
         }
     }
 
-    // ADDED: Download Logic (Generates files from the MODIFIED state)
+    // Download Logic (Generates files from the MODIFIED state)
     downloadFile(fileId) {
         const item = this.processedData[fileId];
         if (!item) return;
@@ -660,10 +718,11 @@ class MILogisticsApp {
         let filename = item.name;
 
         if (item.type === 'excel') {
-            // Create workbook from the current state (this.processedData[fileId].data)
-            const ws = XLSX.utils.aoa_to_sheet(item.data);
             const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "ModifiedSheet");
+            Object.keys(item.sheets).forEach(sName => {
+                const ws = XLSX.utils.aoa_to_sheet(item.sheets[sName].data);
+                XLSX.utils.book_append_sheet(wb, ws, sName);
+            });
             const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
             blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
             if (!filename.endsWith('.xlsx')) filename = filename.split('.')[0] + '.xlsx';
