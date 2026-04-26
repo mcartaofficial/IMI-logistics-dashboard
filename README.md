@@ -1,232 +1,75 @@
-# 🚢 IMI Shipping & Freight - Route Optimization Dashboard
+Comprehensive Technical Analysis: IMI Shipping & Freight - Route Optimization Dashboard
+The IMI Shipping & Freight - Route Optimization Dashboard is a sophisticated, multi-layered analytical platform designed to streamline maritime logistics, financial forecasting, and operational decision-making. It serves as a centralized command center for managing complex shipping contracts (COA), port-side logistics, and predictive market analysis.
 
-A powerful, AI-driven dashboard for optimizing shipping routes using linear programming and Google Gemini AI explanations.
+# Core Architectural Framework
+The dashboard is built on a modular, client-side architecture that emphasizes data persistence and real-time visualization. It utilizes a custom-built JavaScript framework, MILogisticsApp, to manage state across various analytical widgets.
 
-![IMI Shipping Dashboard](https://img.shields.io/badge/Status-Production%20Ready-green)
-![License](https://img.shields.io/badge/License-MIT-blue)
+## State Management and Persistence
+LocalStorage Integration: The application utilizes the browser's LocalStorage to maintain user configurations, such as custom CSS overrides, uploaded document states, and API credentials, ensuring continuity across sessions.
 
-## 🎯 Features
+Dynamic Content Loading: The dashboard employs an iframe-based widget system that allows for the simultaneous display of interactive maps, Excel spreadsheets, and PDF reports without requiring full-page reloads.
 
-- **Linear Programming Optimization**: Minimizes total shipping costs while satisfying all constraints
-- **Interactive Dashboard**: Upload Excel files and adjust parameters in real-time
-- **AI-Powered Explanations**: Google Gemini provides detailed insights on why solutions are optimal
-- **Constraint Management**: 
-  - COA (Contract of Affreightment) min/max limits
-  - FOB port capacity constraints
-  - Bunker fuel price adjustments (BAF)
-- **Scenario Comparison**: Compare multiple optimization runs with different parameters
-- **Professional Branding**: IMI Shipping & Freight red/white theme with cargo ship imagery
+## Security and Integration
+Gemini AI Integration: The platform integrates with the Google Gemini API to provide natural language explanations of complex optimization results, identifying cost-saving opportunities and logistical bottlenecks.
 
-## 📋 Data Requirements
+Data Privacy Protocols: By prioritizing client-side processing, sensitive shipping data remains within the user's local environment unless explicitly pushed to a cloud backend like Railway or Render.
 
-The dashboard requires 4 Excel files:
+# Optimization Engine and Financial Modeling
+The primary utility of the dashboard lies in its ability to transform raw logistical data into actionable shipping strategies.
 
-### 1. COA List (`COA_List.xlsx`)
-Contains Contract of Affreightment details:
-- `COA ID#`: Contract identifier
-- `Min (Firm)`: Minimum guaranteed shipments
-- `Max (Firm + Optionals)`: Maximum allowed shipments
-- `Start Date` / `End Date`: Contract period
-- `BAF Strike`: Bunker adjustment base price
-- `BAF Factor ($/pmt per $/mt Bunker)`: BAF calculation factor
+## Linear Programming Route Optimization
+Variable Input Processing: The engine processes four critical data streams: COA List (contracts), COA Rates (pricing), FOB Prices (port costs), and the Shipment Schedule.
 
-### 2. COA Rates (`COA_Rate.xlsx`)
-Route-specific pricing:
-- `COA ID#`: Contract identifier
-- `Load Port`: Origin port
-- `Discharge Port`: Destination port
-- `Price (pmt)`: Base freight rate (per metric ton)
-- `Consumption Bunker`: Fuel consumption for route
+Bunker Price Sensitivity: Users can input real-time bunker (fuel) prices to observe how fluctuations impact the total cost of shipping routes.
 
-### 3. FOB Prices (`FOB_Prices.xlsx`)
-Port pricing and capacity:
-- `Load Port`: Port name
-- `Price`: FOB price per metric ton
-- `Min`: Minimum shipments from this port
-- `Max`: Maximum shipments from this port
+Constraint Satisfaction: The system calculates the most cost-effective assignments while respecting contractual minimums and maximums, port capacities, and vessel availability.
 
-### 4. Shipment Schedule (`Shipment_Schedule.xlsx`)
-Required shipments:
-- `Shipment Number`: Unique identifier
-- `Loading Port`: Origin (supports "Port A or Port B" format)
-- `Discharge Port`: Destination
-- `Loading Month / Laycan`: Delivery timeframe
+## Advanced Forecasting Capabilities
+The dashboard includes dedicated modules for time-series analysis, essential for navigating the volatile energy markets.
 
-## 🚀 Deployment on GitHub Pages
+Forecasting Time Series Models: This tab replaces general regression with specific models for Rotterdam Fuel Oil and Brent Crude benchmarks.
 
-### Step 1: Create GitHub Repository
+Statistical Methodologies:
 
-```bash
-# Create a new repository on GitHub (e.g., "imi-shipping-dashboard")
-# Then clone it locally:
-git clone https://github.com/YOUR_USERNAME/imi-shipping-dashboard.git
-cd imi-shipping-dashboard
-```
+ARIMA (AutoRegressive Integrated Moving Average): Used for short-term price predictions based on historical trends.
 
-### Step 2: Add Files
+Exponential Smoothing: Applied to smooth out seasonal volatility in shipping rates and fuel costs.
 
-Copy all files from this project into your repository:
+Metric-Driven Analysis: The application outputs critical performance indicators, including Mean Absolute Percentage Error (MAPE) and R-Squared values, to validate model accuracy.
 
-```bash
-# Copy these files:
-# - index.html
-# - app.js
-# - README.md
-```
+# Operational Modules and User Interface
+The interface is engineered for high-stakes environments where clarity and rapid data retrieval are paramount.
 
-### Step 3: Push to GitHub
+## The Integrated Command Center
+Interactive Navigation Sidebar: A persistent sidebar provides instant access to the Dashboard Overview, Route Optimization, Technical Documentation, and specialized forecasting tabs.
 
-```bash
-git add .
-git commit -m "Initial commit: IMI Shipping Dashboard"
-git push origin main
-```
+Real-Time Maritime Tracking: Integration with ShipXplorer provides a live map view of vessel positions, allowing logistics managers to correlate optimized plans with current fleet locations.
 
-### Step 4: Enable GitHub Pages
+## Multi-Format Document Processing
+Universal File Viewer: The dashboard supports a drag-and-drop interface for XLSX, CSV, PDF, and DOCX files.
 
-1. Go to your repository on GitHub
-2. Click **Settings** → **Pages**
-3. Under "Source", select **main** branch
-4. Click **Save**
-5. Your dashboard will be live at: `https://YOUR_USERNAME.github.io/imi-shipping-dashboard/`
+On-Page Spreadsheet Editing: Users can modify Excel data directly within the dashboard interface, allowing for "what-if" scenario testing without leaving the application.
 
-## 💡 Usage Guide
+Persistent Document State: The "Admin-Only" settings ensure that once a document or widget is added to the dashboard, it remains part of the project milestone unless manually reset by a developer.
 
-### Getting Started
+# Technical Specifications and Standards
+To maintain professional software standards, the dashboard adheres to rigorous technical and accessibility guidelines.
 
-1. **Open the Dashboard**: Navigate to your deployed GitHub Pages URL
-2. **Upload Data Files**: Click each upload box and select your Excel files
-3. **Set Parameters**:
-   - Bunker Price ($/mt): Current fuel cost
-   - Optimization Goal: Cost minimization strategy
-4. **Add Gemini API Key**: 
-   - Get your free key at: https://makersuite.google.com/app/apikey
-   - Paste it in the API Key field
-5. **Click "Optimize Routes"**: The system will solve and display results
+## UI/UX and Accessibility
+WCAG Compliance: The interface utilizes high-contrast color ratios (Primary: #C8102E, Secondary: #9B0C23) and professional typography to ensure readability and accessibility for all users.
 
-### Understanding Results
+Responsive Grid System: The layout is built on a flexible grid that adapts the command center from ultra-wide desktop monitors to mobile devices, facilitating field-side logistics management.
 
-#### Summary Cards
-- **Total Cost**: Complete shipping expense for all routes
-- **Total Shipments**: Number of shipments optimized
-- **Average Cost/Shipment**: Cost efficiency metric
-- **COAs Utilized**: Number of contracts used
+## Developer-Centric Features
+Modular Codebase: The app.js file is structured to be extensible, allowing developers to add new data-driven widgets or optimization constraints without refactoring the core logic.
 
-#### Selected Routes Table
-Shows the optimal route for each shipment with:
-- Load/Discharge ports
-- COA contract used
-- Cost breakdown (base rate + FOB)
+Deployment Versatility: The system supports multiple deployment paths, from lightweight static hosting on GitHub Pages to full-stack containerized environments on Railway or Render for intensive Python-based calculations.
 
-#### Constraint Analysis
-- **COA Utilization**: Shows how each contract is used vs. min/max limits
-- **Port Utilization**: Port capacity usage vs. limits
+# Strategic Impact
+By consolidating disparate data sources—market trends, contractual obligations, and real-time ship positions—the IMI Shipping & Freight Dashboard enables:
 
-#### AI Explanation
-Google Gemini analyzes the solution and explains:
-- Why this minimizes costs
-- How contracts are optimally utilized
-- Port selection strategy
-- Cost-saving recommendations
+Cost Reduction: Identifying the mathematical "best" route reduces fuel consumption and port fees.
 
-### Adjusting Scenarios
+Risk Mitigation: Corporate Risk Management tools and predictive models prepare the organization for market volatility.
 
-1. Modify bunker price or other parameters
-2. Click "Optimize Routes" again
-3. View comparison with previous scenarios in the Scenario Comparison section
-
-## 🔧 Technical Details
-
-### Optimization Model
-
-The system uses **Linear Programming** (LP) to solve:
-
-**Objective Function:**
-```
-Minimize: Σ (Base Rate + BAF + FOB Price) × Route Selection
-```
-
-**Subject to:**
-1. Each shipment assigned to exactly one route
-2. COA min ≤ shipments using COA ≤ COA max
-3. Port min ≤ shipments from port ≤ Port max
-
-**BAF Calculation:**
-```
-BAF = (Bunker Price - BAF Strike) × BAF Factor (if Bunker Price > BAF Strike)
-```
-
-### Technology Stack
-
-- **Frontend**: Pure HTML5, CSS3, JavaScript (ES6+)
-- **Optimization**: javascript-lp-solver library
-- **Excel Parsing**: SheetJS (xlsx.js)
-- **AI Integration**: Google Gemini API
-- **Hosting**: GitHub Pages (static)
-
-### Browser Compatibility
-
-✅ Chrome 90+  
-✅ Firefox 88+  
-✅ Safari 14+  
-✅ Edge 90+
-
-## 🔐 Security & Privacy
-
-- All optimization runs **client-side** in your browser
-- No data is sent to external servers (except Gemini API for explanations)
-- API keys are not stored; they remain in-session only
-- Excel files are processed locally
-
-## 📊 Example Use Cases
-
-1. **Monthly Route Planning**: Upload current shipment schedule and optimize
-2. **Fuel Price Sensitivity**: Adjust bunker prices to see cost impact
-3. **Contract Utilization**: Ensure COA minimums are met while minimizing cost
-4. **Port Strategy**: Understand which ports provide best value
-5. **What-if Analysis**: Compare scenarios with different constraints
-
-## 🛠️ Customization
-
-### Changing Branding Colors
-
-Edit `index.html` CSS variables:
-
-```css
-:root {
-    --imi-red: #C8102E;        /* Primary brand color */
-    --imi-dark-red: #9B0C23;   /* Secondary brand color */
-    --imi-white: #FFFFFF;       /* Background */
-}
-```
-
-### Adding Custom Constraints
-
-Modify `app.js` in the `solveLP()` method:
-
-```javascript
-// Add your custom constraint
-model.constraints['custom_constraint'] = { max: someValue };
-```
-
-## 📞 Support
-
-For issues or questions:
-- Create an issue on GitHub
-- Email: support@imishipping.com
-
-## 📄 License
-
-MIT License - Free to use and modify
-
-## 🙏 Acknowledgments
-
-- SheetJS for Excel processing
-- javascript-lp-solver for optimization
-- Google Gemini for AI explanations
-
----
-
-**Built with ❤️ for IMI Shipping & Freight**
-
-*Optimizing global logistics, one route at a time* 🌍📦
+Operational Transparency: A unified view for team members and stakeholders ensures everyone is operating from the same dataset, supported by AI-generated insights.
