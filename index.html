@@ -41,7 +41,15 @@
         .nav-item.active { background: var(--mi-red); color: var(--white); font-weight: 700; }
 
         /* The main content area next to the sidebar */
-        .content { flex: 1; overflow-y: auto !important; display: flex; flex-direction: column; scroll-behavior: smooth; height: 100%; }
+        .content { 
+            flex: 1; 
+            overflow-y: scroll !important; /* FORCED SCROLLBAR */
+            overflow-x: scroll !important; /* FORCED SCROLLBAR */
+            display: flex; 
+            flex-direction: column; 
+            scroll-behavior: smooth; 
+        }
+
         /* The bar at the top of the content area */
         .top-bar { background: var(--white); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.03); position: sticky; top: 0; z-index: 100; }
         /* Styling for the hamburger menu button */
@@ -50,9 +58,18 @@
         .menu-toggle span { display: block; width: 20px; height: 2px; background: white; }
 
         /* The white space around the main cards */
-        .view-area { padding: 45px; flex: 1; overflow-y: visible; }
+        .view-area { padding: 45px; overflow: visible !important; }
         /* Styling for the large white boxes that hold page content */
-        .card { background: var(--white); border-radius: 20px; padding: 35px; box-shadow: 0 15px 35px rgba(36, 34, 63, 0.08); border: 1px solid rgba(226, 232, 240, 0.6); min-height: 400px; position: relative; }
+        .card { 
+            background: var(--white); 
+            border-radius: 20px; 
+            padding: 35px; 
+            box-shadow: 0 15px 35px rgba(36, 34, 63, 0.08); 
+            border: 1px solid rgba(226, 232, 240, 0.6); 
+            min-height: 400px; 
+            position: relative; 
+            overflow: visible !important; /* PREVENT CLIPPING */
+        }
         
         /* A wrapper used to clip and round the corners of embedded maps */
         .hard-clip-wrapper { border-radius: 15px; border: 1px solid #eee; overflow: hidden; background: #fff; margin-bottom: 25px; }
@@ -202,33 +219,37 @@
         /* List layout for uploaded file viewers */
         .viewer-list { display: flex; flex-direction: column; gap: 40px; margin-top: 30px; }
         /* Individual container for a file being viewed */
-        .viewer-item { background: white; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; width: 100%; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
+        .viewer-item { background: white; border-radius: 12px; border: 1px solid #e2e8f0; overflow: visible !important; width: 100%; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
         /* The header bar for an uploaded file item */
         .viewer-header { background: #f1f5f9; padding: 14px 24px; font-weight: 700; font-size: 0.9rem; color: var(--deep-space); border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
         
-        /* Inner area where file content is shown */
+        /* Inner area where file content is shown - FORCED SCROLLBAR */
         .viewer-content { 
             padding: 24px; 
             width: 100%; 
             min-height: 800px; 
-            overflow: auto !important; 
-        }
-        
-        /* --- PDF FINAL SCROLL FIX --- */
-        .pdf-viewer-outer-container {
-            width: 100%;
-            height: 1200px;
-            overflow: auto !important;
-            display: block;
-            background: #525659;
+            overflow-y: scroll !important; 
+            overflow-x: scroll !important;
             -webkit-overflow-scrolling: touch;
         }
-        .pdf-viewer-frame {
+        
+        /* --- PDF SCROLL FIX (ALWAYS VISIBLE) --- */
+        .pdf-viewer-wrapper {
             width: 100%;
-            height: 100%;
-            min-height: 100%;
-            border: none;
+            height: 1200px;
+            overflow-y: scroll !important; /* FORCED */
+            overflow-x: scroll !important; /* FORCED */
+            -webkit-overflow-scrolling: touch;
+            position: relative;
+            background: #525659;
             display: block;
+        }
+        .pdf-viewer { 
+            width: 100%; 
+            height: 100%; 
+            border: none; 
+            display: block; 
+            margin-bottom: 12px; /* SPACING BETWEEN PAGES */
         }
         
         /* --- EXCEL SPREADSHEET STYLES --- */
@@ -236,24 +257,47 @@
         .excel-tab-btn { padding: 8px 16px; border: 1px solid #ccc; border-bottom: none; background: #e2e8f0; cursor: pointer; font-size: 0.8rem; border-radius: 4px 4px 0 0; }
         .excel-tab-btn.active { background: white; font-weight: bold; border-top: 2px solid var(--mi-red); }
         
-        .excel-table-container { width: 100%; overflow: auto !important; border: 1px solid #ccc; max-height: 800px; }
+        .excel-table-container { 
+            width: 100%; 
+            overflow-y: scroll !important; 
+            overflow-x: scroll !important; 
+            border: 1px solid #ccc; 
+            max-height: 800px; 
+        }
         .excel-table { border-collapse: collapse; font-family: Calibri, sans-serif; font-size: 11pt; background: white; width: max-content; }
         .excel-table th { background: #e6e6e6; border: 1px solid #ccc; font-weight: normal; color: #666; padding: 2px 8px; text-align: center; position: sticky; top: 0; z-index: 2; }
         .excel-table th.row-label { position: sticky; left: 0; z-index: 3; width: 40px; }
         .excel-table td { border: 1px solid #d4d4d4; padding: 4px 8px; min-width: 60px; white-space: nowrap; outline: none; }
         .excel-table td:focus { background: #fffde7 !important; border: 2px solid var(--mi-red); }
         
-        .chart-badge { background: #fff3cd; color: #856404; padding: 8px 15px; border-radius: 4px; margin-bottom: 10px; display: inline-flex; align-items: center; gap: 8px; font-weight: bold; border: 1px solid #ffeeba; font-size: 0.8rem; }
+        .chart-notification { background: #fff3cd; color: #856404; padding: 10px; border-radius: 4px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-weight: bold; border: 1px solid #ffeeba; }
 
         /* Text styling for Word document previews */
-        .docx-viewer { line-height: 1.8; color: #2d3748; padding: 20px; font-size: 1.1rem; outline: none; }
+        .docx-viewer { 
+            line-height: 1.8; 
+            color: #2d3748; 
+            padding: 20px; 
+            font-size: 1.1rem; 
+            outline: none; 
+            overflow-y: scroll !important; 
+            overflow-x: scroll !important; 
+            max-height: 800px; 
+        }
         
-        /* Buttons in Header */
-        .header-actions { display: flex; gap: 10px; }
-        .header-btn { border: none; border-radius: 4px; padding: 6px 14px; cursor: pointer; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; transition: opacity 0.2s; }
-        .remove-file { background: var(--mi-red); color: white; }
-        .download-file { background: var(--deep-space); color: white; }
-        .header-btn:hover { opacity: 0.8; }
+        /* Style for the red "Remove" button on uploaded files */
+        .remove-file { background: var(--mi-red); color: white; border: none; border-radius: 4px; padding: 6px 14px; cursor: pointer; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* Force scrollbars for webkit engines (Chrome, Safari, Edge) */
+        ::-webkit-scrollbar {
+            -webkit-appearance: none;
+            width: 10px;
+            height: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            border-radius: 5px;
+            background-color: rgba(0,0,0,.5);
+            -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+        }
 
         /* Media query: Responsive adjustments for tablets */
         @media (max-width: 1024px) { 
@@ -266,7 +310,7 @@
             .services-grid { grid-template-columns: 1fr; } 
             .hq-grid { grid-template-columns: 1fr; } 
             .img-about-header { grid-template-columns: 1fr; gap: 30px; } 
-            .pdf-viewer-outer-container { height: 800px; }
+            .pdf-viewer-wrapper { height: 800px; }
         }
     </style>
 </head>
