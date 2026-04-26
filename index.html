@@ -125,7 +125,7 @@
         .commitment-text { font-size: 1.1rem; line-height: 1.6; font-weight: 300; }
 
         /* Dark container for the headquarters contact section */
-        .hq-container { background-color: var(--deep-space); color: white; padding: 60px 40px; border-radius: 10px; }
+        .group-container { background-color: var(--deep-space); color: white; padding: 60px 40px; border-radius: 10px; }
         /* Grid to organize HQ locations side-by-side */
         .hq-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 40px; margin-top: 20px; }
         /* Text styling for each HQ box */
@@ -207,86 +207,32 @@
         .viewer-header { background: #f1f5f9; padding: 14px 24px; font-weight: 700; font-size: 0.9rem; color: var(--deep-space); border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
         
         /* Inner area where file content is shown */
-        .viewer-content { 
-            padding: 24px; 
-            width: 100%; 
-            min-height: 500px; 
-            max-height: 85vh; 
-            overflow: auto !important; /* Enable scrolling for all files */
-            -webkit-overflow-scrolling: touch; 
-        }
+        .viewer-content { padding: 24px; width: 100%; min-height: 800px; }
         
-        /* Sizing for the embedded PDF viewer */
-        .pdf-viewer { 
-            width: 100%; 
-            height: 80vh; 
-            border: none; 
-            display: block; 
-        }
-
-        /* DOCX styling preservation */
-        .docx-viewer { 
-            line-height: 1.6; 
-            color: #2d3748; 
-            padding: 40px; 
-            font-size: 1rem; 
-            background: white;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
-            border-radius: 8px;
-        }
-        .docx-viewer p { margin-bottom: 1em; }
-        .docx-viewer ul, .docx-viewer ol { margin-left: 2em; margin-bottom: 1em; }
-        
-        /* Excel Grid Specifics */
-        .excel-grid-container { 
-            width: 100%; 
-            border: 1px solid #e2e8f0;
-            background: #fdfdfd;
-        }
-        .gridjs-table { border-collapse: collapse !important; width: auto !important; min-width: 100%; }
-        .gridjs-td, .gridjs-th { border: 1px solid #cbd5e0 !important; padding: 0 !important; }
-        
-        .cell-input {
+        /* --- PDF SCROLL FIX --- */
+        .pdf-viewer-wrapper {
             width: 100%;
-            height: 100%;
-            border: none;
-            padding: 8px 12px;
-            font-family: inherit;
-            font-size: 0.85rem;
-            background: transparent;
-            outline: none;
-            box-sizing: border-box;
-            display: block;
+            height: 1200px;
+            overflow: auto !important;
+            -webkit-overflow-scrolling: touch;
+            position: relative;
+            background: #525659;
         }
-        .cell-input:focus { background: rgba(214, 25, 43, 0.05); box-shadow: inset 0 0 0 2px var(--mi-red); }
+        .pdf-viewer { width: 100%; height: 100%; border: none; display: block; }
+        
+        /* --- EXCEL SPREADSHEET STYLES --- */
+        .excel-table-container { width: 100%; overflow: auto; border: 1px solid #ccc; max-height: 800px; }
+        .excel-table { border-collapse: collapse; font-family: Calibri, sans-serif; font-size: 11pt; background: white; width: max-content; }
+        .excel-table th { background: #e6e6e6; border: 1px solid #ccc; font-weight: normal; color: #666; padding: 2px 8px; text-align: center; position: sticky; top: 0; z-index: 2; }
+        .excel-table th.row-label { position: sticky; left: 0; z-index: 3; width: 40px; }
+        .excel-table td { border: 1px solid #d4d4d4; padding: 4px 8px; min-width: 60px; white-space: nowrap; }
+        .chart-notification { background: #fff3cd; color: #856404; padding: 10px; border-radius: 4px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-weight: bold; border: 1px solid #ffeeba; }
 
-        /* Multi-sheet dropdown */
-        .sheet-selector {
-            padding: 6px 12px;
-            border-radius: 4px;
-            border: 1px solid #cbd5e0;
-            font-size: 0.8rem;
-            margin-right: 10px;
-            cursor: pointer;
-            background: white;
-        }
-
-        /* Chart Placeholder styling */
-        .chart-alert {
-            background: #fffbe6;
-            border: 1px solid #ffe58f;
-            padding: 12px 20px;
-            border-radius: 6px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.85rem;
-            color: #856404;
-        }
-
-        .download-btn { background: var(--deep-space); color: white; border: none; border-radius: 4px; padding: 6px 14px; cursor: pointer; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; margin-right: 8px; }
-        .remove-file { background: var(--mi-red); color: white; border: none; border-radius: 4px; padding: 6px 14px; cursor: pointer; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
+        /* Text styling for Word document previews */
+        .docx-viewer { line-height: 1.8; color: #2d3748; padding: 20px; font-size: 1.1rem; }
+        
+        /* Style for the red "Remove" button on uploaded files */
+        .remove-file { background: var(--mi-red); color: white; border: none; border-radius: 4px; padding: 6px 14px; cursor: pointer; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
 
         /* Media query: Responsive adjustments for tablets */
         @media (max-width: 1024px) { 
@@ -299,9 +245,7 @@
             .services-grid { grid-template-columns: 1fr; } 
             .hq-grid { grid-template-columns: 1fr; } 
             .img-about-header { grid-template-columns: 1fr; gap: 30px; } 
-            .pdf-viewer { height: 500px; }
-            .view-area { padding: 15px; }
-            .card { padding: 15px; }
+            .pdf-viewer-wrapper { height: 800px; }
         }
     </style>
 </head>
