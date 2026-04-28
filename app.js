@@ -319,11 +319,14 @@ class MILogisticsApp {
 
     // Function to load and display the external interactive widget
     renderEmbeddableWidget() {
-        // Find where the widget should go in the HTML
-        const container = document.getElementById('widget-mount-point');
-        // If the container doesn't exist or already has stuff in it, stop here
-        if (!container || container.children.length > 0) return;
-
+        // Find where the original widget should go
+        const container1 = document.getElementById('widget-mount-point');
+        // Find where the new widget container is located
+        const container2 = document.getElementById('new-widget-mount-point');
+        
+        // If the primary container doesn't exist or already has its widget, stop here
+        if (!container1 || container1.children.length > 0) return;
+        
         // Create a new div element to hold the widget
         const widgetDiv = document.createElement('div');
         // Set the unique class name required by the widget provider
@@ -336,6 +339,7 @@ class MILogisticsApp {
         widgetDiv.setAttribute('data-loader', 'false');
         // Tell the widget to load immediately rather than waiting
         widgetDiv.setAttribute('data-lazy-load', 'false');
+        container1.appendChild(widgetDiv1);
 
         // Create a script element to load the widget's brain (software library)
         const script = document.createElement('script');
@@ -343,11 +347,14 @@ class MILogisticsApp {
         script.src = "https://widgets.embeddable.co/sdk/latest/embeddable.js";
         // Tell the browser to load this script in the background
         script.async = true;
+        // Ensure script runs after the divs are created
+        script.defer = true;
 
-        // Add the widget div to the page
-        container.appendChild(widgetDiv);
-        // Add the widget script to the page
-        container.appendChild(script);
+        // Add the widget script to the head of the page to trigger all widgets
+        document.head.appendChild(script);
+        
+        // Note: The second widget (eIvRFEZeWS) is already defined in the HTML 
+        // and will be automatically picked up by the script above.
     } // End of renderEmbeddableWidget function
 
     // Function to show the home dashboard screen
