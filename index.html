@@ -358,10 +358,13 @@
                 <div id="home-view" class="page-frame active">
                     <div id="home-content"></div>
                     
-                    <div class="widget-clipper" style="display: flex; gap: 5px; align-items: flex-start; overflow: hidden;">
-    <div id="widget-mount-point" style="flex: 1; margin-bottom: -35px; display: block;"></div>
+                   // Remove 'display: flex' and 'flex: 1' to allow vertical stacking
+<div class="widget-clipper" style="overflow: hidden;">
+    <!-- Forecasting Time Series (Now on top) -->
+    <div id="widget-mount-point" style="width: 100%; margin-bottom: 20px; display: block;"></div>
 
-    <div style="flex: 1; margin-bottom: -35px; display: block;">
+    <!-- Freight Contract Optimization (Now below) -->
+    <div style="width: 100%; margin-bottom: -35px; display: block;">
         <script src="https://widgets.embeddable.co/sdk/latest/embeddable.js" defer></script>
         <div class="embeddable-eIvRFEZeWS" data-version="dev" data-ignore-cache="true" data-loader="false" data-lazy-load="false"></div>
     </div>
