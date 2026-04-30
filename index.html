@@ -358,16 +358,21 @@
                 <div id="home-view" class="page-frame active">
                     <div id="home-content"></div>
                     
-                   // Remove 'display: flex' and 'flex: 1' to allow vertical stacking
-<div class="widget-clipper" style="overflow: hidden;">
-    <!-- Forecasting Time Series (Now on top) -->
-    <div id="widget-mount-point" style="width: 100%; margin-bottom: 20px; display: block;"></div>
+<div class="widget-vertical-wrapper" style="display: flex; flex-direction: column; gap: 20px;">
 
-    <!-- Freight Contract Optimization (Now below) -->
-    <div style="width: 100%; margin-bottom: -35px; display: block;">
-        <script src="https://widgets.embeddable.co/sdk/latest/embeddable.js" defer></script>
-        <div class="embeddable-eIvRFEZeWS" data-version="dev" data-ignore-cache="true" data-loader="false" data-lazy-load="false"></div>
+    <!-- Top Widget: Forecasting Time Series -->
+    <div class="widget-trim-container" style="overflow: hidden; border-radius: 12px;">
+        <div id="widget-mount-point" style="margin-bottom: -35px; display: block;"></div>
     </div>
+
+    <!-- Bottom Widget: Freight Contract Optimization -->
+    <div class="widget-trim-container" style="overflow: hidden; border-radius: 12px;">
+        <div style="margin-bottom: -35px; display: block;">
+            <script src="https://widgets.embeddable.co/sdk/latest/embeddable.js" defer></script>
+            <div class="embeddable-eIvRFEZeWS" data-version="dev" data-ignore-cache="true" data-loader="false" data-lazy-load="false"></div>
+        </div>
+    </div>
+
 </div>
                     
                     <div id="map-container"></div>
