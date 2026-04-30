@@ -85,6 +85,19 @@
             background: #fff;
         }
 
+        /* Add this to your <style> section */
+.widget-trim-wrapper {
+    width: 100%;
+    overflow: hidden; /* This hides the bottom 35px */
+    border-radius: 12px;
+    background: #fff;
+    margin-bottom: 20px;
+}
+
+.widget-trim-wrapper > div {
+    margin-bottom: -35px; /* Pulls the bottom up to hide the footer */
+    display: block;
+}
         /* Adjustment to hide the bottom credit text of the chart widget */
         .widget-clipper > #widget-mount-point {
             margin-bottom: -35px; 
@@ -358,23 +371,22 @@
                 <div id="home-view" class="page-frame active">
                     <div id="home-content"></div>
                     
-<div class="widget-vertical-wrapper" style="display: flex; flex-direction: column; gap: 20px;">
-
-    <!-- Top Widget: Forecasting Time Series -->
-    <div class="widget-trim-container" style="overflow: hidden; border-radius: 12px;">
-        <div id="widget-mount-point" style="margin-bottom: -35px; display: block;"></div>
+<div id="home-view" class="page-frame active">
+    <div id="home-content"></div>
+    
+    <!-- Container for Forecasting Time Series -->
+    <div class="widget-trim-wrapper">
+        <div id="widget-mount-point"></div>
     </div>
 
-    <!-- Bottom Widget: Freight Contract Optimization -->
-    <div class="widget-trim-container" style="overflow: hidden; border-radius: 12px;">
-        <div style="margin-bottom: -35px; display: block;">
-            <script src="https://widgets.embeddable.co/sdk/latest/embeddable.js" defer></script>
-            <div class="embeddable-eIvRFEZeWS" data-version="dev" data-ignore-cache="true" data-loader="false" data-lazy-load="false"></div>
-        </div>
+    <!-- Container for Freight Contract Optimization -->
+    <div class="widget-trim-wrapper">
+        <div class="embeddable-eIvRFEZeWS" data-version="dev" data-ignore-cache="true" data-loader="false" data-lazy-load="false"></div>
     </div>
-
-</div>
-                    
+    
+    <div id="map-container"></div>
+    <!-- ... rest of your code ... -->
+</div>       
                     <div id="map-container"></div>
 
                     <div id="store-locator-container" class="secondary-map-trim"></div>
